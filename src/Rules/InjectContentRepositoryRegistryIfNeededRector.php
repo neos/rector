@@ -2,9 +2,9 @@
 
 declare (strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Rules;
+namespace Neos\Rector\Rules;
 
-use Neos\ContentRepository\Rector\Utility\CodeSampleLoader;
+use Neos\Rector\Utility\CodeSampleLoader;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Tests\Rules\NodeGetPathRector;
+namespace Neos\Rector\Tests\Rules\NodeGetPathRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 

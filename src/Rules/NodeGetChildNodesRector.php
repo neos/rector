@@ -1,9 +1,9 @@
 <?php
 
 declare (strict_types=1);
-namespace Neos\ContentRepository\Rector\Rules;
+namespace Neos\Rector\Rules;
 
-use Neos\ContentRepository\Rector\Utility\CodeSampleLoader;
+use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;

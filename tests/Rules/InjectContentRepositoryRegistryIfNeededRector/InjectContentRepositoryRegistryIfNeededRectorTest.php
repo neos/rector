@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Tests\Rules\InjectContentRepositoryRegistryIfNeededRector;
+namespace Neos\Rector\Tests\Rules\InjectContentRepositoryRegistryIfNeededRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 

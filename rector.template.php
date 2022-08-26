@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Neos\ContentRepository\Rector\ContentRepositorySets;
+use Neos\Rector\ContentRepositorySets;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {

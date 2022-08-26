@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Tests\Rules\MethodCallToWarningCommentRector;
+namespace Neos\Rector\Tests\Rules\MethodCallToWarningCommentRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 

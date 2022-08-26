@@ -3,8 +3,8 @@
 declare (strict_types=1);
 //namespace RectorPrefix202208;
 
-use Neos\ContentRepository\Rector\Legacy\LegacyContextStub;
-use Neos\ContentRepository\Rector\Rules\ContextGetRootNodeRector;
+use Neos\Rector\Legacy\LegacyContextStub;
+use Neos\Rector\Rules\ContextGetRootNodeRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 

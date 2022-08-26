@@ -1,19 +1,19 @@
 <?php
 declare (strict_types=1);
 
-use Neos\ContentRepository\Rector\Legacy\LegacyContextStub;
-use Neos\ContentRepository\Rector\Rules\ContextFactoryToLegacyContextStubRector;
-use Neos\ContentRepository\Rector\Rules\ContextGetRootNodeRector;
-use Neos\ContentRepository\Rector\Rules\InjectContentRepositoryRegistryIfNeededRector;
-use Neos\ContentRepository\Rector\Rules\MethodCallToWarningCommentRector;
-use Neos\ContentRepository\Rector\Rules\NodeGetChildNodesRector;
+use Neos\Rector\Legacy\LegacyContextStub;
+use Neos\Rector\Rules\ContextFactoryToLegacyContextStubRector;
+use Neos\Rector\Rules\ContextGetRootNodeRector;
+use Neos\Rector\Rules\InjectContentRepositoryRegistryIfNeededRector;
+use Neos\Rector\Rules\MethodCallToWarningCommentRector;
+use Neos\Rector\Rules\NodeGetChildNodesRector;
 use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Rector\Rules\NodeGetContextGetWorkspaceNameRector;
-use Neos\ContentRepository\Rector\Rules\NodeGetContextGetWorkspaceRector;
-use Neos\ContentRepository\Rector\Rules\NodeGetDimensionsRector;
-use Neos\ContentRepository\Rector\Rules\NodeGetPathRector;
-use Neos\ContentRepository\Rector\Rules\NodeIsHiddenRector;
-use Neos\ContentRepository\Rector\ValueObject\MethodCallToWarningComment;
+use Neos\Rector\Rules\NodeGetContextGetWorkspaceNameRector;
+use Neos\Rector\Rules\NodeGetContextGetWorkspaceRector;
+use Neos\Rector\Rules\NodeGetDimensionsRector;
+use Neos\Rector\Rules\NodeGetPathRector;
+use Neos\Rector\Rules\NodeIsHiddenRector;
+use Neos\Rector\ValueObject\MethodCallToWarningComment;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;

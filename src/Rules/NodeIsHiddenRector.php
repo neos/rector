@@ -1,10 +1,10 @@
 <?php
 
 declare (strict_types=1);
-namespace Neos\ContentRepository\Rector\Rules;
+namespace Neos\Rector\Rules;
 
 use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
-use Neos\ContentRepository\Rector\Utility\CodeSampleLoader;
+use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;

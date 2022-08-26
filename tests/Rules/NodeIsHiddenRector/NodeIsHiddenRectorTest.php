@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Tests\Rules\NodeIsHiddenRector;
+namespace Neos\Rector\Tests\Rules\NodeIsHiddenRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 

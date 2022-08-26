@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Tests\Rules\NodeGetDimensionsRector;
+namespace Neos\Rector\Tests\Rules\NodeGetDimensionsRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 

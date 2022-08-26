@@ -1,15 +1,15 @@
 <?php
 declare (strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Rules;
+namespace Neos\Rector\Rules;
 
-use Neos\ContentRepository\Rector\Rules\Traits\ContentRepositoryTrait;
-use Neos\ContentRepository\Rector\Rules\Traits\FunctionsTrait;
-use Neos\ContentRepository\Rector\Rules\Traits\NodeHiddenStateFinderTrait;
-use Neos\ContentRepository\Rector\Rules\Traits\NodeTrait;
-use Neos\ContentRepository\Rector\Rules\Traits\SubgraphTrait;
-use Neos\ContentRepository\Rector\Rules\Traits\ThisTrait;
-use Neos\ContentRepository\Rector\Rules\Traits\ValueObjectTrait;
+use Neos\Rector\Rules\Traits\ContentRepositoryTrait;
+use Neos\Rector\Rules\Traits\FunctionsTrait;
+use Neos\Rector\Rules\Traits\NodeHiddenStateFinderTrait;
+use Neos\Rector\Rules\Traits\NodeTrait;
+use Neos\Rector\Rules\Traits\SubgraphTrait;
+use Neos\Rector\Rules\Traits\ThisTrait;
+use Neos\Rector\Rules\Traits\ValueObjectTrait;
 
 trait AllTraits
 {

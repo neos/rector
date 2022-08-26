@@ -1,7 +1,7 @@
 <?php
 declare (strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Rules\Traits;
+namespace Neos\Rector\Rules\Traits;
 
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;

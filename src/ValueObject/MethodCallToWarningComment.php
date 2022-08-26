@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector\ValueObject;
+namespace Neos\Rector\ValueObject;
 
 class MethodCallToWarningComment
 {

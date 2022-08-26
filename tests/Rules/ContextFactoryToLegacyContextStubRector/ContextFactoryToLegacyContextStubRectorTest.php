@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Tests\Rules\ContextFactoryToLegacyContextStubRector;
+namespace Neos\Rector\Tests\Rules\ContextFactoryToLegacyContextStubRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 

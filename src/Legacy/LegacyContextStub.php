@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Legacy;
+namespace Neos\Rector\Legacy;
 
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;

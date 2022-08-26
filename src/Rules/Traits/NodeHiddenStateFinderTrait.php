@@ -1,7 +1,7 @@
 <?php
 declare (strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Rules\Traits;
+namespace Neos\Rector\Rules\Traits;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
@@ -14,7 +14,7 @@ trait NodeHiddenStateFinderTrait
      * @var \Rector\Core\PhpParser\Node\NodeFactory
      */
     protected $nodeFactory;
-    
+
     private function nodeHiddenStateFinder_findHiddenState(Variable $nodeVariable): Expr
     {
         return $this->nodeFactory->createMethodCall(

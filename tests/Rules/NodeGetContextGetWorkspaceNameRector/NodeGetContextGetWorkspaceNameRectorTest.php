@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector\Tests\Rules\NodeGetContextGetWorkspaceNameRector;
+namespace Neos\Rector\Tests\Rules\NodeGetContextGetWorkspaceNameRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 

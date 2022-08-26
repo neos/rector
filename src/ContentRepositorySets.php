@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Rector;
+namespace Neos\Rector;
 
 use Rector\Set\Contract\SetListInterface;
 

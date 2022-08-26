@@ -1,11 +1,11 @@
 <?php
 
 declare (strict_types=1);
-namespace Neos\ContentRepository\Rector\Rules;
+namespace Neos\Rector\Rules;
 
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Rector\Legacy\LegacyContextStub;
-use Neos\ContentRepository\Rector\Utility\CodeSampleLoader;
+use Neos\Rector\Legacy\LegacyContextStub;
+use Neos\Rector\Utility\CodeSampleLoader;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;
 use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;

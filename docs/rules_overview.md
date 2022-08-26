@@ -4,7 +4,7 @@
 
 add injection for `$contentRepositoryRegistry` if in use.
 
-- class: [`Neos\ContentRepository\Rector\Rules\InjectContentRepositoryRegistryIfNeededRector`](../src/Rules/InjectContentRepositoryRegistryIfNeededRector.php)
+- class: [`Neos\Rector\Rules\InjectContentRepositoryRegistryIfNeededRector`](../src/Rules/InjectContentRepositoryRegistryIfNeededRector.php)
 
 ```diff
  <?php
@@ -30,7 +30,7 @@ add injection for `$contentRepositoryRegistry` if in use.
 
 `"NodeInterface::getChildNodes()"` will be rewritten
 
-- class: [`Neos\ContentRepository\Rector\Rules\NodeGetChildNodesRector`](../src/Rules/NodeGetChildNodesRector.php)
+- class: [`Neos\Rector\Rules\NodeGetChildNodesRector`](../src/Rules/NodeGetChildNodesRector.php)
 
 ```diff
  <?php
@@ -59,7 +59,7 @@ add injection for `$contentRepositoryRegistry` if in use.
 
 `"NodeInterface::getContext()::getWorkspace()"` will be rewritten
 
-- class: [`Neos\ContentRepository\Rector\Rules\NodeGetContextGetWorkspaceRector`](../src/Rules/NodeGetContextGetWorkspaceRector.php)
+- class: [`Neos\Rector\Rules\NodeGetContextGetWorkspaceRector`](../src/Rules/NodeGetContextGetWorkspaceRector.php)
 
 ```diff
  <?php
@@ -85,7 +85,7 @@ add injection for `$contentRepositoryRegistry` if in use.
 
 `"NodeInterface::isHidden()"` will be rewritten
 
-- class: [`Neos\ContentRepository\Rector\Rules\NodeIsHiddenRector`](../src/Rules/NodeIsHiddenRector.php)
+- class: [`Neos\Rector\Rules\NodeIsHiddenRector`](../src/Rules/NodeIsHiddenRector.php)
 
 ```diff
  <?php
