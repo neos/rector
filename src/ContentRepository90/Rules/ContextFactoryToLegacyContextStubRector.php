@@ -1,8 +1,9 @@
 <?php
 
 declare (strict_types=1);
-namespace Neos\Rector\Rules;
+namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
@@ -10,7 +11,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeGetPathRector extends AbstractRector
+final class ContextFactoryToLegacyContextStubRector extends AbstractRector
 {
     use AllTraits;
 
@@ -22,7 +23,7 @@ final class NodeGetPathRector extends AbstractRector
 
     public function getRuleDefinition() : RuleDefinition
     {
-        return CodeSampleLoader::fromFile('"NodeInterface::getPath()" will be rewritten', __CLASS__);
+        return CodeSampleLoader::fromFile('"ContextFactory::create()" will be rewritten.', __CLASS__);
     }
 
     /**
@@ -39,23 +40,20 @@ final class NodeGetPathRector extends AbstractRector
     {
         assert($node instanceof Node\Expr\MethodCall);
 
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Projection\ContentGraph\Node::class))) {
+        if (!$this->isObjectType($node->var, new ObjectType('Neos\ContentRepository\Domain\Service\ContextFactoryInterface'))
+            && !$this->isObjectType($node->var, new ObjectType('Neos\ContentRepository\Domain\Service\ContextFactory'))
+            && !$this->isObjectType($node->var, new ObjectType('Neos\Neos\Domain\Service\ContentContextFactory'))
+        ) {
             return null;
         }
-        if (!$this->isName($node->name, 'getPath')) {
+        if (!$this->isName($node->name, 'create')) {
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($node->var)),
-                self::todoComment('Try to remove the (string) cast and make your code more type-safe.')
-            ],
-            $node
-        );
-
-        return $this->castToString(
-            $this->subgraph_findNodePath($node->var)
+        return new Node\Expr\New_(
+            // TODO clean up
+            new Node\Name('\\' . LegacyContextStub::class),
+            $node->args
         );
     }
 }

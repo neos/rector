@@ -1,10 +1,10 @@
 <?php
 
 declare (strict_types=1);
-namespace Neos\Rector\Rules;
+namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
-use Neos\Rector\Legacy\LegacyContextStub;
+use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
 use Neos\ContentRepository\SharedModel\VisibilityConstraints;

@@ -1,7 +1,7 @@
 <?php
 declare (strict_types=1);
 
-namespace Neos\Rector\Rules\Traits;
+namespace Neos\Rector\Generic\Rules\Traits;
 
 use PhpParser\Comment;
 use PhpParser\Node\Expr;

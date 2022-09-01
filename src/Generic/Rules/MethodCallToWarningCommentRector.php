@@ -2,10 +2,10 @@
 
 declare (strict_types=1);
 
-namespace Neos\Rector\Rules;
+namespace Neos\Rector\Generic\Rules;
 
+use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Utility\CodeSampleLoader;
-use Neos\Rector\ValueObject\MethodCallToWarningComment;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Contract\Rector\ConfigurableRectorInterface;

@@ -1,18 +1,16 @@
 <?php
 
 declare (strict_types=1);
-namespace Neos\Rector\Rules;
+namespace Neos\Rector\ContentRepository90\Rules;
 
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
-use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeIsHiddenRector extends AbstractRector
+final class NodeGetChildNodesRector extends AbstractRector
 {
     use AllTraits;
 
@@ -24,7 +22,7 @@ final class NodeIsHiddenRector extends AbstractRector
 
     public function getRuleDefinition() : RuleDefinition
     {
-        return CodeSampleLoader::fromFile('"NodeInterface::isHidden()" will be rewritten', __CLASS__);
+        return CodeSampleLoader::fromFile('"NodeInterface::getChildNodes()" will be rewritten', __CLASS__);
     }
 
     /**
@@ -44,28 +42,24 @@ final class NodeIsHiddenRector extends AbstractRector
         if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Projection\ContentGraph\Node::class))) {
             return null;
         }
-        if (!$this->isName($node->name, 'isHidden')) {
+        if (!$this->isName($node->name, 'getChildNodes')) {
             return null;
         }
+        if (count($node->args) > 0) {
+            throw new \RuntimeException('TODO - not supported right now');
+        }
 
-        $getContentRepository = $this->this_contentRepositoryRegistry_get(
-            $this->node_subgraphIdentity_contentRepositoryIdentifier($node->var)
-        );
-        $getNodeHiddenStateFinder = $this->contentRepository_getProjection(NodeHiddenStateProjection::class);
-        $getHiddenState = $this->nodeHiddenStateFinder_findHiddenState($node->var);
 
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
-                self::assign('contentRepository', $getContentRepository),
-                self::assign('nodeHiddenStateFinder', $getNodeHiddenStateFinder),
-                self::assign('hiddenState', $getHiddenState),
+                self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($node->var)),
+                self::todoComment('Try to remove the iterator_to_array($nodes) call.')
             ],
             $node
         );
 
-        return $this->nodeFactory->createMethodCall(
-            new Variable('hiddenState'),
-            'isHidden'
+        return $this->iteratorToArray(
+            $this->subgraph_findChildNodes($node->var)
         );
     }
 }

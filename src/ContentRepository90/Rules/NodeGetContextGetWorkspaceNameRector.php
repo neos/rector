@@ -2,7 +2,7 @@
 
 declare (strict_types=1);
 
-namespace Neos\Rector\Rules;
+namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;

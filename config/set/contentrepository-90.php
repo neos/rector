@@ -1,19 +1,19 @@
 <?php
 declare (strict_types=1);
 
-use Neos\Rector\Legacy\LegacyContextStub;
-use Neos\Rector\Rules\ContextFactoryToLegacyContextStubRector;
-use Neos\Rector\Rules\ContextGetRootNodeRector;
-use Neos\Rector\Rules\InjectContentRepositoryRegistryIfNeededRector;
-use Neos\Rector\Rules\MethodCallToWarningCommentRector;
-use Neos\Rector\Rules\NodeGetChildNodesRector;
-use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\Rector\Rules\NodeGetContextGetWorkspaceNameRector;
-use Neos\Rector\Rules\NodeGetContextGetWorkspaceRector;
-use Neos\Rector\Rules\NodeGetDimensionsRector;
-use Neos\Rector\Rules\NodeGetPathRector;
-use Neos\Rector\Rules\NodeIsHiddenRector;
-use Neos\Rector\ValueObject\MethodCallToWarningComment;
+use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
+use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRector;
+use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
+use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
+use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
+use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
+use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
