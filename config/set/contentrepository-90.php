@@ -13,6 +13,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
+use Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
@@ -90,7 +91,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getWorkspace
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.');
     // getIdentifier
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getIdentifier', 'nodeAggregateIdentifier');
+    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getIdentifier', 'nodeAggregateId');
     // setIndex -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setIndex', '!! Node::setIndex() was always internal. To reorder nodes, use the "MoveNodeAggregate" command');
     // getIndex
@@ -104,9 +105,6 @@ return static function (RectorConfig $rectorConfig): void {
     // getPrimaryChildNode() - deprecated
     // getChildNodes($nodeTypeFilter, $limit, $offset) - deprecated
     $rectorConfig->rule(NodeGetChildNodesRector::class);
-        // - TODO: NodeTypeFilter
-        // - TODO: Limit
-        // - TODO: Offset
     // hasChildNodes($nodeTypeFilter) - deprecated
     // remove()
     // setRemoved()
@@ -155,7 +153,7 @@ return static function (RectorConfig $rectorConfig): void {
     // isTethered()
     // getContentStreamIdentifier() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // getNodeAggregateIdentifier()
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeAggregateIdentifier', 'nodeAggregateIdentifier');
+    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeAggregateIdentifier', 'nodeAggregateId');
     // getNodeTypeName()
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeTypeName', 'nodeTypeName');
     // getNodeType() ** (included/compatible in old NodeInterface)
@@ -187,4 +185,5 @@ return static function (RectorConfig $rectorConfig): void {
 
     // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
     $rectorConfig->rule(InjectContentRepositoryRegistryIfNeededRector::class);
+    $rectorConfig->rule(RemoveDuplicateCommentRector::class);
 };

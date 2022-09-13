@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Neos\Rector\ContentRepository90\Rules;
 
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateProjection;
+use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
@@ -41,7 +41,7 @@ final class NodeIsHiddenRector extends AbstractRector
     {
         assert($node instanceof Node\Expr\MethodCall);
 
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Projection\ContentGraph\Node::class))) {
+        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Core\Projection\ContentGraph\Node::class))) {
             return null;
         }
         if (!$this->isName($node->name, 'isHidden')) {
@@ -51,7 +51,7 @@ final class NodeIsHiddenRector extends AbstractRector
         $getContentRepository = $this->this_contentRepositoryRegistry_get(
             $this->node_subgraphIdentity_contentRepositoryIdentifier($node->var)
         );
-        $getNodeHiddenStateFinder = $this->contentRepository_getProjection(NodeHiddenStateProjection::class);
+        $getNodeHiddenStateFinder = $this->contentRepository_getProjection(NodeHiddenStateFinder::class);
         $getHiddenState = $this->nodeHiddenStateFinder_findHiddenState($node->var);
 
         $this->nodesToAddCollector->addNodesBeforeNode(

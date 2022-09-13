@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules\Traits;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
 
@@ -16,13 +17,45 @@ trait SubgraphTrait
     protected $nodeFactory;
 
 
-    private function subgraph_findChildNodes(Variable $nodeVariable): Expr
+    private function subgraph_findChildNodes(
+        Variable $nodeVariable,
+        ?Expr $nodeTypeConstraintsFilterString = null,
+        ?Expr $limit = null,
+        ?Expr $offset = null
+    ): Expr
     {
+        if ($nodeTypeConstraintsFilterString) {
+            $filter = $this->nodeFactory->createStaticCall(
+                FindChildNodesFilter::class,
+                'nodeTypeConstraints',
+                [
+                    $nodeTypeConstraintsFilterString
+                ]
+            );
+        } else {
+            $filter = $this->nodeFactory->createStaticCall(
+                FindChildNodesFilter::class,
+                'all'
+            );
+        }
+
+        if ($limit || $offset) {
+            $filter = $this->nodeFactory->createMethodCall(
+                $filter,
+                'withPagination',
+                [
+                    $limit,
+                    $offset
+                ]
+            );
+        }
+
         return $this->nodeFactory->createMethodCall(
             'subgraph',
             'findChildNodes',
             [
-                $this->node_nodeAggregateIdentifier($nodeVariable)
+                $this->node_nodeAggregateIdentifier($nodeVariable),
+                $filter
             ]
         );
     }

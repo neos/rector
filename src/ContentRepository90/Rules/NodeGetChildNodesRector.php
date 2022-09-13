@@ -39,14 +39,23 @@ final class NodeGetChildNodesRector extends AbstractRector
     {
         assert($node instanceof Node\Expr\MethodCall);
 
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Projection\ContentGraph\Node::class))) {
+        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Core\Projection\ContentGraph\Node::class))) {
             return null;
         }
         if (!$this->isName($node->name, 'getChildNodes')) {
             return null;
         }
-        if (count($node->args) > 0) {
-            throw new \RuntimeException('TODO - not supported right now');
+        $nodeTypeFilterExpr = null;
+        $limitExpr = null;
+        $offsetExpr = null;
+        if (count($node->args) >= 1) {
+            $nodeTypeFilterExpr = $node->args[0];
+        }
+        if (count($node->args) >= 2) {
+            $limitExpr = $node->args[1];
+        }
+        if (count($node->args) >= 3) {
+            $offsetExpr = $node->args[2];
         }
 
 
@@ -59,7 +68,7 @@ final class NodeGetChildNodesRector extends AbstractRector
         );
 
         return $this->iteratorToArray(
-            $this->subgraph_findChildNodes($node->var)
+            $this->subgraph_findChildNodes($node->var, $nodeTypeFilterExpr, $limitExpr, $offsetExpr)
         );
     }
 }
