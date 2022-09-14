@@ -1,10 +1,9 @@
 <?php
 
 declare (strict_types=1);
-//namespace RectorPrefix202208;
 
-use Neos\Rector\Legacy\LegacyContextStub;
-use Neos\Rector\Rules\ContextFactoryToLegacyContextStubRector;
+use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
+use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 

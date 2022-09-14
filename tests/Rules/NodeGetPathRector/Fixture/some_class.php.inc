@@ -1,6 +1,6 @@
 <?php
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 class SomeClass
 {
@@ -14,7 +14,7 @@ class SomeClass
 -----
 <?php
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 class SomeClass
 {

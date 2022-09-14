@@ -28,9 +28,9 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 class SomeClass
 {
     protected ContextFactoryInterface $contextFactory;
-    public function run(string $workspace): \Neos\Rector\Legacy\LegacyContextStub
+    public function run(string $workspace): \Neos\Rector\ContentRepository90\Legacy\LegacyContextStub
     {
-        return new \Neos\Rector\Legacy\LegacyContextStub([
+        return new \Neos\Rector\ContentRepository90\Legacy\LegacyContextStub([
           'workspace' => $workspace,
           'dimensions' => [
             'language' => ['de_DE']
@@ -38,7 +38,7 @@ class SomeClass
         ]);
     }
 
-  public function run2(): \Neos\Rector\Legacy\LegacyContextStub {
+  public function run2(): \Neos\Rector\ContentRepository90\Legacy\LegacyContextStub {
   }
 }
 

@@ -11,13 +11,13 @@ final class ContextFactoryToLegacyContextStubRectorTest extends AbstractRectorTe
     /**
      * @dataProvider provideData()
      */
-    public function test(\Symplify\SmartFileSystem\SmartFileInfo $fileInfo): void
+    public function test(string $fileInfo): void
     {
-        $this->doTestFileInfo($fileInfo);
+        $this->doTestFile($fileInfo);
     }
 
     /**
-     * @return \Iterator<\Symplify\SmartFileSystem\SmartFileInfo>
+     * @return \Iterator<string>
      */
     public function provideData(): \Iterator
     {

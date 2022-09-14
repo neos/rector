@@ -4,7 +4,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 class SomeClass
 {
-    public function run(\Neos\Rector\Legacy\LegacyContextStub $context)
+    public function run(\Neos\Rector\ContentRepository90\Legacy\LegacyContextStub $context)
     {
         return $context->getRootNode();
     }
@@ -18,7 +18,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 
 class SomeClass
 {
-    public function run(\Neos\Rector\Legacy\LegacyContextStub $context)
+    public function run(\Neos\Rector\ContentRepository90\Legacy\LegacyContextStub $context)
     {
         // TODO 9.0 migration: !! MEGA DIRTY CODE! Ensure to rewrite this; by getting rid of LegacyContextStub.
 

@@ -2,9 +2,9 @@
 
 declare (strict_types=1);
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
-use Neos\Rector\Rules\MethodCallToWarningCommentRector;
-use Neos\Rector\ValueObject\MethodCallToWarningComment;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
+use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Rector\Config\RectorConfig;
 return static function (RectorConfig $rectorConfig) : void {
     $rectorConfig->ruleWithConfiguration(MethodCallToWarningCommentRector::class, [
