@@ -4,6 +4,7 @@ declare (strict_types=1);
 use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
+use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -21,6 +22,15 @@ use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 
 return static function (RectorConfig $rectorConfig): void {
+    $services = $rectorConfig->services();
+    $services->defaults()
+        ->public()
+        ->autowire()
+        ->autoconfigure();
+    $services->set(\Neos\Rector\Core\FusionProcessing\FusionFileProcessor::class);
+    $rectorConfig->disableParallel(); // does not work for fusion files - see https://github.com/rectorphp/rector-src/pull/2597#issuecomment-1190120688
+
+
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
         'Neos\\ContentRepository\\Domain\\Model\\NodeInterface' => Node::class,
         'Neos\\ContentRepository\\Domain\\Projection\\Content\\NodeInterface' => Node::class,
@@ -145,6 +155,17 @@ return static function (RectorConfig $rectorConfig): void {
     // Context::getNodeVariantsByIdentifier()
     // Context::getNodesOnPath()
     // Context::adoptNode()
+    /**
+     * ContentContext
+     */
+    // ContentContext::getCurrentSite
+    // ContentContext::getCurrentDomain
+    // ContentContext::getCurrentSiteNode
+    // ContentContext::isLive
+    $rectorConfig->rule(FusionContextInBackendRector::class);
+    // ContentContext::isInBackend
+    // ContentContext::getCurrentRenderingMode
+    // TODO: also with Fusion!!!
 
     /**
      * Neos\ContentRepository\Domain\Projection\Content\NodeInterface
