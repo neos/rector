@@ -13,7 +13,7 @@ trait ThisTrait
      */
     protected $nodeFactory;
 
-    private function this_contentRepositoryRegistry_subgraphForNode(Variable $nodeVariable): Expr
+    private function this_contentRepositoryRegistry_subgraphForNode(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createMethodCall(
             $this->this_contentRepositoryRegistry(),

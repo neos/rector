@@ -50,7 +50,7 @@ final class RemoveDuplicateCommentRector extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         if (self::commentContains90Comment($node)) {
-            $filePath = $this->file->getRelativeFilePath();
+            $filePath = $this->file->getFilePath();
             $changedComments = false;
             $newComments = [];
             foreach ($node->getComments() as $comment) {

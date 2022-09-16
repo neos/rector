@@ -50,12 +50,18 @@ final class NodeGetChildNodesRector extends AbstractRector
         $offsetExpr = null;
         if (count($node->args) >= 1) {
             $nodeTypeFilterExpr = $node->args[0];
+            assert($nodeTypeFilterExpr instanceof Node\Arg);
+            $nodeTypeFilterExpr = $nodeTypeFilterExpr->value;
         }
         if (count($node->args) >= 2) {
             $limitExpr = $node->args[1];
+            assert($limitExpr instanceof Node\Arg);
+            $limitExpr = $limitExpr->value;
         }
         if (count($node->args) >= 3) {
             $offsetExpr = $node->args[2];
+            assert($offsetExpr instanceof Node\Arg);
+            $offsetExpr = $offsetExpr->value;
         }
 
 

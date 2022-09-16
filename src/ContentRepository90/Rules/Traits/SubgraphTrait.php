@@ -18,7 +18,7 @@ trait SubgraphTrait
 
 
     private function subgraph_findChildNodes(
-        Variable $nodeVariable,
+        Expr $nodeVariable,
         ?Expr $nodeTypeConstraintsFilterString = null,
         ?Expr $limit = null,
         ?Expr $offset = null
