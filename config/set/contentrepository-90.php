@@ -22,13 +22,14 @@ use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 
 return static function (RectorConfig $rectorConfig): void {
+    // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
     $services = $rectorConfig->services();
     $services->defaults()
         ->public()
         ->autowire()
         ->autoconfigure();
     $services->set(\Neos\Rector\Core\FusionProcessing\FusionFileProcessor::class);
-    $rectorConfig->disableParallel(); // does not work for fusion files - see https://github.com/rectorphp/rector-src/pull/2597#issuecomment-1190120688
+    $rectorConfig->disableParallel(); // parallel does not work for non-PHP-Files, so we need to disable it - see https://github.com/rectorphp/rector-src/pull/2597#issuecomment-1190120688
 
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
@@ -78,24 +79,29 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenBeforeDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getHiddenBeforeDateTime', '!! Node::getHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+        // TODO: Fusion Warning
     // setHiddenAfterDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setHiddenAfterDateTime', '!! Node::setHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenAfterDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
-    // getHiddenAfterDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+        // TODO: Fusion Warning
     // setHiddenInIndex
     // isHiddenInIndex
-    // isHiddenInIndex
+        // TODO: Fusion Warning
     // setAccessRoles
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setAccessRoles', '!! Node::setAccessRoles() is not supported by the new CR.');
     // getAccessRoles
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getAccessRoles', '!! Node::getAccessRoles() is not supported by the new CR.');
     // getPath
     $rectorConfig->rule(NodeGetPathRector::class);
+        // TODO: Fusion
     // getContextPath
+        // TODO: PHP
+        // TODO: Fusion
         // - NodeAddress + LOG (WARNING)
     // getDepth
+        // TODO: PHP
+        // TODO: Fusion
     // setWorkspace -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setWorkspace', '!! Node::setWorkspace() was always internal, and the workspace system has been fundamentally changed with the new CR. Try to rewrite your code around Content Streams.');
     // getWorkspace
@@ -107,6 +113,8 @@ return static function (RectorConfig $rectorConfig): void {
     // getIndex
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getIndex', '!! Node::getIndex() is not supported. You can fetch all siblings and inspect the ordering');
     // getParent -> Node
+        // TODO: PHP
+        // TODO: Fusion
     // getParentPath - deprecated
     // createNode
     // createSingleNode -> internal
@@ -120,6 +128,7 @@ return static function (RectorConfig $rectorConfig): void {
     // setRemoved()
     // isRemoved()
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'isRemoved', '!! Node::isRemoved() - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
+        // TODO: Fusion warning
     // isVisible()
     // isAccessible()
     // hasAccessRestrictions()
@@ -135,10 +144,13 @@ return static function (RectorConfig $rectorConfig): void {
     // getContext()
     // getContext()->getWorkspace()
     $rectorConfig->rule(NodeGetContextGetWorkspaceRector::class);
+        // TODO: Fusion
     // getContext()->getWorkspaceName()
     $rectorConfig->rule(NodeGetContextGetWorkspaceNameRector::class);
+        // TODO: Fusion
     // getDimensions()
     $rectorConfig->rule(NodeGetDimensionsRector::class);
+        // TODO: Fusion
     // createVariantForContext()
     // isAutoCreated()
     // getOtherNodeVariants()
@@ -148,24 +160,41 @@ return static function (RectorConfig $rectorConfig): void {
      */
     $rectorConfig->rule(ContextFactoryToLegacyContextStubRector::class);
     // Context::getWorkspaceName()
+        // TODO: PHP
+        // TODO: Fusion
     // Context::getRootNode()
     $rectorConfig->rule(ContextGetRootNodeRector::class);
+        // TODO: Fusion
     // Context::getNode()
+        // TODO: PHP
     // Context::getNodeByIdentifier()
+        // TODO: PHP
     // Context::getNodeVariantsByIdentifier()
+        // TODO: PHP
     // Context::getNodesOnPath()
+        // TODO: PHP
     // Context::adoptNode()
     /**
      * ContentContext
      */
     // ContentContext::getCurrentSite
+        // TODO: PHP
+        // TODO: Fusion
     // ContentContext::getCurrentDomain
+        // TODO: PHP
+        // TODO: Fusion
     // ContentContext::getCurrentSiteNode
-    // ContentContext::isLive
+        // TODO: PHP
+        // TODO: Fusion
+    // ContentContext::isLive -> Neos.Ui.NodeInfo.isLive(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
+        // TODO: PHP
+    $rectorConfig->rule(FusionContextInBackendRector::class);
     // ContentContext::isInBackend -> Neos.Ui.NodeInfo.inBackend(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
+        // TODO: PHP
     $rectorConfig->rule(FusionContextInBackendRector::class);
     // ContentContext::getCurrentRenderingMode
-    // TODO: also with Fusion!!!
+        // TODO: PHP
+        // TODO: Fusion
 
     /**
      * Neos\ContentRepository\Domain\Projection\Content\NodeInterface
@@ -175,6 +204,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getContentStreamIdentifier() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // getNodeAggregateIdentifier()
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeAggregateIdentifier', 'nodeAggregateId');
+        // TODO: Fusion
     // getNodeTypeName()
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeTypeName', 'nodeTypeName');
     // getNodeType() ** (included/compatible in old NodeInterface)
@@ -191,12 +221,19 @@ return static function (RectorConfig $rectorConfig): void {
      */
     // getDimensionSpacePoint() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // findParentNode() -> TraversableNodeInterface
+        // TODO: PHP
     // findNodePath() -> NodePath
+        // TODO: PHP
     // findNamedChildNode(NodeName $nodeName): TraversableNodeInterface;
+        // TODO: PHP
     // findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
+        // TODO: PHP
     // countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int;
+        // TODO: PHP
     // findReferencedNodes(): TraversableNodes;
+        // TODO: PHP
     // findNamedReferencedNodes(PropertyName $edgeName): TraversableNodes;
+        // TODO: PHP
     // findReferencingNodes() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // findNamedReferencingNodes() -> threw exception in <= Neos 8.0 - so nobody could have used this
 
