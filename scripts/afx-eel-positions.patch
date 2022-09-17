@@ -39,6 +39,35 @@ index c5668598b6..5ea8fac9f7 100644
                  }
  
                  $braceCount--;
+diff --git a/Neos.Fusion.Afx/Classes/Parser/Expression/Spread.php b/Neos.Fusion.Afx/Classes/Parser/Expression/Spread.php
+index dcb0a87b17..a3e9aff5eb 100644
+--- a/Neos.Fusion.Afx/Classes/Parser/Expression/Spread.php
++++ b/Neos.Fusion.Afx/Classes/Parser/Expression/Spread.php
+@@ -41,6 +41,7 @@ class Spread
+             throw new AfxParserException('Spread without braces', 1557860522);
+         }
+ 
++        $fromOffset = $lexer->characterPosition;
+         while (true) {
+             if ($lexer->isEnd()) {
+                 throw new AfxParserException(sprintf('Unfinished Spread "%s"', $contents), 1557860526);
+@@ -52,10 +53,15 @@ class Spread
+ 
+             if ($lexer->isClosingBrace()) {
+                 if ($braceCount === 0) {
++                    $toOffset = $lexer->characterPosition;
+                     $lexer->consume();
+                     return [
+                         'type' => 'expression',
+-                        'payload' => $contents
++                        'payload' => [
++                            'from' => $fromOffset,
++                            'to' => $toOffset,
++                            'contents' => $contents
++                        ]
+                     ];
+                 }
+ 
 diff --git a/Neos.Fusion.Afx/Classes/Parser/Lexer.php b/Neos.Fusion.Afx/Classes/Parser/Lexer.php
 index dddf2d8c3a..a95b7868bc 100644
 --- a/Neos.Fusion.Afx/Classes/Parser/Lexer.php

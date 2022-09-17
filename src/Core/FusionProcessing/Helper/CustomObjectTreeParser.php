@@ -22,15 +22,14 @@ class CustomObjectTreeParser extends ObjectTreeParser
     private array $foundAfxExpressions = [];
 
     /**
-     * @return EelExpressionPosition[]
      * @throws ParserException
      */
-    public static function findEelExpressions(string $sourceCode, ?string $contextPathAndFilename = null): array
+    public static function findEelExpressions(string $sourceCode, ?string $contextPathAndFilename = null): EelExpressionPositions
     {
         $lexer = new Lexer($sourceCode);
         $parser = new self($lexer, $contextPathAndFilename);
         $parser->parseFusionFile();
-        return $parser->foundEelExpressions;
+        return EelExpressionPositions::fromArray($parser->foundEelExpressions);
     }
 
     /**
@@ -54,7 +53,7 @@ class CustomObjectTreeParser extends ObjectTreeParser
         $result = parent::parsePathValue();
         if ($result instanceof EelExpressionValue) {
             $toOffset = $this->lexer->getCursor();
-            $this->foundEelExpressions[] = new EelExpressionPosition($result->value, $fromOffset, $toOffset);
+            $this->foundEelExpressions[] = new EelExpressionPosition($result->value, $fromOffset + 2, $toOffset - 1);
         }
         return $result;
     }

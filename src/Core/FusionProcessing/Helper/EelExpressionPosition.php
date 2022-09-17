@@ -10,4 +10,22 @@ final class EelExpressionPosition
         public readonly int $toOffset
     ) {
     }
+
+    public function withOffset(int $offset): self
+    {
+        return new self(
+            $this->eelExpression,
+            $this->fromOffset + $offset,
+            $this->toOffset + $offset
+        );
+    }
+
+    public function withEelExpression(string $eelExpression)
+    {
+        return new self(
+            $eelExpression,
+            $this->fromOffset,
+            $this->toOffset
+        );
+    }
 }

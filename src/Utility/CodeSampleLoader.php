@@ -9,7 +9,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class CodeSampleLoader
 {
-    static function fromFile(string $description, string $rectorClassName): RuleDefinition
+    static function fromFile(string $description, string $rectorClassName, string $fixtureFileName = 'some_class.php.inc'): RuleDefinition
     {
         $shortName = (new \ReflectionClass($rectorClassName))->getShortName();
         $fileName = __DIR__ . '/../../tests/Rules/' . $shortName . '/Fixture/some_class.php.inc';

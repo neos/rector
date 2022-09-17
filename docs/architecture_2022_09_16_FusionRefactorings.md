@@ -12,10 +12,13 @@ and then add comments for all remaining occurences.
 
 ## Solution Idea
 
-- [ ] find all Eel expression positions in a file
+- [x] find all Eel expression positions in a file
   - [x] use Fusion parser to find Eel expression positions in Fusion files
   - [x] use Fusion parser to find AFX Expressions in Fusion files
-  - [ ] use AFX parser to find Eel Expression positions in AFX Blocks
-- [ ] rewrite Eel expressions
-  - [ ] do semantically correct transformation
-- [ ] add comments where we cannot find the markers.
+  - [x] use AFX parser to find Eel Expression positions in AFX Blocks
+- [x] rewrite Eel expressions
+  - [x] build framework for eel replacement
+  - [x] do semantically correct transformation
+- [x] add comments where we cannot find the markers.
+  - go easy: write the comments on top of the fusion file (with line numbers)
+- [x] fix spread operation

@@ -9,6 +9,7 @@ grep -rl 'Neos\\Fusion\\Core\\ObjectTreeParser' $FUSION_PARSER_TARGETPATH | xarg
 
 
 # To create the patch file for Neos.Fusion.Afx, do:
+# cd Packages/Neos
 # patch -p1 < ../Libraries/neos/rector/scripts/afx-eel-positions.patch
 ## Now, do your modifications as needed.
 # git diff -- Neos.Fusion.Afx/ > ../Libraries/neos/rector/scripts/afx-eel-positions.patch

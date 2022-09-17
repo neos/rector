@@ -162,8 +162,8 @@ return static function (RectorConfig $rectorConfig): void {
     // ContentContext::getCurrentDomain
     // ContentContext::getCurrentSiteNode
     // ContentContext::isLive
+    // ContentContext::isInBackend -> Neos.Ui.NodeInfo.inBackend(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
     $rectorConfig->rule(FusionContextInBackendRector::class);
-    // ContentContext::isInBackend
     // ContentContext::getCurrentRenderingMode
     // TODO: also with Fusion!!!
 
