@@ -86,7 +86,7 @@ final class InjectContentRepositoryRegistryIfNeededRector extends AbstractRector
         ], [], $type, [
             new Node\AttributeGroup([
                 new Node\Attribute(
-                    new Node\Name('Flow\Inject')
+                    new Node\Name('\Neos\Flow\Annotations\Inject')
                 )
             ])
         ]);

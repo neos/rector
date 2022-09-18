@@ -2,6 +2,7 @@
 declare (strict_types=1);
 
 use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
+use Neos\Rector\ContentRepository90\Rules\ContentDimensionCombinatorGetAllAllowedCombinationsRector;
 use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
@@ -158,47 +159,6 @@ return static function (RectorConfig $rectorConfig): void {
     // getOtherNodeVariants()
 
     /**
-     * Context
-     */
-    $rectorConfig->rule(ContextFactoryToLegacyContextStubRector::class);
-    // Context::getWorkspaceName()
-        // TODO: PHP
-        // TODO: Fusion
-    // Context::getRootNode()
-    $rectorConfig->rule(ContextGetRootNodeRector::class);
-        // TODO: Fusion
-    // Context::getNode()
-        // TODO: PHP
-    // Context::getNodeByIdentifier()
-        // TODO: PHP
-    // Context::getNodeVariantsByIdentifier()
-        // TODO: PHP
-    // Context::getNodesOnPath()
-        // TODO: PHP
-    // Context::adoptNode()
-    /**
-     * ContentContext
-     */
-    // ContentContext::getCurrentSite
-        // TODO: PHP
-        // TODO: Fusion
-    // ContentContext::getCurrentDomain
-        // TODO: PHP
-        // TODO: Fusion
-    // ContentContext::getCurrentSiteNode
-        // TODO: PHP
-        // TODO: Fusion
-    // ContentContext::isLive -> Neos.Ui.NodeInfo.isLive(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
-        // TODO: PHP
-    $rectorConfig->rule(FusionContextInBackendRector::class);
-    // ContentContext::isInBackend -> Neos.Ui.NodeInfo.inBackend(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
-        // TODO: PHP
-    $rectorConfig->rule(FusionContextInBackendRector::class);
-    // ContentContext::getCurrentRenderingMode
-        // TODO: PHP
-        // TODO: Fusion
-
-    /**
      * Neos\ContentRepository\Domain\Projection\Content\NodeInterface
      */
     // isRoot()
@@ -240,15 +200,67 @@ return static function (RectorConfig $rectorConfig): void {
     // findNamedReferencingNodes() -> threw exception in <= Neos 8.0 - so nobody could have used this
 
 
+    /**
+     * Context
+     */
+    $rectorConfig->rule(ContextFactoryToLegacyContextStubRector::class);
+    // Context::getWorkspaceName()
+    // TODO: PHP
+    // TODO: Fusion
+    // Context::getRootNode()
+    $rectorConfig->rule(ContextGetRootNodeRector::class);
+    // TODO: Fusion
+    // Context::getNode()
+    // TODO: PHP
+    // Context::getNodeByIdentifier()
+    // TODO: PHP
+    // Context::getNodeVariantsByIdentifier()
+    // TODO: PHP
+    // Context::getNodesOnPath()
+    // TODO: PHP
+    // Context::adoptNode()
+    /**
+     * ContentContext
+     */
+    // ContentContext::getCurrentSite
+    // TODO: PHP
+    // TODO: Fusion
+    // ContentContext::getCurrentDomain
+    // TODO: PHP
+    // TODO: Fusion
+    // ContentContext::getCurrentSiteNode
+    // TODO: PHP
+    // TODO: Fusion
+    // ContentContext::isLive -> Neos.Ui.NodeInfo.isLive(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
+    // TODO: PHP
+    $rectorConfig->rule(FusionContextInBackendRector::class);
+    // ContentContext::isInBackend -> Neos.Ui.NodeInfo.inBackend(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
+    // TODO: PHP
+    $rectorConfig->rule(FusionContextInBackendRector::class);
+    // ContentContext::getCurrentRenderingMode
+    // TODO: PHP
+    // TODO: Fusion
+
+    /**
+     * ContentDimensionCombinator
+     */
+    // ContentDimensionCombinator::getAllAllowedCombinations
+    $rectorConfig->rule(ContentDimensionCombinatorGetAllAllowedCombinationsRector::class);
+
+
+    /**
+     * CLEAN UP / END GLOBAL RULES
+     */
     $rectorConfig->ruleWithConfiguration(MethodCallToPropertyFetchRector::class, $methodCallToPropertyFetches);
     $rectorConfig->ruleWithConfiguration(MethodCallToWarningCommentRector::class, $methodCallToWarningComments);
 
-    // Remove injections to ContextFactory, now that they have been rewritten.
+    // Remove injections to classes which are gone now
     $rectorConfig->ruleWithConfiguration(RemoveInjectionsRector::class, [
-        new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class)
+        new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class),
+        new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContentDimensionCombinator::class)
     ]);
 
     // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
     $rectorConfig->rule(InjectContentRepositoryRegistryIfNeededRector::class);
-    $rectorConfig->rule(RemoveDuplicateCommentRector::class);
+    // TODO: does not fully seem to work.$rectorConfig->rule(RemoveDuplicateCommentRector::class);
 };

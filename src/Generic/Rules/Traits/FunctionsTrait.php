@@ -42,4 +42,9 @@ trait FunctionsTrait
             ]
         ]);
     }
+
+    private static function todoCommentAttribute(string $commentText): Comment
+    {
+        return new Comment('// TODO 9.0 migration: ' . $commentText);
+    }
 }
