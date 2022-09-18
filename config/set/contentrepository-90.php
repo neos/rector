@@ -15,7 +15,9 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector;
+use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
+use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
@@ -240,6 +242,11 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->ruleWithConfiguration(MethodCallToPropertyFetchRector::class, $methodCallToPropertyFetches);
     $rectorConfig->ruleWithConfiguration(MethodCallToWarningCommentRector::class, $methodCallToWarningComments);
+
+    // Remove injections to ContextFactory, now that they have been rewritten.
+    $rectorConfig->ruleWithConfiguration(RemoveInjectionsRector::class, [
+        new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class)
+    ]);
 
     // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
     $rectorConfig->rule(InjectContentRepositoryRegistryIfNeededRector::class);
