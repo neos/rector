@@ -21,9 +21,9 @@ trait NodeHiddenStateFinderTrait
             new Variable('nodeHiddenStateFinder'),
             'findHiddenState',
             [
-                $this->node_subgraphIdentity_contentStreamIdentifier($nodeVariable),
+                $this->node_subgraphIdentity_contentStreamId($nodeVariable),
                 $this->node_subgraphIdentity_dimensionSpacePoint($nodeVariable),
-                $this->node_nodeAggregateIdentifier($nodeVariable),
+                $this->node_nodeAggregateId($nodeVariable),
             ]
         );
     }

@@ -1,6 +1,6 @@
 <?php
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 class SomeClass
 {
@@ -14,14 +14,14 @@ class SomeClass
 -----
 <?php
 
-use Neos\ContentRepository\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 class SomeClass
 {
     public function run(Node $node)
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryIdentifier);
-        return $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier($node->subgraphIdentity->contentStreamIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        return $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($node->subgraphIdentity->contentStreamId);
     }
 }
 

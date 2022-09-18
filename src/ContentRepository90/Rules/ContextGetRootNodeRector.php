@@ -3,17 +3,13 @@
 declare (strict_types=1);
 namespace Neos\Rector\ContentRepository90\Rules;
 
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\Utility\CodeSampleLoader;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
-use Rector\Php74\Rector\Assign\NullCoalescingOperatorRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -56,17 +52,17 @@ final class ContextGetRootNodeRector extends AbstractRector
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
                 self::todoComment('!! MEGA DIRTY CODE! Ensure to rewrite this; by getting rid of LegacyContextStub.'),
-                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryIdentifier_fromString('default'))),
+                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
                 self::assign('workspace', $this->contentRepository_getWorkspaceFinder_findOneByName($this->workspaceName_fromString($this->context_workspaceName_fallbackToLive($node->var)))),
-                self::assign('rootNodeAggregate', $this->contentRepository_getContentGraph_findRootNodeAggregateByType($this->workspace_currentContentStreamIdentifier(), $this->nodeTypeName_fromString('Neos.Neos:Sites'))),
-                self::assign('subgraph', $this->contentRepository_getContentGraph_getSubgraph($this->workspace_currentContentStreamIdentifier(), $this->dimensionSpacePoint_fromLegacyDimensionArray($this->context_dimensions_fallbackToEmpty($node->var)), $this->visibilityConstraints($node->var))),
+                self::assign('rootNodeAggregate', $this->contentRepository_getContentGraph_findRootNodeAggregateByType($this->workspace_currentContentStreamId(), $this->nodeTypeName_fromString('Neos.Neos:Sites'))),
+                self::assign('subgraph', $this->contentRepository_getContentGraph_getSubgraph($this->workspace_currentContentStreamId(), $this->dimensionSpacePoint_fromLegacyDimensionArray($this->context_dimensions_fallbackToEmpty($node->var)), $this->visibilityConstraints($node->var))),
 
             ],
             $node
         );
 
-        return $this->subgraph_findNodeByNodeAggregateIdentifier(
-            $this->nodeFactory->createMethodCall('rootNodeAggregate', 'getIdentifier')
+        return $this->subgraph_findNodeById(
+            $this->nodeFactory->createPropertyFetch('rootNodeAggregate', 'nodeAggregateId')
         );
     }
 
@@ -80,9 +76,9 @@ final class ContextGetRootNodeRector extends AbstractRector
     }
 
 
-    private function workspace_currentContentStreamIdentifier(): Expr
+    private function workspace_currentContentStreamId(): Expr
     {
-        return $this->nodeFactory->createPropertyFetch('workspace', 'currentContentStreamIdentifier');
+        return $this->nodeFactory->createPropertyFetch('workspace', 'currentContentStreamId');
     }
 
     private function context_dimensions_fallbackToEmpty(Expr $legacyContextStub)

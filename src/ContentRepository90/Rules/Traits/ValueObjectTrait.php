@@ -3,10 +3,10 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules\Traits;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar\String_;
 
@@ -18,9 +18,9 @@ trait ValueObjectTrait
      */
     protected $nodeFactory;
 
-    private function contentRepositoryIdentifier_fromString(string $contentRepositoryName)
+    private function contentRepositoryId_fromString(string $contentRepositoryName)
     {
-        return $this->nodeFactory->createStaticCall(ContentRepositoryIdentifier::class, 'fromString', [new String_($contentRepositoryName)]);
+        return $this->nodeFactory->createStaticCall(ContentRepositoryId::class, 'fromString', [new String_($contentRepositoryName)]);
     }
 
     private function workspaceName_fromString(Expr $expr): Expr

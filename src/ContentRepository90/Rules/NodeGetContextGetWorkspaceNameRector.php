@@ -51,7 +51,7 @@ final class NodeGetContextGetWorkspaceNameRector extends AbstractRector
             return null;
         }
 
-        if (!$this->isObjectType($node->var->var, new ObjectType(\Neos\ContentRepository\Projection\ContentGraph\Node::class))) {
+        if (!$this->isObjectType($node->var->var, new ObjectType(\Neos\ContentRepository\Core\Projection\ContentGraph\Node::class))) {
             return null;
         }
 
@@ -61,15 +61,15 @@ final class NodeGetContextGetWorkspaceNameRector extends AbstractRector
                 self::assign(
                     'contentRepository',
                     $this->this_contentRepositoryRegistry_get(
-                        $this->node_subgraphIdentity_contentRepositoryIdentifier($nodeVar)
+                        $this->node_subgraphIdentity_contentRepositoryId($nodeVar)
                     )
                 )
             ],
             $node
         );
 
-        $workspace = $this->contentRepository_getWorkspaceFinder_findOneByCurrentContentStreamIdentifier(
-            $this->node_subgraphIdentity_contentStreamIdentifier($nodeVar)
+        $workspace = $this->contentRepository_getWorkspaceFinder_findOneByCurrentContentStreamId(
+            $this->node_subgraphIdentity_contentStreamId($nodeVar)
         );
         return $this->nodeFactory->createPropertyFetch($workspace, 'workspaceName');
     }

@@ -15,27 +15,27 @@ trait ContentRepositoryTrait
      */
     protected $nodeFactory;
 
-    private function contentRepository_getProjection(string $projectionClassName): Expr
+    private function contentRepository_projectionState(string $projectionStateClassName): Expr
     {
         return $this->nodeFactory->createMethodCall(
             new Variable('contentRepository'),
-            'getProjection',
+            'projectionState',
             [
                 new Expr\ClassConstFetch(
-                    new FullyQualified($projectionClassName),
+                    new FullyQualified($projectionStateClassName),
                     new Identifier('class')
                 )
             ]
         );
     }
 
-    private function contentRepository_getWorkspaceFinder_findOneByCurrentContentStreamIdentifier(Expr $contentStreamIdentifier): Expr
+    private function contentRepository_getWorkspaceFinder_findOneByCurrentContentStreamId(Expr $contentStreamId): Expr
     {
         return $this->nodeFactory->createMethodCall(
             $this->contentRepository_getWorkspaceFinder(),
-            'findOneByCurrentContentStreamIdentifier',
+            'findOneByCurrentContentStreamId',
             [
-                $contentStreamIdentifier
+                $contentStreamId
             ]
         );
     }
@@ -72,13 +72,13 @@ trait ContentRepositoryTrait
         );
     }
 
-    private function contentRepository_getContentGraph_getSubgraph(Expr $contentStreamIdentifier, Expr $dimensionSpacePoint, Expr $visibilityConstraints)
+    private function contentRepository_getContentGraph_getSubgraph(Expr $contentStreamId, Expr $dimensionSpacePoint, Expr $visibilityConstraints)
     {
         return $this->nodeFactory->createMethodCall(
             $this->contentRepository_getContentGraph(),
             'getSubgraph',
             [
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             ]

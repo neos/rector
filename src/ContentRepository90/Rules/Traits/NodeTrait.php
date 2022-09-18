@@ -18,19 +18,19 @@ trait NodeTrait
         return $this->nodeFactory->createPropertyFetch($nodeVariable, 'subgraphIdentity');
     }
 
-    private function node_subgraphIdentity_contentRepositoryIdentifier(Expr $nodeVariable)
+    private function node_subgraphIdentity_contentRepositoryId(Expr $nodeVariable)
     {
         return $this->nodeFactory->createPropertyFetch(
             $this->node_subgraphIdentity($nodeVariable),
-            'contentRepositoryIdentifier'
+            'contentRepositoryId'
         );
     }
 
-    private function node_subgraphIdentity_contentStreamIdentifier(Expr $nodeVariable): Expr
+    private function node_subgraphIdentity_contentStreamId(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createPropertyFetch(
             $this->node_subgraphIdentity($nodeVariable),
-            'contentStreamIdentifier'
+            'contentStreamId'
         );
     }
 
@@ -42,11 +42,11 @@ trait NodeTrait
         );
     }
 
-    private function node_nodeAggregateIdentifier(Expr $nodeVariable): Expr
+    private function node_nodeAggregateId(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createPropertyFetch(
             $nodeVariable,
-            'nodeAggregateIdentifier'
+            'nodeAggregateId'
         );
     }
 

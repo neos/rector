@@ -54,7 +54,7 @@ trait SubgraphTrait
             'subgraph',
             'findChildNodes',
             [
-                $this->node_nodeAggregateIdentifier($nodeVariable),
+                $this->node_nodeAggregateId($nodeVariable),
                 $filter
             ]
         );
@@ -66,18 +66,18 @@ trait SubgraphTrait
             'subgraph',
             'findNodePath',
             [
-                $this->node_nodeAggregateIdentifier($nodeVariable)
+                $this->node_nodeAggregateId($nodeVariable)
             ]
         );
     }
 
 
 
-    private function subgraph_findNodeByNodeAggregateIdentifier(Expr $nodeAggregateIdentifier)
+    private function subgraph_findNodeById(Expr $nodeAggregateIdentifier)
     {
         return $this->nodeFactory->createMethodCall(
             'subgraph',
-            'findNodeByNodeAggregateIdentifier',
+            'findNodeById',
             [
                 $nodeAggregateIdentifier
             ]

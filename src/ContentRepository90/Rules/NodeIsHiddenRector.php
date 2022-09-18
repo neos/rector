@@ -49,9 +49,9 @@ final class NodeIsHiddenRector extends AbstractRector
         }
 
         $getContentRepository = $this->this_contentRepositoryRegistry_get(
-            $this->node_subgraphIdentity_contentRepositoryIdentifier($node->var)
+            $this->node_subgraphIdentity_contentRepositoryId($node->var)
         );
-        $getNodeHiddenStateFinder = $this->contentRepository_getProjection(NodeHiddenStateFinder::class);
+        $getNodeHiddenStateFinder = $this->contentRepository_projectionState(NodeHiddenStateFinder::class);
         $getHiddenState = $this->nodeHiddenStateFinder_findHiddenState($node->var);
 
         $this->nodesToAddCollector->addNodesBeforeNode(

@@ -23,7 +23,7 @@ class SomeClass
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
 
-        return (string) $subgraph->findNodePath($node->nodeAggregateIdentifier);
+        return (string) $subgraph->findNodePath($node->nodeAggregateId);
     }
 }
 
