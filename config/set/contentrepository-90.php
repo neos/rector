@@ -7,6 +7,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRecto
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
+use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector;
@@ -183,7 +184,7 @@ return static function (RectorConfig $rectorConfig): void {
      */
     // getDimensionSpacePoint() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // findParentNode() -> TraversableNodeInterface
-        // TODO: PHP
+    $rectorConfig->rule(NodeFindParentNodeRector::class);
     // findNodePath() -> NodePath
         // TODO: PHP
     // findNamedChildNode(NodeName $nodeName): TraversableNodeInterface;
