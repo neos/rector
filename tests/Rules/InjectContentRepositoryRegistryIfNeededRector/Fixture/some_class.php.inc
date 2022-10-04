@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 class SomeClass
 {
-    #[Flow\Inject]
+    #[\Neos\Flow\Annotations\Inject]
     protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
     public function run(Node $node)
     {
