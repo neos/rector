@@ -11,7 +11,7 @@ Event Sourced Content Repository (>= 9.0).
 
 ```bash
 # inside your Distribution folder
-composer require --dev neos-rector:dev-main
+composer require --dev neos/rector:dev-main
 cp Packages/Libraries/neos/rector/rector.template.php rector.php
 ```
 
