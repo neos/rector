@@ -41,6 +41,12 @@ Run the following command at the root of your distribution (i.e. where `rector.p
 
 (This section is not relevant for users, but for **developers** of the Neos Rector packages)
 
+## Running Rector after adjusting rules
+
+Make sure to run Rector with the `--clear-cache` flag while developing rules, when you run them on a full codebase.
+
+Otherwise, 
+
 ## Running Tests
 
 We develop **all** Rector Rules completely test-driven.

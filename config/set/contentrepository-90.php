@@ -4,9 +4,11 @@ declare (strict_types=1);
 use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\ContentRepository90\Rules\ContentDimensionCombinatorGetAllAllowedCombinationsRector;
 use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRector;
+use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
+use Neos\Rector\ContentRepository90\Rules\NodeFactoryResetRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -43,6 +45,9 @@ return static function (RectorConfig $rectorConfig): void {
 
         'Neos\ContentRepository\Domain\Service\Context' => LegacyContextStub::class,
         'Neos\Neos\Domain\Service\ContentContext' => LegacyContextStub::class,
+
+        'Neos\ContentRepository\Domain\Model\NodeType' => \Neos\ContentRepository\Core\NodeType\NodeType::class,
+        'Neos\ContentRepository\Domain\Service\NodeTypeManager' => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class
     ]);
 
 
@@ -220,6 +225,9 @@ return static function (RectorConfig $rectorConfig): void {
     // Context::getNodesOnPath()
     // TODO: PHP
     // Context::adoptNode()
+    // Context::getFirstLevelNodeCache()
+    $rectorConfig->rule(ContextGetFirstLevelNodeCacheRector::class);
+
     /**
      * ContentContext
      */
@@ -250,6 +258,13 @@ return static function (RectorConfig $rectorConfig): void {
 
 
     /**
+     * Neos\ContentRepository\Domain\Factory\NodeFactory
+     */
+    // TODO: What other methods?
+    // NodeFactory::reset
+    $rectorConfig->rule(NodeFactoryResetRector::class);
+
+    /**
      * CLEAN UP / END GLOBAL RULES
      */
     $rectorConfig->ruleWithConfiguration(MethodCallToPropertyFetchRector::class, $methodCallToPropertyFetches);
@@ -258,7 +273,8 @@ return static function (RectorConfig $rectorConfig): void {
     // Remove injections to classes which are gone now
     $rectorConfig->ruleWithConfiguration(RemoveInjectionsRector::class, [
         new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class),
-        new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContentDimensionCombinator::class)
+        new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContentDimensionCombinator::class),
+        new RemoveInjection(\Neos\ContentRepository\Domain\Factory\NodeFactory::class)
     ]);
 
     // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.

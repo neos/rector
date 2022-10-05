@@ -111,4 +111,12 @@ trait ContentRepositoryTrait
         );
     }
 
+    private function contentRepository_getNodeTypeManager(): Expr
+    {
+        return $this->nodeFactory->createMethodCall(
+            new Variable('contentRepository'),
+            'getNodeTypeManager',
+            []
+        );
+    }
 }
