@@ -7,6 +7,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRecto
 use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeParentRector;
 use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFactoryResetRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
@@ -124,7 +125,8 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getIndex', '!! Node::getIndex() is not supported. You can fetch all siblings and inspect the ordering');
     // getParent -> Node
     $rectorConfig->rule(NodeGetParentRector::class);
-        // TODO: Fusion
+    // Fusion: .parent -> Neos.NodeAccess.findParent(node)
+    $rectorConfig->rule(FusionNodeParentRector::class);
     // getParentPath - deprecated
     // createNode
     // createSingleNode -> internal
