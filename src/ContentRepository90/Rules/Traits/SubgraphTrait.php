@@ -71,6 +71,14 @@ trait SubgraphTrait
         );
     }
 
+    private function subgraph_findNodePath_getDepth(Variable $nodeVariable): Expr
+    {
+        return $this->nodeFactory->createMethodCall(
+            $this->subgraph_findNodePath($nodeVariable),
+            'getDepth'
+        );
+    }
+
     private function subgraph_findNodeById(Expr $nodeAggregateIdentifier)
     {
         return $this->nodeFactory->createMethodCall(
