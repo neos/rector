@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetParentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
@@ -122,7 +123,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getIndex
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getIndex', '!! Node::getIndex() is not supported. You can fetch all siblings and inspect the ordering');
     // getParent -> Node
-        // TODO: PHP
+    $rectorConfig->rule(NodeGetParentRector::class);
         // TODO: Fusion
     // getParentPath - deprecated
     // createNode
