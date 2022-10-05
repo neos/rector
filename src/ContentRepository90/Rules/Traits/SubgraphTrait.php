@@ -71,8 +71,6 @@ trait SubgraphTrait
         );
     }
 
-
-
     private function subgraph_findNodeById(Expr $nodeAggregateIdentifier)
     {
         return $this->nodeFactory->createMethodCall(
@@ -84,4 +82,14 @@ trait SubgraphTrait
         );
     }
 
+    private function subgraph_findParentNode(Variable $nodeVariable): Expr
+    {
+        return $this->nodeFactory->createMethodCall(
+            'subgraph',
+            'findParentNode',
+            [
+                $this->node_nodeAggregateId($nodeVariable)
+            ]
+        );
+    }
 }
