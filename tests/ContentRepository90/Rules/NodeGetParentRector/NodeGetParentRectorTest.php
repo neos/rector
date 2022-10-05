@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Rules\NodeGetParentRector;
+namespace Neos\Rector\Tests\ContentRepository90\Rules\NodeGetParentRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
