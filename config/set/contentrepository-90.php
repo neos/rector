@@ -8,6 +8,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector;
 use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFactoryResetRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
@@ -112,7 +113,8 @@ return static function (RectorConfig $rectorConfig): void {
         // - NodeAddress + LOG (WARNING)
     // getDepth
     $rectorConfig->rule(NodeGetDepthRector::class);
-        // TODO: Fusion
+    // Fusion: .depth -> Neos.NodeAccess.depth(node)
+    $rectorConfig->rule(FusionNodeDepthRector::class);
     // setWorkspace -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setWorkspace', '!! Node::setWorkspace() was always internal, and the workspace system has been fundamentally changed with the new CR. Try to rewrite your code around Content Streams.');
     // getWorkspace
