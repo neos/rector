@@ -7,6 +7,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRecto
 use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodePathRector;
 use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFactoryResetRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
@@ -103,7 +104,8 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getAccessRoles', '!! Node::getAccessRoles() is not supported by the new CR.');
     // getPath
     $rectorConfig->rule(NodeGetPathRector::class);
-        // TODO: Fusion
+    // Fusion: .depth -> Neos.NodeAccess.depth(node)
+    $rectorConfig->rule(FusionNodePathRector::class);
     // getContextPath
         // TODO: PHP
         // TODO: Fusion
