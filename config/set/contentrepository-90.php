@@ -18,9 +18,11 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
+use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
+use Neos\Rector\Generic\ValueObject\FusionNodePropertyPathToWarningComment;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Rector\Config\RectorConfig;
@@ -85,19 +87,21 @@ return static function (RectorConfig $rectorConfig): void {
     // setHidden
     // isHidden
     $rectorConfig->rule(NodeIsHiddenRector::class);
+        // TODO: Fusion NodeAccess
     // setHiddenBeforeDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenBeforeDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getHiddenBeforeDateTime', '!! Node::getHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
-        // TODO: Fusion Warning
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('getHiddenBeforeDateTime', 'Line %LINE: !! node.getHiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // setHiddenAfterDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setHiddenAfterDateTime', '!! Node::setHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenAfterDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
-        // TODO: Fusion Warning
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('getHiddenAfterDateTime', 'Line %LINE: !! node.getHiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // setHiddenInIndex
     // isHiddenInIndex
-        // TODO: Fusion Warning
+        // ToDo PHP Node::properties['_isHiddenInIndex']
+        // ToDo Fusion --> node.properties._isHiddenInIndex
     // setAccessRoles
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setAccessRoles', '!! Node::setAccessRoles() is not supported by the new CR.');
     // getAccessRoles
@@ -139,7 +143,7 @@ return static function (RectorConfig $rectorConfig): void {
     // setRemoved()
     // isRemoved()
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'isRemoved', '!! Node::isRemoved() - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
-        // TODO: Fusion warning
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('isRemoved', 'Line %LINE: !! node.isRemoved - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
     // isVisible()
     // isAccessible()
     // hasAccessRestrictions()
@@ -271,6 +275,7 @@ return static function (RectorConfig $rectorConfig): void {
      */
     $rectorConfig->ruleWithConfiguration(MethodCallToPropertyFetchRector::class, $methodCallToPropertyFetches);
     $rectorConfig->ruleWithConfiguration(MethodCallToWarningCommentRector::class, $methodCallToWarningComments);
+    $rectorConfig->ruleWithConfiguration(FusionNodePropertyPathToWarningCommentRector::class, $fusionNodePropertyPathToWarningComments);
 
     // Remove injections to classes which are gone now
     $rectorConfig->ruleWithConfiguration(RemoveInjectionsRector::class, [

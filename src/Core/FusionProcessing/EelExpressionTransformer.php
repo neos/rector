@@ -1,12 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Rector\Core\FusionProcessing;
 
+use Closure;
 use Neos\Rector\Core\FusionProcessing\AfxParser\AfxParserException;
 use Neos\Rector\Core\FusionProcessing\FusionParser\Exception\ParserException;
 use Neos\Rector\Core\FusionProcessing\Helper\CustomObjectTreeParser;
 use Neos\Rector\Core\FusionProcessing\Helper\EelExpressionPosition;
 use Neos\Rector\Core\FusionProcessing\Helper\EelExpressionPositions;
+use Neos\Rector\Core\FusionProcessing\Helper\PrecedingFusionFileComment;
+use Neos\Rector\Core\FusionProcessing\Helper\RegexCommentTemplatePair;
 
 class EelExpressionTransformer
 {
@@ -24,7 +29,7 @@ class EelExpressionTransformer
      * @throws ParserException
      * @throws AfxParserException
      */
-    public function process(\Closure $processingFunction): self
+    public function process(Closure $processingFunction): self
     {
         $eelExpressions = $this->findAllEelExpressions();
 
@@ -38,42 +43,89 @@ class EelExpressionTransformer
         return new self($this->render($eelExpressions));
     }
 
-    public function addWarningsIfRegexMatches(string $regexpString, string $warningMessage): self
+    /**
+     * @throws ParserException
+     * @throws AfxParserException
+     */
+    public function addCommentsIfRegexMatches(string $regex, string $comment): self
+    {
+        $regexCommentTemplatePair = new RegexCommentTemplatePair($regex, $comment);
+        return $this->addCommentsIfRegexesMatch([$regexCommentTemplatePair]);
+    }
+
+    /**
+     * @param RegexCommentTemplatePair[] $regexCommentTemplatePairs
+     * @throws AfxParserException
+     * @throws ParserException
+     */
+    public function addCommentsIfRegexesMatch(array $regexCommentTemplatePairs): self
     {
         $eelExpressions = $this->findAllEelExpressions();
 
-        $warningLines = [];
-        // fill $warningLines
-        $eelExpressions->map(
-            function(EelExpressionPosition $expressionPosition) use ($regexpString, $warningMessage, &$warningLines) {
-                $matches = [];
-                if (preg_match_all($regexpString, $expressionPosition->eelExpression, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
-                    foreach ($matches as $match) {
-                        // $match[0][0] => the fully matched string
-                        // $match[0][1] => the start offset of the string
-                        $offsetOfFullMatch = $match[0][1];
-                        $lineNumber = substr_count($this->fileContent, "\n", 0, $expressionPosition->fromOffset + $offsetOfFullMatch);
-
-                        $replacements = [
-                            // we need to add 2 because line counts in IDEs are 1-based; and additionally, we add a line by this warning.
-                            '%LINE' => $lineNumber + count($warningLines) + 2
-                        ];
-                        $warningLines[] = str_replace(array_keys($replacements), array_values($replacements), $warningMessage);
-
-                    }
+        $comments = [];
+        // fill $comments
+        foreach ($regexCommentTemplatePairs as $regexCommentTemplatePair) {
+            $eelExpressions->map(
+                function (EelExpressionPosition $expressionPosition) use ($regexCommentTemplatePair, &$comments) {
+                    $comments = array_merge(
+                        $comments,
+                        $this->getPrecedingCommentsForEelExpressionPosition($expressionPosition, $regexCommentTemplatePair->regex, $regexCommentTemplatePair->template)
+                    );
+                    return $expressionPosition;
                 }
+            );
+        }
 
-                return $expressionPosition;
-            }
-        );
+        $comments = $this->replaceLinePlaceholderWithinCommentTemplates($comments);
 
-        if (count($warningLines)) {
-            return new EelExpressionTransformer(implode("\n", $warningLines) . "\n" . $this->fileContent);
+        if (count($comments)) {
+            $precedingComments = array_map(fn($comment) => $comment->text, $comments);
+            return new EelExpressionTransformer(implode("\n", $precedingComments) . "\n" . $this->fileContent);
         } else {
             return $this;
         }
     }
 
+    /** @return PrecedingFusionFileComment[] */
+    private function getPrecedingCommentsForEelExpressionPosition(EelExpressionPosition $expressionPosition, string $regex, string $template): array
+    {
+        $comments = [];
+
+        $matches = [];
+        if (preg_match_all($regex, $expressionPosition->eelExpression, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+            foreach ($matches as $match) {
+                // $match[0][0] => the fully matched string
+                // $match[0][1] => the start offset of the string
+                $offsetOfFullMatch = $match[0][1];
+                $lineNumberOfMatch = substr_count($this->fileContent, "\n", 0, $expressionPosition->fromOffset + $offsetOfFullMatch);
+                // we add one because the number of counted new line characters will be one less than the actual line number
+                $lineNumberOfMatch += 1;
+                // avoid adding the same comment multiple times per line by using an explicit array key
+                $commentKey = sha1($lineNumberOfMatch . $regex . $template);
+                $comments[$commentKey] = new PrecedingFusionFileComment($lineNumberOfMatch, $template);
+            }
+        }
+
+        return $comments;
+    }
+
+    /**
+     * @param PrecedingFusionFileComment[] $comments
+     * @return PrecedingFusionFileComment[]
+     */
+    private function replaceLinePlaceholderWithinCommentTemplates(array $comments): array
+    {
+        foreach ($comments as $comment) {
+            $finalLineNumber = $comment->lineNumberOfMatch + count($comments);
+            $comment->text = str_replace('%LINE', (string)$finalLineNumber, $comment->template);
+        }
+        return $comments;
+    }
+
+    /**
+     * @throws ParserException
+     * @throws AfxParserException
+     */
     public function findAllEelExpressions(): EelExpressionPositions
     {
         $eelExpressions = CustomObjectTreeParser::findEelExpressions($this->fileContent);
@@ -146,7 +198,7 @@ class EelExpressionTransformer
         }
     }
 
-    private function render(EelExpressionPositions $eelExpressions)
+    private function render(EelExpressionPositions $eelExpressions): string
     {
         if ($eelExpressions->isEmpty()) {
             return $this->fileContent;
@@ -169,7 +221,7 @@ class EelExpressionTransformer
         return $processedFusionString;
     }
 
-    public function getProcessedContent()
+    public function getProcessedContent(): string
     {
         return $this->fileContent;
     }

@@ -23,7 +23,7 @@ class FusionContextLiveRector implements FusionRectorInterface
                 'Neos.Ui.NodeInfo.isLive($1)',
                 $eelExpression
             ))
-            ->addWarningsIfRegexMatches(
+            ->addCommentsIfRegexMatches(
                 '/\.context\.live/',
                 '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.context.live" to Neos.Ui.NodeInfo.isLive(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();

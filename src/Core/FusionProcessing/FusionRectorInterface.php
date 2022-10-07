@@ -8,5 +8,5 @@ use Rector\Core\Contract\Rector\RectorInterface;
 
 interface FusionRectorInterface extends RectorInterface
 {
-    public function refactorFileContent(string $getFileContent): string;
+    public function refactorFileContent(string $fileContent): string;
 }

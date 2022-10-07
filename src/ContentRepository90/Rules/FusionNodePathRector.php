@@ -25,7 +25,7 @@ class FusionNodePathRector implements FusionRectorInterface
                 'Neos.NodeAccess.path($1)',
                 $eelExpression
             ))
-            ->addWarningsIfRegexMatches(
+            ->addCommentsIfRegexMatches(
                 '/\.path$/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.path" to Neos.NodeAccess.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
