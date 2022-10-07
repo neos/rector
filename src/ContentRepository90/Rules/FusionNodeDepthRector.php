@@ -14,7 +14,7 @@ class FusionNodeDepthRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.depth to Neos.NodeAccess.depth(node)', __CLASS__, 'some_class.fusion');
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.depth to Neos.NodeInfo.depth(node)', __CLASS__, 'some_class.fusion');
     }
 
     public function refactorFileContent(string $fileContent): string
@@ -22,12 +22,12 @@ class FusionNodeDepthRector implements FusionRectorInterface
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
                 '/(node|documentNode)\.depth/',
-                'Neos.NodeAccess.depth($1)',
+                'Neos.NodeInfo.depth($1)',
                 $eelExpression
             ))
             ->addWarningsIfRegexMatches(
                 '/\.depth$/',
-                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.depth" to Neos.NodeAccess.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.depth" to Neos.NodeInfo.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
 }

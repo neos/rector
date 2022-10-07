@@ -113,7 +113,7 @@ return static function (RectorConfig $rectorConfig): void {
         // - NodeAddress + LOG (WARNING)
     // getDepth
     $rectorConfig->rule(NodeGetDepthRector::class);
-    // Fusion: .depth -> Neos.NodeAccess.depth(node)
+    // Fusion: .depth -> Neos.NodeInfo.depth(node)
     $rectorConfig->rule(FusionNodeDepthRector::class);
     // setWorkspace -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setWorkspace', '!! Node::setWorkspace() was always internal, and the workspace system has been fundamentally changed with the new CR. Try to rewrite your code around Content Streams.');
