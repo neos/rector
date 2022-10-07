@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\ContentRepository90\Rules\NodeGetChildNodesRector;
+namespace Neos\Rector\Tests\ContentRepository90\Rules\FusionNodeDepthRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class NodeFindParentNodeRectorTest extends AbstractRectorTestCase
+final class FusionNodeDepthRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
@@ -21,7 +21,7 @@ final class NodeFindParentNodeRectorTest extends AbstractRectorTestCase
      */
     public function provideData(): \Iterator
     {
-        return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
+        return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture', '*.fusion');
     }
 
     public function provideConfigFilePath(): string

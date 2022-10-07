@@ -7,6 +7,8 @@ use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRecto
 use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
+use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector;
 use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFactoryResetRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
@@ -14,6 +16,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetDepthRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
@@ -109,8 +112,9 @@ return static function (RectorConfig $rectorConfig): void {
         // TODO: Fusion
         // - NodeAddress + LOG (WARNING)
     // getDepth
-        // TODO: PHP
-        // TODO: Fusion
+    $rectorConfig->rule(NodeGetDepthRector::class);
+    // Fusion: .depth -> Neos.NodeInfo.depth(node)
+    $rectorConfig->rule(FusionNodeDepthRector::class);
     // setWorkspace -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setWorkspace', '!! Node::setWorkspace() was always internal, and the workspace system has been fundamentally changed with the new CR. Try to rewrite your code around Content Streams.');
     // getWorkspace
@@ -242,7 +246,7 @@ return static function (RectorConfig $rectorConfig): void {
     // TODO: Fusion
     // ContentContext::isLive -> Neos.Ui.NodeInfo.isLive(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
     // TODO: PHP
-    $rectorConfig->rule(FusionContextInBackendRector::class);
+    $rectorConfig->rule(FusionContextLiveRector::class);
     // ContentContext::isInBackend -> Neos.Ui.NodeInfo.inBackend(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
     // TODO: PHP
     $rectorConfig->rule(FusionContextInBackendRector::class);

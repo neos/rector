@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\ContentRepository90\Rules\NodeGetChildNodesRector;
+namespace Neos\Rector\Tests\Rules\NodeGetDepthRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class NodeFindParentNodeRectorTest extends AbstractRectorTestCase
+final class NodeGetDepthRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
