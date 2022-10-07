@@ -21,7 +21,7 @@ class FusionNodePathRector implements FusionRectorInterface
     {
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
-                '/(node|documentNode)\.path/',
+                '/(node|documentNode|site)\.path/',
                 'Neos.NodeAccess.path($1)',
                 $eelExpression
             ))
