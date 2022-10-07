@@ -1,0 +1,105 @@
+prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
+
+  renderer = Neos.Fusion:Component {
+
+    #
+    # pass down props
+    #
+    attributes = ${node.isRemoved || site.isRemoved || documentNode.getHiddenBeforeDateTime}
+    attributes2 = ${node.getHiddenBeforeDateTime || site.getHiddenBeforeDateTime || documentNode.isRemoved}
+    attributes3 = ${node.getHiddenAfterDateTime || site.getHiddenAfterDateTime || documentNode.getHiddenAfterDateTime}
+    attributes4 = ${node.foo.bar}
+    attributes5 = ${node.fooXbar}
+
+    #
+    # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
+    #
+    checked = false
+    checked.@process.checkMultiValue = ${Array.indexOf(field.getCurrentMultivalueStringified(), field.getTargetValueStringified()) > -1}
+    checked.@process.checkMultiValue.@if.hasValue = ${field.hasCurrentValue()}
+    checked.@process.checkMultiValue.@if.isMultiple = ${field.isMultiple()}
+    checked.@process.checkSingleValue = ${field.getCurrentValueStringified() == field.getTargetValueStringified()}
+    checked.@process.checkSingleValue.@if.hasValue = ${field.hasCurrentValue()}
+    checked.@process.checkSingleValue.@if.isSingle = ${!field.isMultiple()}
+
+    renderer = afx`
+      <input
+        type="checkbox"
+        name={node.getHiddenAfterDateTime}
+        checked={props.checked}
+        {...node.isRemoved}
+      />
+      <input
+        type="checkbox"
+        name={node.getHiddenBeforeDateTime}
+        checked={props.checked}
+        {...node.getHiddenBeforeDateTime}
+      />
+      <input
+        type="checkbox"
+        name={node.getHiddenAfterDateTime}
+        checked={props.checked}
+        {...node.isRemoved}
+      />
+    `
+  }
+}
+-----
+// TODO 9.0 migration: Line 20: !! node.isRemoved - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.
+// TODO 9.0 migration: Line 21: !! node.isRemoved - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.
+// TODO 9.0 migration: Line 42: !! node.isRemoved - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.
+// TODO 9.0 migration: Line 54: !! node.isRemoved - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.
+// TODO 9.0 migration: Line 20: !! node.getHiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.
+// TODO 9.0 migration: Line 21: !! node.getHiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.
+// TODO 9.0 migration: Line 46: !! node.getHiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.
+// TODO 9.0 migration: Line 48: !! node.getHiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.
+// TODO 9.0 migration: Line 22: !! node.getHiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.
+// TODO 9.0 migration: Line 40: !! node.getHiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.
+// TODO 9.0 migration: Line 52: !! node.getHiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.
+// TODO 9.0 migration: Line 23: !! node.foo.bar is not supported anymore.
+prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
+
+  renderer = Neos.Fusion:Component {
+
+    #
+    # pass down props
+    #
+    attributes = ${node.isRemoved || site.isRemoved || documentNode.getHiddenBeforeDateTime}
+    attributes2 = ${node.getHiddenBeforeDateTime || site.getHiddenBeforeDateTime || documentNode.isRemoved}
+    attributes3 = ${node.getHiddenAfterDateTime || site.getHiddenAfterDateTime || documentNode.getHiddenAfterDateTime}
+    attributes4 = ${node.foo.bar}
+    attributes5 = ${node.fooXbar}
+
+    #
+    # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
+    #
+    checked = false
+    checked.@process.checkMultiValue = ${Array.indexOf(field.getCurrentMultivalueStringified(), field.getTargetValueStringified()) > -1}
+    checked.@process.checkMultiValue.@if.hasValue = ${field.hasCurrentValue()}
+    checked.@process.checkMultiValue.@if.isMultiple = ${field.isMultiple()}
+    checked.@process.checkSingleValue = ${field.getCurrentValueStringified() == field.getTargetValueStringified()}
+    checked.@process.checkSingleValue.@if.hasValue = ${field.hasCurrentValue()}
+    checked.@process.checkSingleValue.@if.isSingle = ${!field.isMultiple()}
+
+    renderer = afx`
+      <input
+        type="checkbox"
+        name={node.getHiddenAfterDateTime}
+        checked={props.checked}
+        {...node.isRemoved}
+      />
+      <input
+        type="checkbox"
+        name={node.getHiddenBeforeDateTime}
+        checked={props.checked}
+        {...node.getHiddenBeforeDateTime}
+      />
+      <input
+        type="checkbox"
+        name={node.getHiddenAfterDateTime}
+        checked={props.checked}
+        {...node.isRemoved}
+      />
+    `
+  }
+}
