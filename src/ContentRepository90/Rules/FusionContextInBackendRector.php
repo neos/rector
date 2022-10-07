@@ -23,7 +23,7 @@ class FusionContextInBackendRector implements FusionRectorInterface
                 'Neos.Ui.NodeInfo.inBackend($1)',
                 $eelExpression
             ))
-            ->addWarningsIfRegexMatches(
+            ->addCommentsIfRegexMatches(
                 '/\.context\.inBackend/',
                 '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.context.inBackend" to Neos.Ui.NodeInfo.inBackend(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
