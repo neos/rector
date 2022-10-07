@@ -25,7 +25,7 @@ class FusionNodeParentRector implements FusionRectorInterface
                 'Neos.NodeAccess.findParent($1)',
                 $eelExpression
             ))
-            ->addWarningsIfRegexMatches(
+            ->addCommentsIfRegexMatches(
                 '/\.parent/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.parent" to Neos.NodeAccess.findParent(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();

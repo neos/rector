@@ -97,12 +97,12 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenBeforeDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getHiddenBeforeDateTime', '!! Node::getHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
-    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('getHiddenBeforeDateTime', 'Line %LINE: !! node.getHiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('hiddenBeforeDateTime', 'Line %LINE: !! node.hiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // setHiddenAfterDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setHiddenAfterDateTime', '!! Node::setHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenAfterDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
-    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('getHiddenAfterDateTime', 'Line %LINE: !! node.getHiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('hiddenAfterDateTime', 'Line %LINE: !! node.hiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // setHiddenInIndex
     // isHiddenInIndex
         // ToDo PHP Node::properties['_isHiddenInIndex']
@@ -150,7 +150,7 @@ return static function (RectorConfig $rectorConfig): void {
     // setRemoved()
     // isRemoved()
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'isRemoved', '!! Node::isRemoved() - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
-    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('isRemoved', 'Line %LINE: !! node.isRemoved - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('removed', 'Line %LINE: !! node.removed - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
     // isVisible()
     // isAccessible()
     // hasAccessRestrictions()

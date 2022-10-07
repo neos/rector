@@ -25,7 +25,7 @@ class FusionNodeDepthRector implements FusionRectorInterface
                 'Neos.NodeInfo.depth($1)',
                 $eelExpression
             ))
-            ->addWarningsIfRegexMatches(
+            ->addCommentsIfRegexMatches(
                 '/\.depth$/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.depth" to Neos.NodeInfo.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
