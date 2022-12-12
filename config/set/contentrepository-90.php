@@ -55,7 +55,9 @@ return static function (RectorConfig $rectorConfig): void {
         'Neos\Neos\Domain\Service\ContentContext' => LegacyContextStub::class,
 
         'Neos\ContentRepository\Domain\Model\NodeType' => \Neos\ContentRepository\Core\NodeType\NodeType::class,
-        'Neos\ContentRepository\Domain\Service\NodeTypeManager' => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class
+        'Neos\ContentRepository\Domain\Service\NodeTypeManager' => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
+
+        'Neos\ContentRepository\Utility' => \Neos\ContentRepositoryRegistry\Utility::class
     ]);
 
 
