@@ -9,6 +9,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeParentRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodePathRector;
 use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
@@ -22,6 +23,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetDepthRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetParentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
+use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
@@ -107,8 +109,9 @@ return static function (RectorConfig $rectorConfig): void {
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('hiddenAfterDateTime', 'Line %LINE: !! node.hiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // setHiddenInIndex
     // isHiddenInIndex
-        // ToDo PHP Node::properties['_isHiddenInIndex']
-        // ToDo Fusion --> node.properties._isHiddenInIndex
+    $rectorConfig->rule(NodeIsHiddenInIndexRector::class);
+    // Fusion: .hiddenInIndex -> node.properties._hiddenInIndex
+    $rectorConfig->rule(FusionNodeHiddenInIndexRector::class);
     // setAccessRoles
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setAccessRoles', '!! Node::setAccessRoles() is not supported by the new CR.');
     // getAccessRoles
