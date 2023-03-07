@@ -258,10 +258,10 @@ return static function (RectorConfig $rectorConfig): void {
     // ContentContext::getCurrentSiteNode
     // TODO: PHP
     // TODO: Fusion
-    // ContentContext::isLive -> Neos.Ui.NodeInfo.isLive(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
+    // ContentContext::isLive -> Neos.Node.isLive(...)
     // TODO: PHP
     $rectorConfig->rule(FusionContextLiveRector::class);
-    // ContentContext::isInBackend -> Neos.Ui.NodeInfo.inBackend(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
+    // ContentContext::isInBackend -> Neos.Node.inBackend(...)
     // TODO: PHP
     $rectorConfig->rule(FusionContextInBackendRector::class);
     // ContentContext::getCurrentRenderingMode
