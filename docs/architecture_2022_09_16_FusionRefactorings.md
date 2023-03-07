@@ -3,7 +3,7 @@
 ## Problem Description
 
 We want to refactor Eel expressions like `node.context.inBackend` or `site.context.inBackend` towards
-`Neos.Ui.NodeInfo.inBackend(node)` and `Neos.Ui.NodeInfo.inBackend(site)` respectively.
+`Neos.Node.inBackend(node)` and `Neos.Node.inBackend(site)` respectively.
 
 This must work BOTH in Eel expressions inside Fusion, and inside AFX blocks.
 
