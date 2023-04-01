@@ -29,12 +29,14 @@ use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
+use Neos\Rector\Generic\Rules\ToStringToPropertyFetchRector;
 use Neos\Rector\Generic\ValueObject\FusionNodePropertyPathToWarningComment;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
+use Rector\Transform\Rector\String_\ToStringToMethodCallRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -299,4 +301,39 @@ return static function (RectorConfig $rectorConfig): void {
     // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
     $rectorConfig->rule(InjectContentRepositoryRegistryIfNeededRector::class);
     // TODO: does not fully seem to work.$rectorConfig->rule(RemoveDuplicateCommentRector::class);
+
+    $rectorConfig->ruleWithConfiguration(ToStringToPropertyFetchRector::class, [
+        \Neos\ContentRepository\Core\Dimension\ContentDimensionId::class => 'value',
+        \Neos\ContentRepository\Core\Dimension\ContentDimensionValue::class => 'value',
+        \Neos\ContentRepository\Core\Dimension\ContentDimensionValueSpecializationDepth::class => 'value',
+        \Neos\ContentRepository\Core\Factory\ContentRepositoryId::class => 'value',
+        \Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName::class => 'value',
+        \Neos\ContentRepository\Core\Infrastructure\Property\PropertyType::class => 'value',
+        \Neos\ContentRepository\Core\NodeType\NodeType::class => 'name',
+        \Neos\ContentRepository\Core\NodeType\NodeTypeName::class => 'value',
+        \Neos\ContentRepository\Core\Projection\ContentGraph\NodePath::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Node\PropertyName::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Node\ReferenceName::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\User\UserId::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle::class => 'value',
+    ]);
+
+    $rectorConfig->ruleWithConfiguration(ToStringToMethodCallRector::class, [
+        \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints::class => 'toFilterString',
+        \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes::class => 'toFilterString',
+        \Neos\ContentRepository\Core\DimensionSpace\AbstractDimensionSpacePoint::class => 'toJson',
+        \Neos\ContentRepository\Core\DimensionSpace\ContentSubgraphVariationWeight::class => 'toJson',
+        \Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet::class => 'toJson',
+        \Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet::class => 'toJson',
+        \Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination::class => 'toJson',
+        \Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination::class => 'toJson',
+        \Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin::class => 'toJson',
+        \Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage::class => 'toJson',
+        \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds::class => 'toJson',
+    ]);
 };

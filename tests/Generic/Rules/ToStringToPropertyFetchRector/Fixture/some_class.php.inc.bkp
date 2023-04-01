@@ -1,0 +1,17 @@
+<?php
+
+$someValue = new SomeObject;
+$result = (string) $someValue;
+$result = $someValue->__toString();
+$result = 'foo' . $someValue;
+
+?>
+-----
+<?php
+
+$someValue = new SomeObject;
+$result = $someValue->propertyName;
+$result = $someValue->propertyName;
+$result = 'foo' . $someValue->propertyName;
+
+?>

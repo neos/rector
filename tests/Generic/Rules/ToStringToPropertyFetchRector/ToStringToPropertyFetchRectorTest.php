@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Generic\Rules\RemoveInjectionsRector;
+namespace Neos\Rector\Tests\Generic\Rules\ToStringToPropertyFetchRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class RemoveInjectionsRectorTest extends AbstractRectorTestCase
+final class ToStringToPropertyFetchRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
