@@ -21,7 +21,7 @@ final class FusionNodeParentRectorTest extends AbstractRectorTestCase
      */
     public function provideData(): \Iterator
     {
-        return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture', '*.fusion');
+        return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture', '*.fusion.inc');
     }
 
     public function provideConfigFilePath(): string

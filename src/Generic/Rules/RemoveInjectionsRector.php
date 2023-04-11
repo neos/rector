@@ -77,6 +77,9 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
     private function hasFlowInjectDocComment(Node\Stmt\Property $node): bool
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
+        if ($phpDocInfo === null) {
+            return false;
+        }
         return $phpDocInfo->findOneByAnnotationClass('Neos\Flow\Annotations\Inject') !== null;
     }
 
