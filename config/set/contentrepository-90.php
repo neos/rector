@@ -25,6 +25,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetParentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector;
@@ -283,6 +284,11 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NodeFactoryResetRector::class);
 
     /**
+     * Neos\ContentRepository\Domain\Repository\WorkspaceRepository
+     */
+    $rectorConfig->rule(WorkspaceRepositoryCountByNameRector::class);
+
+    /**
      * CLEAN UP / END GLOBAL RULES
      */
     $rectorConfig->ruleWithConfiguration(MethodCallToPropertyFetchRector::class, $methodCallToPropertyFetches);
@@ -293,7 +299,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(RemoveInjectionsRector::class, [
         new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class),
         new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContentDimensionCombinator::class),
-        new RemoveInjection(\Neos\ContentRepository\Domain\Factory\NodeFactory::class)
+        new RemoveInjection(\Neos\ContentRepository\Domain\Factory\NodeFactory::class),
+        new RemoveInjection(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class)
     ]);
 
     // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
