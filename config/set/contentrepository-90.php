@@ -8,6 +8,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector;
@@ -193,7 +194,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getContentStreamIdentifier() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // getNodeAggregateIdentifier()
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeAggregateIdentifier', 'nodeAggregateId');
-        // TODO: Fusion
+    $rectorConfig->rule(rectorClass: FusionNodeAggregateIdentifierRector::class);
     // getNodeTypeName()
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeTypeName', 'nodeTypeName');
     // getNodeType() ** (included/compatible in old NodeInterface)
