@@ -7,6 +7,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRecto
 use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionCachingNodeInEntryIdentifierRector;
+use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentSiteRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector;
@@ -256,6 +257,7 @@ return static function (RectorConfig $rectorConfig): void {
      */
     // ContentContext::getCurrentSite
     // TODO: PHP
+    $rectorConfig->rule(FusionContextCurrentSiteRector::class);
     // TODO: Fusion
     // ContentContext::getCurrentDomain
     // TODO: PHP
