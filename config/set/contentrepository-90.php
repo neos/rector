@@ -6,6 +6,7 @@ use Neos\Rector\ContentRepository90\Rules\ContentDimensionCombinatorGetAllAllowe
 use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
+use Neos\Rector\ContentRepository90\Rules\FusionCachingNodeInEntryIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector;
@@ -291,6 +292,10 @@ return static function (RectorConfig $rectorConfig): void {
      */
     $rectorConfig->rule(WorkspaceRepositoryCountByNameRector::class);
 
+    /**
+     * SPECIAL rules
+     */
+    $rectorConfig->rule(FusionCachingNodeInEntryIdentifierRector::class);
     /**
      * CLEAN UP / END GLOBAL RULES
      */
