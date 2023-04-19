@@ -32,11 +32,11 @@ use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
-use Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
 use Neos\Rector\Generic\ValueObject\FusionNodePropertyPathToWarningComment;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Generic\ValueObject\RemoveInjection;
+use Neos\Rector\Generic\ValueObject\RemoveParentClass;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
@@ -298,10 +298,13 @@ return static function (RectorConfig $rectorConfig): void {
      * SPECIAL rules
      */
     $rectorConfig->rule(FusionCachingNodeInEntryIdentifierRector::class);
-    $rectorConfig->ruleWithConfiguration(RemoveParentRector::class, [
-        // TODO: add comment about CR transformations -> what to use instead
-        'Neos\ContentRepository\Migration\Transformations\AbstractTransformation',
+    $rectorConfig->ruleWithConfiguration(\Neos\Rector\Generic\Rules\RemoveParentClassRector::class, [
+        new RemoveParentClass(
+            parentClassName: Neos\ContentRepository\Migration\Transformations\AbstractTransformation::class,
+            comment: '// TODO 9.0 migration: You need to convert your AbstractTransformation to an implementation of Neos\ContentRepository\NodeMigration\Transformation\TransformationFactoryInterface'
+        )
     ]);
+
     /**
      * CLEAN UP / END GLOBAL RULES
      */
