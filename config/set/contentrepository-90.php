@@ -296,6 +296,10 @@ return static function (RectorConfig $rectorConfig): void {
      * SPECIAL rules
      */
     $rectorConfig->rule(FusionCachingNodeInEntryIdentifierRector::class);
+    $rectorConfig->ruleWithConfiguration(RemoveParentRector::class, [
+        // TODO: add comment about CR transformations -> what to use instead
+        'Neos\ContentRepository\Migration\Transformations\AbstractTransformation',
+    ]);
     /**
      * CLEAN UP / END GLOBAL RULES
      */
