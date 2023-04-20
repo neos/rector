@@ -30,7 +30,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
   }
 }
 -----
-// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.path" to Neos.NodeInfo.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.path" to Neos.Node.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
   renderer = Neos.Fusion:Component {
@@ -38,7 +38,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${Neos.NodeInfo.path(node) || Neos.NodeInfo.path(documentNode)}
+    attributes = ${Neos.Node.path(node) || Neos.Node.path(documentNode)}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -54,10 +54,10 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     renderer = afx`
       <input
         type="checkbox"
-        name={Neos.NodeInfo.path(node)}
+        name={Neos.Node.path(node)}
         value={someOtherVariable.path}
         checked={props.checked}
-        {...Neos.NodeInfo.path(node)}
+        {...Neos.Node.path(node)}
       />
     `
   }

@@ -5,7 +5,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.depth || documentNode.depth}
+    attributes = ${this.node.depth || this.documentNode.depth}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -38,7 +38,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${Neos.Node.depth(node) || Neos.Node.depth(documentNode)}
+    attributes = ${Neos.Node.depth(this.node) || Neos.Node.depth(this.documentNode)}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
