@@ -30,6 +30,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
+use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
@@ -50,6 +51,7 @@ return static function (RectorConfig $rectorConfig): void {
         ->autowire()
         ->autoconfigure();
     $services->set(\Neos\Rector\Core\FusionProcessing\FusionFileProcessor::class);
+    $services->set(\Neos\Rector\Core\YamlProcessing\YamlFileProcessor::class);
     $rectorConfig->disableParallel(); // parallel does not work for non-PHP-Files, so we need to disable it - see https://github.com/rectorphp/rector-src/pull/2597#issuecomment-1190120688
 
 
@@ -304,6 +306,8 @@ return static function (RectorConfig $rectorConfig): void {
             comment: '// TODO 9.0 migration: You need to convert your AbstractTransformation to an implementation of Neos\ContentRepository\NodeMigration\Transformation\TransformationFactoryInterface'
         )
     ]);
+
+    $rectorConfig->rule(YamlDimensionConfigRector::class);
 
     /**
      * CLEAN UP / END GLOBAL RULES
