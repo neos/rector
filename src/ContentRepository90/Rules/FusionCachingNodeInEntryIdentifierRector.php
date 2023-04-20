@@ -24,7 +24,7 @@ class FusionCachingNodeInEntryIdentifierRector implements FusionRectorInterface
                     return $eelExpression;
                 }
                 return preg_replace(
-                    '/(node|documentNode|site)/',
+                    '/(?<!Neos\.Caching\.entryIdentifierForNode\()(node|documentNode|site)/',
                     'Neos.Caching.entryIdentifierForNode($1)',
                     $eelExpression
                 );
