@@ -14,7 +14,7 @@ class FusionNodePathRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.path to Neos.Node.path(node)', __CLASS__, 'some_class.fusion');
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.path to Neos.Node.path(node)', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string

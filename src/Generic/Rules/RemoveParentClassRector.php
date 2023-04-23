@@ -36,7 +36,9 @@ final class RemoveParentClassRector extends AbstractRector implements Configurab
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Remove "extends BLABLA" from classes', __CLASS__);
+        return CodeSampleLoader::fromFile('Remove "extends BLABLA" from classes', __CLASS__, [
+            new RemoveParentClass(\Foo\Bar\Baz::class, '// TODO: Neos 9.0 Migration: Stuff')
+        ]);
     }
 
     /**

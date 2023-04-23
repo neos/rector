@@ -12,7 +12,7 @@ class FusionContextInBackendRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)', __CLASS__, 'some_class.fusion');
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string

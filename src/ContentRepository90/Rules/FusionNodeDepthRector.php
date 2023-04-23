@@ -14,7 +14,7 @@ class FusionNodeDepthRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.depth to Neos.Node.depth(node)', __CLASS__, 'some_class.fusion');
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.depth to Neos.Node.depth(node)', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string

@@ -31,7 +31,9 @@ final class MethodCallToWarningCommentRector extends AbstractRector implements C
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('"Warning comments for various non-supported use cases', __CLASS__);
+        return CodeSampleLoader::fromFile('"Warning comments for various non-supported use cases', __CLASS__, [
+            new MethodCallToWarningComment(Node::class, 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.')
+        ]);
     }
 
     /**

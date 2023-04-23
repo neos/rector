@@ -30,7 +30,9 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Remove properties marked with a @Flow\Inject annotation and a certain type', __CLASS__);
+        return CodeSampleLoader::fromFile('Remove properties marked with a @Flow\Inject annotation and a certain type', __CLASS__, [
+            new RemoveInjection(\Foo\Bar\Baz::class)
+        ]);
     }
 
     /**

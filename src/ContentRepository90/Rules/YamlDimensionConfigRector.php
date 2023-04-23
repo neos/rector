@@ -14,7 +14,7 @@ class YamlDimensionConfigRector implements YamlRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite Settings.yaml config to new language', __CLASS__, 'Settings.yaml');
+        return CodeSampleLoader::fromFile('Fusion: Rewrite Settings.yaml config to new language', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string

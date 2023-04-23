@@ -13,7 +13,7 @@ class FusionCachingNodeInEntryIdentifierRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node to Neos.Caching.entryIdentifierForNode(...) in @cache.entryIdentifier segments', __CLASS__, 'some_class.fusion');
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node to Neos.Caching.entryIdentifierForNode(...) in @cache.entryIdentifier segments', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string

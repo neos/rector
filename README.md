@@ -110,3 +110,8 @@ git diff -- Neos.Fusion.Afx/ > ../Libraries/neos/rector/scripts/afx-eel-position
 git restore -- Neos.Fusion.Afx/
 ```
 
+## Generating docs
+
+```bash
+composer run generate-docs
+```
