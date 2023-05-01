@@ -48,22 +48,27 @@ final class NodeGetChildNodesRector extends AbstractRector
         $nodeTypeFilterExpr = null;
         $limitExpr = null;
         $offsetExpr = null;
-        if (count($node->args) >= 1) {
-            $nodeTypeFilterExpr = $node->args[0];
-            assert($nodeTypeFilterExpr instanceof Node\Arg);
-            $nodeTypeFilterExpr = $nodeTypeFilterExpr->value;
-        }
-        if (count($node->args) >= 2) {
-            $limitExpr = $node->args[1];
-            assert($limitExpr instanceof Node\Arg);
-            $limitExpr = $limitExpr->value;
-        }
-        if (count($node->args) >= 3) {
-            $offsetExpr = $node->args[2];
-            assert($offsetExpr instanceof Node\Arg);
-            $offsetExpr = $offsetExpr->value;
-        }
 
+        foreach ($node->args as $index => $arg) {
+            $argumentName = $arg?->name?->name;
+            $namedArgument = $argumentName !== null;
+
+            if (($namedArgument && $argumentName === 'nodeTypeFilter') ||  !$namedArgument && $index === 0) {
+                $nodeTypeFilterExpr = $arg;
+                assert($nodeTypeFilterExpr instanceof Node\Arg);
+                $nodeTypeFilterExpr = $nodeTypeFilterExpr->value;
+            }
+            if (($namedArgument && $argumentName === 'limit') ||  !$namedArgument && $index === 1) {
+                $limitExpr = $arg;
+                assert($limitExpr instanceof Node\Arg);
+                $limitExpr = $limitExpr->value;
+            }
+            if (($namedArgument && $argumentName === 'offset') ||  !$namedArgument && $index === 2) {
+                $offsetExpr = $arg;
+                assert($offsetExpr instanceof Node\Arg);
+                $offsetExpr = $offsetExpr->value;
+            }
+        }
 
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
