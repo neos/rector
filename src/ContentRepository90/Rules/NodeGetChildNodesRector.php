@@ -54,19 +54,19 @@ final class NodeGetChildNodesRector extends AbstractRector
             $namedArgument = $argumentName !== null;
 
             if (($namedArgument && $argumentName === 'nodeTypeFilter') ||  !$namedArgument && $index === 0) {
-                $nodeTypeFilterExpr = $arg;
-                assert($nodeTypeFilterExpr instanceof Node\Arg);
-                $nodeTypeFilterExpr = $nodeTypeFilterExpr->value;
+                assert($arg instanceof Node\Arg);
+
+                if ($arg->value instanceof Node\Scalar\String_) {
+                    $nodeTypeFilterExpr = $arg->value;
+                }
             }
             if (($namedArgument && $argumentName === 'limit') ||  !$namedArgument && $index === 1) {
-                $limitExpr = $arg;
-                assert($limitExpr instanceof Node\Arg);
-                $limitExpr = $limitExpr->value;
+                assert($arg instanceof Node\Arg);
+                $limitExpr = $arg->value;
             }
             if (($namedArgument && $argumentName === 'offset') ||  !$namedArgument && $index === 2) {
-                $offsetExpr = $arg;
-                assert($offsetExpr instanceof Node\Arg);
-                $offsetExpr = $offsetExpr->value;
+                assert($arg instanceof Node\Arg);
+                $offsetExpr = $arg->value;
             }
         }
 

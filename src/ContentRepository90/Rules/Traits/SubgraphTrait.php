@@ -25,7 +25,7 @@ trait SubgraphTrait
     ): Expr {
         $args = [];
 
-        if ($nodeTypeConstraintsFilterString ) {
+        if ($nodeTypeConstraintsFilterString) {
             $args = [
                 'nodeTypeConstraints' => $nodeTypeConstraintsFilterString
             ];
