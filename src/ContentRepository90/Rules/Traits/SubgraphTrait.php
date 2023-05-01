@@ -24,28 +24,30 @@ trait SubgraphTrait
         ?Expr $offset = null
     ): Expr
     {
-        if ($nodeTypeConstraintsFilterString) {
+        if ($nodeTypeConstraintsFilterString && $nodeTypeConstraintsFilterString != null) {
             $filter = $this->nodeFactory->createStaticCall(
                 FindChildNodesFilter::class,
-                'nodeTypeConstraints',
+                'create',
                 [
-                    $nodeTypeConstraintsFilterString
+                    'nodeTypeConstraints' => $nodeTypeConstraintsFilterString
                 ]
             );
         } else {
             $filter = $this->nodeFactory->createStaticCall(
                 FindChildNodesFilter::class,
-                'all'
+                'create'
             );
         }
 
         if ($limit || $offset) {
             $filter = $this->nodeFactory->createMethodCall(
                 $filter,
-                'withPagination',
+                'with',
                 [
-                    $limit,
-                    $offset
+                    'pagination' => [
+                        'limit' => $limit,
+                        'offset' => $offset
+                    ]
                 ]
             );
         }
