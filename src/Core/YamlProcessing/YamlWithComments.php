@@ -18,8 +18,15 @@ class YamlWithComments
 
         $yamlAsString = Yaml::dump($sortedInput, 100, 2);
 
+        // WARNING: we had sneaky bugs in the regex below, only on some systems.
+        // the old regex was "|(\s*)'[^']+##': '##([a-zA-Z0-9+=]+)'|m"
+        // this lead to problems that only some occurrences of comments were replaced and not all of them;
+        // and this only on specific systems.
+        // => our assumption is that we hit some backtracking limit of the regex engine. By using .+
+        // instead, we seem to reduce the amount of backtracking, fixing the problem (hopefully everywhere :) )
+
         // first, replace the comment keys of the form 'bla##': ...
-        $yamlAsString = preg_replace_callback("|^(\s*)'[^']+##': '##([a-zA-Z0-9+=/]+)'$|m", function ($a) {
+        $yamlAsString = preg_replace_callback("|(\s*)'.+##': '##([a-zA-Z0-9+=]+)'|m", function ($a) {
             $indentation = $a[1];
             $comment = base64_decode($a[2]);
             $commentLines = explode("\n", $comment);
@@ -28,7 +35,7 @@ class YamlWithComments
         }, $yamlAsString);
 
         // second, replace the comment keys of the form - '##...'
-        $yamlAsString = preg_replace_callback("|^(\s*)- '##([a-zA-Z0-9+=/]+)'$|m", function ($a) {
+        $yamlAsString = preg_replace_callback("|^(\s*)- '##([a-zA-Z0-9+=]+)'$|m", function ($a) {
             $indentation = $a[1];
             $comment = base64_decode($a[2]);
             $commentLines = explode("\n", $comment);

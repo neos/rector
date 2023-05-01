@@ -43,6 +43,7 @@ use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -143,7 +144,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getWorkspace
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.');
     // getIdentifier
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getIdentifier', 'nodeAggregateId');
+    $rectorConfig->rule(NodeGetIdentifierRector::class);
     $rectorConfig->rule(FusionNodeIdentifierRector::class);
     // setIndex -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setIndex', '!! Node::setIndex() was always internal. To reorder nodes, use the "MoveNodeAggregate" command');
