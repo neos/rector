@@ -42,6 +42,7 @@ use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -67,7 +68,9 @@ return static function (RectorConfig $rectorConfig): void {
         'Neos\ContentRepository\Domain\Model\NodeType' => \Neos\ContentRepository\Core\NodeType\NodeType::class,
         'Neos\ContentRepository\Domain\Service\NodeTypeManager' => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
 
-        'Neos\ContentRepository\Utility' => \Neos\ContentRepositoryRegistry\Utility::class
+        'Neos\ContentRepository\Utility' => \Neos\ContentRepositoryRegistry\Utility::class,
+
+        'Neos\ContentRepository\Domain\Model\Workspace' => \Neos\ContentRepository\Core\Projection\Workspace\Workspace::class,
     ]);
 
 
@@ -296,6 +299,11 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos\ContentRepository\Domain\Repository\WorkspaceRepository
      */
     $rectorConfig->rule(WorkspaceRepositoryCountByNameRector::class);
+
+    /**
+     * Neos\ContentRepository\Domain\Model\Workspace
+     */
+    $rectorConfig->rule(WorkspaceGetNameRector::class);
 
     /**
      * SPECIAL rules
