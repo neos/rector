@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Rules\RemoveInjectionsRector;
+namespace Neos\Rector\Tests\Generic\Rules\RemoveInjectionsRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 

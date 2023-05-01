@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\ContentRepository90\Rules\ContentDimensionCombinatorGetAllAllowedCombinationsRector;
+namespace Neos\Rector\Tests\Generic\Rules\ToStringToPropertyFetchRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class ContentDimensionCombinatorGetAllAllowedCombinationsRectorTest extends AbstractRectorTestCase
+final class ToStringToMethodCallOrPropertyFetchRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
