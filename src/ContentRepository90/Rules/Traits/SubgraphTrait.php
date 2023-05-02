@@ -21,34 +21,28 @@ trait SubgraphTrait
         Expr $nodeVariable,
         ?Expr $nodeTypeConstraintsFilterString = null,
         ?Expr $limit = null,
-        ?Expr $offset = null
-    ): Expr
-    {
+        ?Expr $offset = null,
+    ): Expr {
+        $args = [];
+
         if ($nodeTypeConstraintsFilterString) {
-            $filter = $this->nodeFactory->createStaticCall(
-                FindChildNodesFilter::class,
-                'nodeTypeConstraints',
-                [
-                    $nodeTypeConstraintsFilterString
-                ]
-            );
-        } else {
-            $filter = $this->nodeFactory->createStaticCall(
-                FindChildNodesFilter::class,
-                'all'
-            );
+            $args = [
+                'nodeTypeConstraints' => $nodeTypeConstraintsFilterString
+            ];
         }
 
         if ($limit || $offset) {
-            $filter = $this->nodeFactory->createMethodCall(
-                $filter,
-                'withPagination',
-                [
-                    $limit,
-                    $offset
-                ]
-            );
+            $args['pagination'] = [
+                'limit' => $limit,
+                'offset' => $offset
+            ];
         }
+
+        $filter = $this->nodeFactory->createStaticCall(
+            FindChildNodesFilter::class,
+            'create',
+            $args
+        );
 
         return $this->nodeFactory->createMethodCall(
             'subgraph',
