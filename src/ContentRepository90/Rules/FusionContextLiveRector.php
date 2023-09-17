@@ -20,12 +20,12 @@ class FusionContextLiveRector implements FusionRectorInterface
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
                 '/(node|documentNode|site)\.context\.live/',
-                'Neos.Node.isLive($1)',
+                '!renderingMode.isEdit',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
                 '/\.context\.live/',
-                '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.context.live" to Neos.Node.isLive(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.context.live" to "!renderingMode.isEdit". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
 }

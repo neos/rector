@@ -30,7 +30,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
   }
 }
 -----
-// TODO 9.0 migration: Line 26: You very likely need to rewrite "VARIABLE.context.live" to Neos.Node.isLive(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 26: You very likely need to rewrite "VARIABLE.context.live" to "!renderingMode.isEdit". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
   renderer = Neos.Fusion:Component {
@@ -38,7 +38,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${Neos.Node.isLive(node) || Neos.Node.isLive(site) || Neos.Node.isLive(documentNode)}
+    attributes = ${!renderingMode.isEdit || !renderingMode.isEdit || !renderingMode.isEdit}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -54,10 +54,10 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     renderer = afx`
       <input
         type="checkbox"
-        name={Neos.Node.isLive(node)}
+        name={!renderingMode.isEdit}
         value={someOtherVariable.context.live}
         checked={props.checked}
-        {...Neos.Node.isLive(node)}
+        {...!renderingMode.isEdit}
       />
     `
   }

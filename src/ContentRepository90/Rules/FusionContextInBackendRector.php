@@ -20,12 +20,12 @@ class FusionContextInBackendRector implements FusionRectorInterface
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
                 '/(node|documentNode|site)\.context\.inBackend/',
-                'Neos.Node.inBackend($1)',
+                'renderingMode.isEdit',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
                 '/\.context\.inBackend/',
-                '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.context.inBackend" to Neos.Node.inBackend(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.context.inBackend" to "renderingMode.isEdit". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
 }
