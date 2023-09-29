@@ -45,6 +45,8 @@ use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector;
+use Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -214,6 +216,13 @@ return static function (RectorConfig $rectorConfig): void {
     // getProperty() ** (included/compatible in old NodeInterface)
     // hasProperty() ** (included/compatible in old NodeInterface)
     // getLabel() ** (included/compatible in old NodeInterface)
+
+    /**
+     * Neos\ContentRepository\Core\NodeType\NodeType
+     */
+    // getName()
+    $rectorConfig->rule(rectorClass: FusionNodeTypeNameRector::class);
+    $rectorConfig->rule(rectorClass: NodeTypeGetNameRector::class);
 
     /**
      * Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface
