@@ -16,7 +16,7 @@ renderer = afx`
 }
 }
 -----
-// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.nodeType.name" to VARIABLE.nodeTypeName.value. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.nodeType.name" to "VARIABLE.nodeTypeName.value". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
 renderer = Neos.Fusion:Component {
