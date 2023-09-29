@@ -12,7 +12,7 @@ class FusionContextCurrentSiteRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)', __CLASS__);
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.context.currentSite to Neos.Site.findBySiteNode(site)', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string
