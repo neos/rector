@@ -12,7 +12,7 @@ class FusionContextLiveRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.context.live to Neos.Node.isLive(...)', __CLASS__);
+        return CodeSampleLoader::fromFile('Fusion: Rewrite "node.context.live" to "!renderingMode.isEdit"', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string
