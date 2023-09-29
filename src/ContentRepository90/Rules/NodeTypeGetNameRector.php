@@ -22,7 +22,7 @@ final class NodeTypeGetNameRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('"NodeInterface::getChildNodes()" will be rewritten', __CLASS__);
+        return CodeSampleLoader::fromFile('"NodeType::getName()" will be rewritten', __CLASS__);
     }
 
     /**
