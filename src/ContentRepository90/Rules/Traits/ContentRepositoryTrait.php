@@ -94,19 +94,19 @@ trait ContentRepositoryTrait
         );
     }
 
-    private function contentRepository_getInterDimensionalVariationGraph(): Expr
+    private function contentRepository_getVariationGraph(): Expr
     {
         return $this->nodeFactory->createMethodCall(
             new Variable('contentRepository'),
-            'getInterDimensionalVariationGraph',
+            'getVariationGraph',
             []
         );
     }
 
-    private function contentRepository_getInterDimensionalVariationGraph_getDimensionSpacePoints()
+    private function contentRepository_getVariationGraph_getDimensionSpacePoints()
     {
         return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getInterDimensionalVariationGraph(),
+            $this->contentRepository_getVariationGraph(),
             'getDimensionSpacePoints'
         );
     }

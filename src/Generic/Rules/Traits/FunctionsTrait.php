@@ -7,6 +7,7 @@ use PhpParser\Comment;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Nop;
 
 trait FunctionsTrait
@@ -26,11 +27,15 @@ trait FunctionsTrait
         return new Expr\Cast\String_($inner);
     }
 
-    private static function assign(string $variableName, Expr $value): Assign
+    private static function assign(string $variableName, Expr $value): Expression
     {
-        return new Assign(
-            new Variable($variableName),
-            $value
+        // NOTE: it is crucial to wrap thw assign in an expression; so that this works with self::withTodoComment.
+        // (otherwise the comment is silently swallowed because it is added to the wrong element, and thus not printed)
+        return new Expression(
+            new Assign(
+                new Variable($variableName),
+                $value
+            )
         );
     }
 
@@ -41,6 +46,14 @@ trait FunctionsTrait
                 new Comment('// TODO 9.0 migration: ' . $commentText)
             ]
         ]);
+    }
+
+    private static function withTodoComment(string $commentText, \PhpParser\NodeAbstract $attachmentNode): \PhpParser\Node
+    {
+        $attachmentNode->setAttribute('comments', [
+            new Comment('// TODO 9.0 migration: ' . $commentText)
+        ]);
+        return $attachmentNode;
     }
 
     private static function todoCommentAttribute(string $commentText): Comment

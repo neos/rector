@@ -28,8 +28,16 @@ class CustomObjectTreeParser extends ObjectTreeParser
     {
         $lexer = new Lexer($sourceCode);
         $parser = new self($lexer, $contextPathAndFilename);
-        $parser->parseFusionFile();
-        return EelExpressionPositions::fromArray($parser->foundEelExpressions);
+        $fusionFile = $parser->parseFusionFile();
+        $eelExpressionPositions = EelExpressionPositions::fromArray($parser->foundEelExpressions);
+
+        // enrich $eelExpressionPositions by filling fusionPath -> needed for some context sensitive transformations
+        $eelExpressionPathBuilder = new EelExpressionPathBuilderVisitor(
+            $eelExpressionPositions
+        );
+        $fusionFile->visit($eelExpressionPathBuilder);
+
+        return $eelExpressionPositions;
     }
 
     /**
@@ -53,7 +61,7 @@ class CustomObjectTreeParser extends ObjectTreeParser
         $result = parent::parsePathValue();
         if ($result instanceof EelExpressionValue) {
             $toOffset = $this->lexer->getCursor();
-            $this->foundEelExpressions[] = new EelExpressionPosition($result->value, $fromOffset + 2, $toOffset - 1);
+            $this->foundEelExpressions[] = new EelExpressionPosition($result->value, $fromOffset + 2, $toOffset - 1, $result);
         }
         return $result;
     }

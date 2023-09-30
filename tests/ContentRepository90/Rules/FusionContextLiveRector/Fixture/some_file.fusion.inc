@@ -5,7 +5,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.depth || documentNode.depth}
+    attributes = ${node.context.live || site.context.live || documentNode.context.live}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -21,16 +21,16 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     renderer = afx`
       <input
         type="checkbox"
-        name={node.depth}
-        value={someOtherVariable.depth}
+        name={node.context.live}
+        value={someOtherVariable.context.live}
         checked={props.checked}
-        {...node.depth}
+        {...node.context.live}
       />
     `
   }
 }
 -----
-// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.depth" to Neos.NodeInfo.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 26: You very likely need to rewrite "VARIABLE.context.live" to "!renderingMode.isEdit". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
   renderer = Neos.Fusion:Component {
@@ -38,7 +38,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${Neos.NodeInfo.depth(node) || Neos.NodeInfo.depth(documentNode)}
+    attributes = ${!renderingMode.isEdit || !renderingMode.isEdit || !renderingMode.isEdit}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -54,10 +54,10 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     renderer = afx`
       <input
         type="checkbox"
-        name={Neos.NodeInfo.depth(node)}
-        value={someOtherVariable.depth}
+        name={!renderingMode.isEdit}
+        value={someOtherVariable.context.live}
         checked={props.checked}
-        {...Neos.NodeInfo.depth(node)}
+        {...!renderingMode.isEdit}
       />
     `
   }

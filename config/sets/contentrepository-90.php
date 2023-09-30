@@ -6,10 +6,14 @@ use Neos\Rector\ContentRepository90\Rules\ContentDimensionCombinatorGetAllAllowe
 use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
+use Neos\Rector\ContentRepository90\Rules\FusionCachingNodeInEntryIdentifierRector;
+use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentSiteRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeParentRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodePathRector;
 use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
@@ -25,17 +29,22 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetParentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
+use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
-use Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
+use Neos\Rector\Generic\Rules\ToStringToMethodCallOrPropertyFetchRector;
 use Neos\Rector\Generic\ValueObject\FusionNodePropertyPathToWarningComment;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Generic\ValueObject\RemoveInjection;
+use Neos\Rector\Generic\ValueObject\RemoveParentClass;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -45,6 +54,7 @@ return static function (RectorConfig $rectorConfig): void {
         ->autowire()
         ->autoconfigure();
     $services->set(\Neos\Rector\Core\FusionProcessing\FusionFileProcessor::class);
+    $services->set(\Neos\Rector\Core\YamlProcessing\YamlFileProcessor::class);
     $rectorConfig->disableParallel(); // parallel does not work for non-PHP-Files, so we need to disable it - see https://github.com/rectorphp/rector-src/pull/2597#issuecomment-1190120688
 
 
@@ -59,7 +69,9 @@ return static function (RectorConfig $rectorConfig): void {
         'Neos\ContentRepository\Domain\Model\NodeType' => \Neos\ContentRepository\Core\NodeType\NodeType::class,
         'Neos\ContentRepository\Domain\Service\NodeTypeManager' => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
 
-        'Neos\ContentRepository\Utility' => \Neos\ContentRepositoryRegistry\Utility::class
+        'Neos\ContentRepository\Utility' => \Neos\ContentRepositoryRegistry\Utility::class,
+
+        'Neos\ContentRepository\Domain\Model\Workspace' => \Neos\ContentRepository\Core\Projection\Workspace\Workspace::class,
     ]);
 
 
@@ -126,14 +138,15 @@ return static function (RectorConfig $rectorConfig): void {
         // - NodeAddress + LOG (WARNING)
     // getDepth
     $rectorConfig->rule(NodeGetDepthRector::class);
-    // Fusion: .depth -> Neos.NodeInfo.depth(node)
+    // Fusion: .depth -> Neos.Node.depth(node)
     $rectorConfig->rule(FusionNodeDepthRector::class);
     // setWorkspace -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setWorkspace', '!! Node::setWorkspace() was always internal, and the workspace system has been fundamentally changed with the new CR. Try to rewrite your code around Content Streams.');
     // getWorkspace
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.');
     // getIdentifier
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getIdentifier', 'nodeAggregateId');
+    $rectorConfig->rule(NodeGetIdentifierRector::class);
+    $rectorConfig->rule(FusionNodeIdentifierRector::class);
     // setIndex -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setIndex', '!! Node::setIndex() was always internal. To reorder nodes, use the "MoveNodeAggregate" command');
     // getIndex
@@ -190,7 +203,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getContentStreamIdentifier() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // getNodeAggregateIdentifier()
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeAggregateIdentifier', 'nodeAggregateId');
-        // TODO: Fusion
+    $rectorConfig->rule(rectorClass: FusionNodeAggregateIdentifierRector::class);
     // getNodeTypeName()
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeTypeName', 'nodeTypeName');
     // getNodeType() ** (included/compatible in old NodeInterface)
@@ -251,6 +264,7 @@ return static function (RectorConfig $rectorConfig): void {
      */
     // ContentContext::getCurrentSite
     // TODO: PHP
+    $rectorConfig->rule(FusionContextCurrentSiteRector::class);
     // TODO: Fusion
     // ContentContext::getCurrentDomain
     // TODO: PHP
@@ -258,10 +272,10 @@ return static function (RectorConfig $rectorConfig): void {
     // ContentContext::getCurrentSiteNode
     // TODO: PHP
     // TODO: Fusion
-    // ContentContext::isLive -> Neos.Ui.NodeInfo.isLive(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
+    // ContentContext::isLive -> Neos.Node.isLive(...)
     // TODO: PHP
     $rectorConfig->rule(FusionContextLiveRector::class);
-    // ContentContext::isInBackend -> Neos.Ui.NodeInfo.inBackend(...) (TODO - should this be part of Neos.Ui or Neos Namespace?)
+    // ContentContext::isInBackend -> Neos.Node.inBackend(...)
     // TODO: PHP
     $rectorConfig->rule(FusionContextInBackendRector::class);
     // ContentContext::getCurrentRenderingMode
@@ -283,6 +297,29 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NodeFactoryResetRector::class);
 
     /**
+     * Neos\ContentRepository\Domain\Repository\WorkspaceRepository
+     */
+    $rectorConfig->rule(WorkspaceRepositoryCountByNameRector::class);
+
+    /**
+     * Neos\ContentRepository\Domain\Model\Workspace
+     */
+    $rectorConfig->rule(WorkspaceGetNameRector::class);
+
+    /**
+     * SPECIAL rules
+     */
+    $rectorConfig->rule(FusionCachingNodeInEntryIdentifierRector::class);
+    $rectorConfig->ruleWithConfiguration(\Neos\Rector\Generic\Rules\RemoveParentClassRector::class, [
+        new RemoveParentClass(
+            parentClassName: Neos\ContentRepository\Migration\Transformations\AbstractTransformation::class,
+            comment: '// TODO 9.0 migration: You need to convert your AbstractTransformation to an implementation of Neos\ContentRepository\NodeMigration\Transformation\TransformationFactoryInterface'
+        )
+    ]);
+
+    $rectorConfig->rule(YamlDimensionConfigRector::class);
+
+    /**
      * CLEAN UP / END GLOBAL RULES
      */
     $rectorConfig->ruleWithConfiguration(MethodCallToPropertyFetchRector::class, $methodCallToPropertyFetches);
@@ -293,10 +330,43 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(RemoveInjectionsRector::class, [
         new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class),
         new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContentDimensionCombinator::class),
-        new RemoveInjection(\Neos\ContentRepository\Domain\Factory\NodeFactory::class)
+        new RemoveInjection(\Neos\ContentRepository\Domain\Factory\NodeFactory::class),
+        new RemoveInjection(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class)
     ]);
 
     // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
     $rectorConfig->rule(InjectContentRepositoryRegistryIfNeededRector::class);
     // TODO: does not fully seem to work.$rectorConfig->rule(RemoveDuplicateCommentRector::class);
+
+    $rectorConfig->ruleWithConfiguration(ToStringToMethodCallOrPropertyFetchRector::class, [
+        \Neos\ContentRepository\Core\Dimension\ContentDimensionId::class => 'value',
+        \Neos\ContentRepository\Core\Dimension\ContentDimensionValue::class => 'value',
+        \Neos\ContentRepository\Core\Dimension\ContentDimensionValueSpecializationDepth::class => 'value',
+        \Neos\ContentRepository\Core\Factory\ContentRepositoryId::class => 'value',
+        \Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName::class => 'value',
+        \Neos\ContentRepository\Core\Infrastructure\Property\PropertyType::class => 'value',
+        \Neos\ContentRepository\Core\NodeType\NodeType::class => 'name',
+        \Neos\ContentRepository\Core\NodeType\NodeTypeName::class => 'value',
+        \Neos\ContentRepository\Core\Projection\ContentGraph\NodePath::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Node\PropertyName::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Node\ReferenceName::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\User\UserId::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName::class => 'value',
+        \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle::class => 'value',
+        \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints::class => 'toFilterString()',
+        \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes::class => 'toFilterString()',
+        \Neos\ContentRepository\Core\DimensionSpace\AbstractDimensionSpacePoint::class => 'toJson()',
+        \Neos\ContentRepository\Core\DimensionSpace\ContentSubgraphVariationWeight::class => 'toJson()',
+        \Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet::class => 'toJson()',
+        \Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet::class => 'toJson()',
+        \Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination::class => 'toJson()',
+        \Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination::class => 'toJson()',
+        \Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin::class => 'toJson()',
+        \Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage::class => 'toJson()',
+        \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds::class => 'toJson()',
+    ]);
 };

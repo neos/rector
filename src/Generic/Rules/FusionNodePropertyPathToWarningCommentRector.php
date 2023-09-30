@@ -25,7 +25,12 @@ class FusionNodePropertyPathToWarningCommentRector implements FusionRectorInterf
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Adds a warning comment when the defined path is used within an Eel expression.', __CLASS__, 'some_class.fusion');
+        return CodeSampleLoader::fromFile('Fusion: Adds a warning comment when the defined path is used within an Eel expression.', __CLASS__, [
+            new FusionNodePropertyPathToWarningComment('removed', 'Line %LINE: !! node.removed - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.'),
+            new FusionNodePropertyPathToWarningComment('hiddenBeforeDateTime', 'Line %LINE: !! node.hiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.'),
+            new FusionNodePropertyPathToWarningComment('hiddenAfterDateTime', 'Line %LINE: !! node.hiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.'),
+            new FusionNodePropertyPathToWarningComment('foo.bar', 'Line %LINE: !! node.foo.bar is not supported anymore.'),
+        ]);
     }
 
     /**

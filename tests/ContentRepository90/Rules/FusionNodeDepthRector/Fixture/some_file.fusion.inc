@@ -5,7 +5,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.context.live || site.context.live || documentNode.context.live}
+    attributes = ${node.depth || documentNode.depth}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -21,16 +21,16 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     renderer = afx`
       <input
         type="checkbox"
-        name={node.context.live}
-        value={someOtherVariable.context.live}
+        name={node.depth}
+        value={someOtherVariable.depth}
         checked={props.checked}
-        {...node.context.live}
+        {...node.depth}
       />
     `
   }
 }
 -----
-// TODO 9.0 migration: Line 26: You very likely need to rewrite "VARIABLE.context.live" to Neos.Ui.NodeInfo.isLive(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.depth" to Neos.Node.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
   renderer = Neos.Fusion:Component {
@@ -38,7 +38,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${Neos.Ui.NodeInfo.isLive(node) || Neos.Ui.NodeInfo.isLive(site) || Neos.Ui.NodeInfo.isLive(documentNode)}
+    attributes = ${Neos.Node.depth(node) || Neos.Node.depth(documentNode)}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -54,10 +54,10 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     renderer = afx`
       <input
         type="checkbox"
-        name={Neos.Ui.NodeInfo.isLive(node)}
-        value={someOtherVariable.context.live}
+        name={Neos.Node.depth(node)}
+        value={someOtherVariable.depth}
         checked={props.checked}
-        {...Neos.Ui.NodeInfo.isLive(node)}
+        {...Neos.Node.depth(node)}
       />
     `
   }

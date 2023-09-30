@@ -8,4 +8,5 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig) : void {
     $rectorConfig->rule(ContextGetRootNodeRector::class);
+    $rectorConfig->rule(\Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector::class);
 };

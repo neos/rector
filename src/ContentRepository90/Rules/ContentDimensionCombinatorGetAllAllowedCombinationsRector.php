@@ -52,7 +52,7 @@ final class ContentDimensionCombinatorGetAllAllowedCombinationsRector extends Ab
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
                 self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
-                self::assign('dimensionSpacePoints', $this->contentRepository_getInterDimensionalVariationGraph_getDimensionSpacePoints()),
+                self::assign('dimensionSpacePoints', $this->contentRepository_getVariationGraph_getDimensionSpacePoints()),
                 self::todoComment('try to directly work with $dimensionSpacePoints, instead of converting them to the legacy dimension format')
             ],
             $node

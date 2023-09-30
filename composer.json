@@ -11,14 +11,18 @@
         }
     },
     "scripts": {
-        "generate-docs": "rule-doc-generator generate src/Rules --output-file docs/rules_overview.md",
+        "generate-docs": "rule-doc-generator generate src/ContentRepository90/Rules src/Generic/Rules",
         "tests": "phpunit tests"
     },
     "require": {
-        "rector/rector": "^0.14.2"
+        "rector/rector": "0.15.24",
+        "phpstan/phpstan": "1.10.11",
+        "symfony/yaml": "*",
+        "neos/utility-arrays": "*"
     },
     "require-dev": {
-        "symplify/rule-doc-generator": "^11.1",
-        "phpunit/phpunit": "^9.5"
+        "phpunit/phpunit": "^9.5",
+        "webmozart/assert": "^1.11",
+        "symplify/rule-doc-generator": "^11.1"
     }
 }

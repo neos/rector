@@ -12,7 +12,7 @@ class FusionContextInBackendRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.context.inBackend to Neos.Ui.NodeInfo.inBackend(...)', __CLASS__, 'some_class.fusion');
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string
@@ -20,12 +20,12 @@ class FusionContextInBackendRector implements FusionRectorInterface
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
                 '/(node|documentNode|site)\.context\.inBackend/',
-                'Neos.Ui.NodeInfo.inBackend($1)',
+                'renderingMode.isEdit',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
                 '/\.context\.inBackend/',
-                '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.context.inBackend" to Neos.Ui.NodeInfo.inBackend(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.context.inBackend" to "renderingMode.isEdit". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
 }

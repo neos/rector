@@ -2,6 +2,7 @@
 
 namespace Neos\Rector\Core\FusionProcessing\Helper;
 
+use Neos\Rector\Core\FusionProcessing\FusionParser\Ast\EelExpressionValue;
 use Traversable;
 
 final class EelExpressionPositions implements \IteratorAggregate
@@ -63,5 +64,15 @@ final class EelExpressionPositions implements \IteratorAggregate
         $elements = $this->elements;
         array_shift($elements);
         return new self(...$elements);
+    }
+
+    public function byEelExpressionValue(EelExpressionValue $eelExpressionValue): ?EelExpressionPosition
+    {
+        foreach ($this->elements as $element) {
+            if ($element->eelExpressionValue === $eelExpressionValue) {
+                return $element;
+            }
+        }
+        return null;
     }
 }

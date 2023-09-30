@@ -49,9 +49,10 @@ final class NodeTypeManagerAccessRector extends AbstractRector
 
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
-                self::todoComment('Make this code aware of multiple Content Repositories.'),
-                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
-
+                self::withTodoComment(
+                    'Make this code aware of multiple Content Repositories.',
+                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
+                )
             ],
             $node
         );

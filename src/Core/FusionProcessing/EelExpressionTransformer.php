@@ -36,7 +36,7 @@ class EelExpressionTransformer
         // apply processing function on Eel expressions
         $eelExpressions = $eelExpressions->map(
             fn(EelExpressionPosition $expressionPosition) => $expressionPosition->withEelExpression(
-                $processingFunction($expressionPosition->eelExpression)
+                $processingFunction($expressionPosition->eelExpression, $expressionPosition->fusionPath)
             )
         );
 
@@ -183,7 +183,8 @@ class EelExpressionTransformer
             $result[] = new EelExpressionPosition(
                 $afxElement['payload']['payload']['contents'],
                 $afxElement['payload']['payload']['from'] + 1,
-                $afxElement['payload']['payload']['to'] + 1
+                $afxElement['payload']['payload']['to'] + 1,
+                null
             );
             return;
         }
@@ -193,7 +194,8 @@ class EelExpressionTransformer
             $result[] = new EelExpressionPosition(
                 $afxElement['payload']['contents'],
                 $afxElement['payload']['from'] + 1,
-                $afxElement['payload']['to'] + 1
+                $afxElement['payload']['to'] + 1,
+                null
             );
         }
     }

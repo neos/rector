@@ -51,8 +51,10 @@ final class ContextGetRootNodeRector extends AbstractRector
 
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
-                self::todoComment('!! MEGA DIRTY CODE! Ensure to rewrite this; by getting rid of LegacyContextStub.'),
-                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
+                self::withTodoComment(
+                    '!! MEGA DIRTY CODE! Ensure to rewrite this; by getting rid of LegacyContextStub.',
+                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default')))
+                ),
                 self::assign('workspace', $this->contentRepository_getWorkspaceFinder_findOneByName($this->workspaceName_fromString($this->context_workspaceName_fallbackToLive($node->var)))),
                 self::assign('rootNodeAggregate', $this->contentRepository_getContentGraph_findRootNodeAggregateByType($this->workspace_currentContentStreamId(), $this->nodeTypeName_fromString('Neos.Neos:Sites'))),
                 self::assign('subgraph', $this->contentRepository_getContentGraph_getSubgraph($this->workspace_currentContentStreamId(), $this->dimensionSpacePoint_fromLegacyDimensionArray($this->context_dimensions_fallbackToEmpty($node->var)), $this->visibilityConstraints($node->var))),

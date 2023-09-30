@@ -14,7 +14,7 @@ class FusionNodeHiddenInIndexRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.hiddenInIndex to node.properties._hiddenInIndex', __CLASS__, 'some_class.fusion');
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.hiddenInIndex to node.properties._hiddenInIndex', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string

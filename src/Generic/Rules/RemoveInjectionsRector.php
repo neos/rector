@@ -30,7 +30,9 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Remove properties marked with a @Flow\Inject annotation and a certain type', __CLASS__);
+        return CodeSampleLoader::fromFile('Remove properties marked with a @Flow\Inject annotation and a certain type', __CLASS__, [
+            new RemoveInjection(\Foo\Bar\Baz::class)
+        ]);
     }
 
     /**
@@ -77,6 +79,9 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
     private function hasFlowInjectDocComment(Node\Stmt\Property $node): bool
     {
         $phpDocInfo = $this->phpDocInfoFactory->createFromNode($node);
+        if ($phpDocInfo === null) {
+            return false;
+        }
         return $phpDocInfo->findOneByAnnotationClass('Neos\Flow\Annotations\Inject') !== null;
     }
 
