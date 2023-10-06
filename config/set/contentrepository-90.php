@@ -7,6 +7,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRecto
 use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionCachingNodeInEntryIdentifierRector;
+use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentRenderingModeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentSiteRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
@@ -281,15 +282,16 @@ return static function (RectorConfig $rectorConfig): void {
     // ContentContext::getCurrentSiteNode
     // TODO: PHP
     // TODO: Fusion
-    // ContentContext::isLive -> Neos.Node.isLive(...)
+    // ContentContext::isLive -> renderingMode.isLive
     // TODO: PHP
     $rectorConfig->rule(FusionContextLiveRector::class);
-    // ContentContext::isInBackend -> Neos.Node.inBackend(...)
+    // ContentContext::isInBackend -> renderingMode.inBackend
     // TODO: PHP
     $rectorConfig->rule(FusionContextInBackendRector::class);
-    // ContentContext::getCurrentRenderingMode
+    // ContentContext::getCurrentRenderingMode... -> renderingMode...
     // TODO: PHP
-    // TODO: Fusion
+    $rectorConfig->rule(FusionContextCurrentRenderingModeRector::class);
+
 
     /**
      * ContentDimensionCombinator
