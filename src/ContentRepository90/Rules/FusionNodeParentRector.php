@@ -14,7 +14,7 @@ class FusionNodeParentRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.parent to Neos.NodeAccess.findParent(node)', __CLASS__);
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.parent to q(node).parent().get(0)', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string
@@ -22,12 +22,12 @@ class FusionNodeParentRector implements FusionRectorInterface
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
                 '/(node|documentNode)\.parent/',
-                'Neos.NodeAccess.findParent($1)',
+                'q($1).parent().get(0)',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
-                '/\.parent/',
-                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.parent" to Neos.NodeAccess.findParent(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '/\.parent($|[^(])/',
+                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.parent" to "q(VARIABLE).parent().get(0)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
 }
