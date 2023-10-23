@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Rules\InjectContentRepositoryRegistryIfNeededRector;
+namespace Neos\Rector\Tests\Generic\Rules\InjectContentRepositoryRegistryIfNeededRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class InjectContentRepositoryRegistryIfNeededRectorTest extends AbstractRectorTestCase
+final class InjectServiceIfNeededRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
