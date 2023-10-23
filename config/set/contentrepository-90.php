@@ -17,7 +17,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeParentRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodePathRector;
-use Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector;
+use Neos\Rector\ContentRepository90\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFactoryResetRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
@@ -48,6 +48,8 @@ use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector;
+use Neos\Rector\Generic\ValueObject\AddInjection;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -345,10 +347,6 @@ return static function (RectorConfig $rectorConfig): void {
         new RemoveInjection(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class)
     ]);
 
-    // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
-    $rectorConfig->rule(InjectContentRepositoryRegistryIfNeededRector::class);
-    // TODO: does not fully seem to work.$rectorConfig->rule(RemoveDuplicateCommentRector::class);
-
     $rectorConfig->ruleWithConfiguration(ToStringToMethodCallOrPropertyFetchRector::class, [
         \Neos\ContentRepository\Core\Dimension\ContentDimensionId::class => 'value',
         \Neos\ContentRepository\Core\Dimension\ContentDimensionValue::class => 'value',
@@ -380,4 +378,10 @@ return static function (RectorConfig $rectorConfig): void {
         \Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage::class => 'toJson()',
         \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds::class => 'toJson()',
     ]);
+
+    // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
+    $rectorConfig->ruleWithConfiguration(InjectServiceIfNeededRector::class, [
+        new AddInjection('contentRepositoryRegistry', ContentRepositoryRegistry::class),
+    ]);
+    // TODO: does not fully seem to work.$rectorConfig->rule(RemoveDuplicateCommentRector::class);
 };

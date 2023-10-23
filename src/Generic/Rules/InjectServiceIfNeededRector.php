@@ -2,7 +2,7 @@
 
 declare (strict_types=1);
 
-namespace Neos\Rector\ContentRepository90\Rules;
+namespace Neos\Rector\Generic\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -14,19 +14,37 @@ use PhpParser\Node\Stmt\Property;
 use Rector\Core\NodeManipulator\ClassInsertManipulator;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+use Webmozart\Assert\Assert;
+use Neos\Rector\Generic\ValueObject\AddInjection;
+use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
 
 // Modelled after https://raw.githubusercontent.com/sabbelasichon/typo3-rector/main/src/Rector/v10/v2/InjectEnvironmentServiceIfNeededInResponseRector.php
-final class InjectContentRepositoryRegistryIfNeededRector extends AbstractRector
+final class InjectServiceIfNeededRector extends AbstractRector implements ConfigurableRectorInterface
 {
+    /**
+     * @var AddInjection[]
+     */
+    private array $injectionsToAdd;
+
     public function __construct(
         private readonly ClassInsertManipulator $classInsertManipulator,
-    )
-    {
+    ) {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('add injection for $contentRepositoryRegistry if in use.', __CLASS__);
+        return CodeSampleLoader::fromFile('add injection for $contentRepositoryRegistry if in use.', __CLASS__, [
+            new AddInjection('contentRepositoryRegistry', ContentRepositoryRegistry::class)
+        ]);
+    }
+
+    /**
+     * @param mixed[] $configuration
+     */
+    public function configure(array $configuration): void
+    {
+        Assert::allIsAOf($configuration, AddInjection::class);
+        $this->injectionsToAdd = $configuration;
     }
 
     /**
@@ -42,33 +60,39 @@ final class InjectContentRepositoryRegistryIfNeededRector extends AbstractRector
      */
     public function refactor(Node $node): ?Node
     {
-        if (!$this->isContentRepositoryRegistryInUse($node)) {
-            return null;
+        $modified = false;
+        foreach ($this->injectionsToAdd as $addInjection) {
+            if (!$this->isObjectInUse($node, $addInjection)) {
+                continue;
+            }
+
+            // already added
+            if ($node->getProperty($addInjection->memberName)) {
+                continue;
+            }
+
+            $property = $this->createInjectedProperty($addInjection->memberName, new FullyQualified($addInjection->objectType));
+            $this->classInsertManipulator->addAsFirstMethod($node, $property);
+            $modified = true;
         }
 
-        // already added
-        if ($node->getProperty('contentRepositoryRegistry')) {
-            return null;
-        }
-
-        $property = $this->createInjectedProperty('contentRepositoryRegistry', new FullyQualified(ContentRepositoryRegistry::class));
-        $this->classInsertManipulator->addAsFirstMethod($node, $property);
-
-        return $node;
+        return $modified ? $node : null;
     }
 
-    private function isContentRepositoryRegistryInUse(Class_ $class): bool
+    private function isObjectInUse(Class_ $class, AddInjection $addInjection): bool
     {
         $inUse = false;
         $this->traverseNodesWithCallable($class->stmts, function (Node $node) use (
-            &$inUse
+            &$inUse,
+            $addInjection
         ): ?PropertyFetch {
+
             if (!$node instanceof PropertyFetch) {
                 return null;
             }
 
-            // $this->contentRepositoryRegistry found somewhere in class
-            if ($this->isName($node->name, 'contentRepositoryRegistry')) {
+            // E.g. $this->contentRepositoryRegistry found somewhere in class
+            if ($this->isName($node->name, $addInjection->memberName)) {
                 if ($node->var instanceof Node\Expr\Variable && $node->var->name === 'this') {
                     $inUse = true;
                 }
