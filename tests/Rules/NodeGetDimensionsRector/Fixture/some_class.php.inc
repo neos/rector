@@ -1,10 +1,10 @@
 <?php
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 class SomeClass
 {
-    public function run(Node $node)
+    public function run(NodeLegacyStub $node)
     {
         return $node->getDimensions();
     }
@@ -14,11 +14,11 @@ class SomeClass
 -----
 <?php
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 class SomeClass
 {
-    public function run(Node $node)
+    public function run(NodeLegacyStub $node)
     {
         // TODO 9.0 migration: Try to remove the toLegacyDimensionArray() call and make your codebase more typesafe.
 

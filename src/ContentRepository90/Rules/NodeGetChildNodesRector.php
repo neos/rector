@@ -39,7 +39,7 @@ final class NodeGetChildNodesRector extends AbstractRector
     {
         assert($node instanceof Node\Expr\MethodCall);
 
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Core\Projection\ContentGraph\Node::class))) {
+        if (!$this->isObjectType($node->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
             return null;
         }
         if (!$this->isName($node->name, 'getChildNodes')) {

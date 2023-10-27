@@ -1,10 +1,10 @@
 <?php
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 class SomeClass
 {
-    public function run(Node $node)
+    public function run(NodeLegacyStub $node)
     {
         return $node->getContext()->getWorkspaceName();
     }
@@ -14,11 +14,11 @@ class SomeClass
 -----
 <?php
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 class SomeClass
 {
-    public function run(Node $node)
+    public function run(NodeLegacyStub $node)
     {
         $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
         return $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($node->subgraphIdentity->contentStreamId)->workspaceName;

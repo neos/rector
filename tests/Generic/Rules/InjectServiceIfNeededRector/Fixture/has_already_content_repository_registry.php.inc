@@ -1,13 +1,13 @@
 <?php
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 class SomeClass
 {
     #[\Neos\Flow\Annotations\Inject]
     protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    public function run(Node $node)
+    public function run(NodeLegacyStub $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
     }
@@ -17,14 +17,14 @@ class SomeClass
 -----
 <?php
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 class SomeClass
 {
     #[\Neos\Flow\Annotations\Inject]
     protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    public function run(Node $node)
+    public function run(NodeLegacyStub $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
     }

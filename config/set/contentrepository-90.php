@@ -21,7 +21,6 @@ use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFactoryResetRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDepthRector;
@@ -50,6 +49,11 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector;
 use Neos\Rector\Generic\ValueObject\AddInjection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Neos\Domain\Service\RenderingModeService;
+use Neos\Rector\ContentRepository90\Rules\ContextGetCurrentRenderingModeRector;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\Rector\ContentRepository90\Rules\ContextIsLiveRector;
+use Neos\Rector\ContentRepository90\Rules\ContextIsInBackendRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -64,9 +68,9 @@ return static function (RectorConfig $rectorConfig): void {
 
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'Neos\\ContentRepository\\Domain\\Model\\NodeInterface' => Node::class,
-        'Neos\\ContentRepository\\Domain\\Projection\\Content\\NodeInterface' => Node::class,
-        'Neos\\ContentRepository\\Domain\\Projection\\Content\\TraversableNodeInterface' => Node::class,
+        'Neos\\ContentRepository\\Domain\\Model\\NodeInterface' => NodeLegacyStub::class,
+        'Neos\\ContentRepository\\Domain\\Projection\\Content\\NodeInterface' => NodeLegacyStub::class,
+        'Neos\\ContentRepository\\Domain\\Projection\\Content\\TraversableNodeInterface' => NodeLegacyStub::class,
 
         'Neos\ContentRepository\Domain\Service\Context' => LegacyContextStub::class,
         'Neos\Neos\Domain\Service\ContentContext' => LegacyContextStub::class,
@@ -92,37 +96,37 @@ return static function (RectorConfig $rectorConfig): void {
      */
     // setName
     // getName
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getName', 'nodeName');
+    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getName', 'nodeName');
     // getLabel -> compatible with ES CR node (nothing to do)
     // setProperty
     // hasProperty -> compatible with ES CR Node (nothing to do)
     // getProperty -> compatible with ES CR Node (nothing to do)
     // removeProperty
     // getProperties -> PropertyCollectionInterface
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getProperties', 'properties');
+    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getProperties', 'properties');
     // getPropertyNames
     // setContentObject -> DEPRECATED / NON-FUNCTIONAL
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setContentObject', '!! Node::setContentObject() is not supported by the new CR. Referencing objects can be done by storing them in Node::properties (and the serialization/deserialization is extensible).');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setContentObject', '!! Node::setContentObject() is not supported by the new CR. Referencing objects can be done by storing them in Node::properties (and the serialization/deserialization is extensible).');
     // getContentObject -> DEPRECATED / NON-FUNCTIONAL
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getContentObject', '!! Node::getContentObject() is not supported by the new CR. Referencing objects can be done by storing them in Node::properties (and the serialization/deserialization is extensible).');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getContentObject', '!! Node::getContentObject() is not supported by the new CR. Referencing objects can be done by storing them in Node::properties (and the serialization/deserialization is extensible).');
     // unsetContentObject -> DEPRECATED / NON-FUNCTIONAL
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'unsetContentObject', '!! Node::unsetContentObject() is not supported by the new CR. Referencing objects can be done by storing them in Node::properties (and the serialization/deserialization is extensible).');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'unsetContentObject', '!! Node::unsetContentObject() is not supported by the new CR. Referencing objects can be done by storing them in Node::properties (and the serialization/deserialization is extensible).');
     // setNodeType
     // getNodeType: NodeType
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeType', 'nodeType');
+    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeType', 'nodeType');
     // setHidden
     // isHidden
     $rectorConfig->rule(NodeIsHiddenRector::class);
         // TODO: Fusion NodeAccess
     // setHiddenBeforeDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenBeforeDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getHiddenBeforeDateTime', '!! Node::getHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenBeforeDateTime', '!! Node::getHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('hiddenBeforeDateTime', 'Line %LINE: !! node.hiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // setHiddenAfterDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setHiddenAfterDateTime', '!! Node::setHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenAfterDateTime', '!! Node::setHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenAfterDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('hiddenAfterDateTime', 'Line %LINE: !! node.hiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // setHiddenInIndex
     // isHiddenInIndex
@@ -130,9 +134,9 @@ return static function (RectorConfig $rectorConfig): void {
     // Fusion: .hiddenInIndex -> node.properties._hiddenInIndex
     $rectorConfig->rule(FusionNodeHiddenInIndexRector::class);
     // setAccessRoles
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setAccessRoles', '!! Node::setAccessRoles() is not supported by the new CR.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setAccessRoles', '!! Node::setAccessRoles() is not supported by the new CR.');
     // getAccessRoles
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getAccessRoles', '!! Node::getAccessRoles() is not supported by the new CR.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getAccessRoles', '!! Node::getAccessRoles() is not supported by the new CR.');
     // getPath
     $rectorConfig->rule(NodeGetPathRector::class);
     // Fusion: .depth -> Neos.NodeAccess.depth(node)
@@ -146,16 +150,16 @@ return static function (RectorConfig $rectorConfig): void {
     // Fusion: .depth -> Neos.Node.depth(node)
     $rectorConfig->rule(FusionNodeDepthRector::class);
     // setWorkspace -> internal
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setWorkspace', '!! Node::setWorkspace() was always internal, and the workspace system has been fundamentally changed with the new CR. Try to rewrite your code around Content Streams.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setWorkspace', '!! Node::setWorkspace() was always internal, and the workspace system has been fundamentally changed with the new CR. Try to rewrite your code around Content Streams.');
     // getWorkspace
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.');
     // getIdentifier
     $rectorConfig->rule(NodeGetIdentifierRector::class);
     $rectorConfig->rule(FusionNodeIdentifierRector::class);
     // setIndex -> internal
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'setIndex', '!! Node::setIndex() was always internal. To reorder nodes, use the "MoveNodeAggregate" command');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setIndex', '!! Node::setIndex() was always internal. To reorder nodes, use the "MoveNodeAggregate" command');
     // getIndex
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getIndex', '!! Node::getIndex() is not supported. You can fetch all siblings and inspect the ordering');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getIndex', '!! Node::getIndex() is not supported. You can fetch all siblings and inspect the ordering');
     // getParent -> Node
     $rectorConfig->rule(NodeGetParentRector::class);
     // Fusion: .parent -> Neos.NodeAccess.findParent(node)
@@ -172,7 +176,7 @@ return static function (RectorConfig $rectorConfig): void {
     // remove()
     // setRemoved()
     // isRemoved()
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'isRemoved', '!! Node::isRemoved() - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'isRemoved', '!! Node::isRemoved() - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('removed', 'Line %LINE: !! node.removed - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
     // isVisible()
     // isAccessible()
@@ -185,7 +189,7 @@ return static function (RectorConfig $rectorConfig): void {
     // copyAfter()
     // copyInto()
     // getNodeData()
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(Node::class, 'getNodeData', '!! Node::getNodeData() - the new CR is not based around the concept of NodeData anymore. You need to rewrite your code here.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getNodeData', '!! Node::getNodeData() - the new CR is not based around the concept of NodeData anymore. You need to rewrite your code here.');
     // getContext()
     // getContext()->getWorkspace()
     $rectorConfig->rule(NodeGetContextGetWorkspaceRector::class);
@@ -207,13 +211,13 @@ return static function (RectorConfig $rectorConfig): void {
     // isTethered()
     // getContentStreamIdentifier() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // getNodeAggregateIdentifier()
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeAggregateIdentifier', 'nodeAggregateId');
+    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeAggregateIdentifier', 'nodeAggregateId');
     $rectorConfig->rule(rectorClass: FusionNodeAggregateIdentifierRector::class);
     // getNodeTypeName()
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeTypeName', 'nodeTypeName');
+    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeTypeName', 'nodeTypeName');
     // getNodeType() ** (included/compatible in old NodeInterface)
     // getNodeName()
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(Node::class, 'getNodeName', 'nodeName');
+    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeName', 'nodeName');
     // getOriginDimensionSpacePoint() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // getProperties() ** (included/compatible in old NodeInterface)
     // getProperty() ** (included/compatible in old NodeInterface)
@@ -275,23 +279,22 @@ return static function (RectorConfig $rectorConfig): void {
      * ContentContext
      */
     // ContentContext::getCurrentSite
-    // TODO: PHP
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(LegacyContextStub::class, 'getCurrentSite', '!! ContentContext::getCurrentSite() is removed in Neos 9.0.');
     $rectorConfig->rule(FusionContextCurrentSiteRector::class);
-    // TODO: Fusion
     // ContentContext::getCurrentDomain
-    // TODO: PHP
-    // TODO: Fusion
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(LegacyContextStub::class, 'getCurrentDomain', '!! ContentContext::getCurrentDomain() is removed in Neos 9.0.');
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.currentDomain', 'Line %LINE: !! node.context.currentDomain is removed in Neos 9.0.');
     // ContentContext::getCurrentSiteNode
-    // TODO: PHP
-    // TODO: Fusion
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(LegacyContextStub::class, 'getCurrentSiteNode', '!! ContentContext::getCurrentSiteNode() is removed in Neos 9.0.');
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.currentSiteNode', 'Line %LINE: !! node.context.currentSiteNode is removed in Neos 9.0.');
     // ContentContext::isLive -> renderingMode.isLive
-    // TODO: PHP
+    $rectorConfig->rule(ContextIsLiveRector::class);
     $rectorConfig->rule(FusionContextLiveRector::class);
     // ContentContext::isInBackend -> renderingMode.inBackend
-    // TODO: PHP
+    $rectorConfig->rule(ContextIsInBackendRector::class);
     $rectorConfig->rule(FusionContextInBackendRector::class);
     // ContentContext::getCurrentRenderingMode... -> renderingMode...
-    // TODO: PHP
+    $rectorConfig->rule(ContextGetCurrentRenderingModeRector::class);
     $rectorConfig->rule(FusionContextCurrentRenderingModeRector::class);
 
 
@@ -379,9 +382,14 @@ return static function (RectorConfig $rectorConfig): void {
         \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds::class => 'toJson()',
     ]);
 
+    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        LegacyContextStub::class => NodeLegacyStub::class,
+    ]);
+
     // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
     $rectorConfig->ruleWithConfiguration(InjectServiceIfNeededRector::class, [
         new AddInjection('contentRepositoryRegistry', ContentRepositoryRegistry::class),
+        new AddInjection('renderingModeService', RenderingModeService::class),
     ]);
     // TODO: does not fully seem to work.$rectorConfig->rule(RemoveDuplicateCommentRector::class);
 };
