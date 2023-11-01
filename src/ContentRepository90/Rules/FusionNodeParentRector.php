@@ -26,7 +26,7 @@ class FusionNodeParentRector implements FusionRectorInterface
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
-                '/\.parent($|[^(])/',
+                '/\.parent($|[^a-z(])/i',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.parent" to "q(VARIABLE).parent().get(0)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
