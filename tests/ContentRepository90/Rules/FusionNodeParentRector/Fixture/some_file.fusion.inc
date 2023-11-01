@@ -12,6 +12,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
         type="checkbox"
         name={node.parent}
         value={someOtherVariable.parent}
+        data-parents={q(node).parents()}
         checked={props.checked}
         {...node.parent}
       />
@@ -34,6 +35,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
         type="checkbox"
         name={q(node).parent().get(0)}
         value={someOtherVariable.parent}
+        data-parents={q(node).parents()}
         checked={props.checked}
         {...q(node).parent().get(0)}
       />
