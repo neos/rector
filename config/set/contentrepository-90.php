@@ -55,6 +55,7 @@ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 use Neos\Rector\ContentRepository90\Rules\ContextIsLiveRector;
 use Neos\Rector\ContentRepository90\Rules\ContextIsInBackendRector;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Rules\FusionPrimaryContentRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -322,6 +323,11 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos\ContentRepository\Domain\Model\Workspace
      */
     $rectorConfig->rule(WorkspaceGetNameRector::class);
+
+    /**
+     * Neos.Neos:PrimaryContent
+     */
+    $rectorConfig->rule(FusionPrimaryContentRector::class );
 
     /**
      * SPECIAL rules
