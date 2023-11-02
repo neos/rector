@@ -50,6 +50,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector;
 use Neos\Rector\Generic\ValueObject\AddInjection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Rector\ContentRepository90\Rules\FusionPrimaryContentRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -318,6 +319,11 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos\ContentRepository\Domain\Model\Workspace
      */
     $rectorConfig->rule(WorkspaceGetNameRector::class);
+
+    /**
+     * Neos.Neos:PrimaryContent
+     */
+    $rectorConfig->rule(FusionPrimaryContentRector::class );
 
     /**
      * SPECIAL rules
