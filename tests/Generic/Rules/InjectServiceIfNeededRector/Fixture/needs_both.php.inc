@@ -1,10 +1,10 @@
 <?php
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 class SomeClass
 {
-    public function run(Node $node)
+    public function run(NodeLegacyStub $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $currentRenderingMode = $this->renderingModeService->findByCurrentUser();
@@ -15,7 +15,7 @@ class SomeClass
 -----
 <?php
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 class SomeClass
 {
@@ -23,7 +23,7 @@ class SomeClass
     protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
     #[\Neos\Flow\Annotations\Inject]
     protected \Neos\Neos\Domain\Service\RenderingModeService $renderingModeService;
-    public function run(Node $node)
+    public function run(NodeLegacyStub $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $currentRenderingMode = $this->renderingModeService->findByCurrentUser();

@@ -13,6 +13,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 final class MethodCallToWarningCommentRector extends AbstractRector implements ConfigurableRectorInterface
 {
@@ -32,7 +33,7 @@ final class MethodCallToWarningCommentRector extends AbstractRector implements C
     public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"Warning comments for various non-supported use cases', __CLASS__, [
-            new MethodCallToWarningComment(Node::class, 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.')
+            new MethodCallToWarningComment(NodeLegacyStub::class, 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.')
         ]);
     }
 

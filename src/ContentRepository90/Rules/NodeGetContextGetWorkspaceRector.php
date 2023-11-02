@@ -51,7 +51,7 @@ final class NodeGetContextGetWorkspaceRector extends AbstractRector
             return null;
         }
 
-        if (!$this->isObjectType($node->var->var, new ObjectType(\Neos\ContentRepository\Core\Projection\ContentGraph\Node::class))) {
+        if (!$this->isObjectType($node->var->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
             return null;
         }
 
