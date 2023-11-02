@@ -54,6 +54,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextGetCurrentRenderingModeRector;
 use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 use Neos\Rector\ContentRepository90\Rules\ContextIsLiveRector;
 use Neos\Rector\ContentRepository90\Rules\ContextIsInBackendRector;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -383,7 +384,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        LegacyContextStub::class => NodeLegacyStub::class,
+        NodeLegacyStub::class => Node::class,
     ]);
 
     // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.
