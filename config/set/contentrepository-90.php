@@ -56,6 +56,9 @@ use Neos\Rector\ContentRepository90\Rules\ContextIsLiveRector;
 use Neos\Rector\ContentRepository90\Rules\ContextIsInBackendRector;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Rector\ContentRepository90\Rules\FusionPrimaryContentRector;
+use Neos\Rector\Generic\ValueObject\FusionFlowQueryNodePropertyToWarningComment;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeContextPathRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeAutoCreatedRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -93,13 +96,16 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToWarningComments = [];
 
 
+    $fusionFlowQueryPropertyToComments = [];
     /**
      * Neos\ContentRepository\Domain\Model\NodeInterface
      */
     // setName
     // getName
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getName', 'nodeName');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_name', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_name")" to "VARIABLE.nodeName.value". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getLabel -> compatible with ES CR node (nothing to do)
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_label', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_label")" to "VARIABLE.label". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // setProperty
     // hasProperty -> compatible with ES CR Node (nothing to do)
     // getProperty -> compatible with ES CR Node (nothing to do)
@@ -116,56 +122,64 @@ return static function (RectorConfig $rectorConfig): void {
     // setNodeType
     // getNodeType: NodeType
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeType', 'nodeType');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_nodeType', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_nodeType")" to "VARIABLE.nodeType". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // setHidden
     // isHidden
     $rectorConfig->rule(NodeIsHiddenRector::class);
-        // TODO: Fusion NodeAccess
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_hidden', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_hidden")". Use the NodeHiddenStateFinder of CR to determine the hidden state. ');
+    // TODO: Fusion NodeAccess
     // setHiddenBeforeDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenBeforeDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenBeforeDateTime', '!! Node::getHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('hiddenBeforeDateTime', 'Line %LINE: !! node.hiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_hiddenBeforeDateTime', 'Line %LINE: !! "q(VARIABLE).property("_hiddenBeforeDateTime")" is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // setHiddenAfterDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenAfterDateTime', '!! Node::setHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // getHiddenAfterDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('hiddenAfterDateTime', 'Line %LINE: !! node.hiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_hiddenAfterDateTime', 'Line %LINE: !! "q(VARIABLE).property("_hiddenAfterDateTime")" is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     // setHiddenInIndex
     // isHiddenInIndex
     $rectorConfig->rule(NodeIsHiddenInIndexRector::class);
     // Fusion: .hiddenInIndex -> node.properties._hiddenInIndex
     $rectorConfig->rule(FusionNodeHiddenInIndexRector::class);
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_hiddenInIndex', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_hiddenInIndex")" to "VARIABLE.properties._hiddenInIndex". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // setAccessRoles
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setAccessRoles', '!! Node::setAccessRoles() is not supported by the new CR.');
     // getAccessRoles
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getAccessRoles', '!! Node::getAccessRoles() is not supported by the new CR.');
     // getPath
     $rectorConfig->rule(NodeGetPathRector::class);
-    // Fusion: .depth -> Neos.NodeAccess.depth(node)
     $rectorConfig->rule(FusionNodePathRector::class);
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_path', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_path")" to "Neos.Node.path(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getContextPath
-        // TODO: PHP
-        // TODO: Fusion
-        // - NodeAddress + LOG (WARNING)
+    // TODO: PHP
+    $rectorConfig->rule(FusionNodeContextPathRector::class);
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_contextPath', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_contextPath")" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getDepth
     $rectorConfig->rule(NodeGetDepthRector::class);
-    // Fusion: .depth -> Neos.Node.depth(node)
     $rectorConfig->rule(FusionNodeDepthRector::class);
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_depth', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_depth")" to "Neos.Node.depth(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // setWorkspace -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setWorkspace', '!! Node::setWorkspace() was always internal, and the workspace system has been fundamentally changed with the new CR. Try to rewrite your code around Content Streams.');
     // getWorkspace
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_workspace', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_workspace")". It does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.');
     // getIdentifier
     $rectorConfig->rule(NodeGetIdentifierRector::class);
     $rectorConfig->rule(FusionNodeIdentifierRector::class);
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_identifier', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_identifier")" to "VARIABLE.nodeAggregateId.value". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // setIndex -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setIndex', '!! Node::setIndex() was always internal. To reorder nodes, use the "MoveNodeAggregate" command');
     // getIndex
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getIndex', '!! Node::getIndex() is not supported. You can fetch all siblings and inspect the ordering');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_index', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_index")". You can fetch all siblings and inspect the ordering.');
     // getParent -> Node
     $rectorConfig->rule(NodeGetParentRector::class);
-    // Fusion: .parent -> Neos.NodeAccess.findParent(node)
     $rectorConfig->rule(FusionNodeParentRector::class);
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_parent', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_parent")" to "q(VARIABLE).parent().get(0)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getParentPath - deprecated
     // createNode
     // createSingleNode -> internal
@@ -204,7 +218,14 @@ return static function (RectorConfig $rectorConfig): void {
         // TODO: Fusion
     // createVariantForContext()
     // isAutoCreated()
+    // TODO: PHP
+    $rectorConfig->rule(FusionNodeAutoCreatedRector::class);
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_autoCreated', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_autoCreated")" to "VARIABLE.classification.tethered". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+
     // getOtherNodeVariants()
+
+    $rectorConfig->ruleWithConfiguration(FusionNodePropertyPathToWarningCommentRector::class, $fusionFlowQueryPropertyToComments);
+
 
     /**
      * Neos\ContentRepository\Domain\Projection\Content\NodeInterface
