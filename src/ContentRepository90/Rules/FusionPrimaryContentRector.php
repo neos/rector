@@ -16,7 +16,7 @@ class FusionPrimaryContentRector implements FusionRectorInterface
 
     public function refactorFileContent(string $fileContent): string
     {
-        $comment = '// TODO 9.0 migration: You need to rewrite "Neos.Neos:PrimaryContent" to "Neos.Neos:ContentCollection".';
+        $comment = '// TODO 9.0 migration: You need to refactor "Neos.Neos:PrimaryContent" to use "Neos.Neos:ContentCollection" instead.';
         $regex = '/Neos\.Neos:PrimaryContent/';
 
         if (preg_match($regex, $fileContent) === 1){
