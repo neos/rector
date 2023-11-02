@@ -16,10 +16,14 @@ class FusionPrimaryContentRector implements FusionRectorInterface
 
     public function refactorFileContent(string $fileContent): string
     {
-        return EelExpressionTransformer::parse($fileContent)
-            ->addCommentsIfRegexMatches(
-                '/Neos\.Neos:PrimaryContent/',
-                '// TODO 9.0 migration: Line %LINE: You need to rewrite "Neos.Neos:PrimaryContent" to "Neos.Neos:ContentCollection".'
-            )->getProcessedContent();
+        $comment = '// TODO 9.0 migration: You need to rewrite "Neos.Neos:PrimaryContent" to "Neos.Neos:ContentCollection".';
+        $regex = '/Neos\.Neos:PrimaryContent/';
+
+        if (preg_match($regex, $fileContent) === 1){
+            return $comment . "\n" . $fileContent;
+        }
+
+        return $fileContent;
+
     }
 }
