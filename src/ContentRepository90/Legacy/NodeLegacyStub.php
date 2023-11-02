@@ -11,8 +11,4 @@ class NodeLegacyStub
     public function getContext() : LegacyContextStub {
         return new LegacyContextStub([]);
     }
-
-    public function isLive() :bool {
-        return false;
-    }
 }
