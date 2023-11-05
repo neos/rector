@@ -56,6 +56,13 @@ use Neos\Rector\ContentRepository90\Rules\ContextIsLiveRector;
 use Neos\Rector\ContentRepository90\Rules\ContextIsInBackendRector;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Rector\ContentRepository90\Rules\FusionPrimaryContentRector;
+use Neos\Rector\ContentRepository90\Rules\NodeTypeGetAutoCreatedChildNodesRector;
+use Neos\Rector\ContentRepository90\Rules\NodeTypeHasAutoCreatedChildNodesRector;
+use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
+use Rector\Renaming\ValueObject\MethodCallRename;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\Rector\ContentRepository90\Rules\NodeTypeGetTypeOfAutoCreatedChildNodeRector;
+use Neos\Rector\ContentRepository90\Rules\NodeTypeAllowsGrandchildNodeTypeRector;
 use Neos\Rector\Generic\ValueObject\FusionFlowQueryNodePropertyToWarningComment;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeContextPathRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeAutoCreatedRector;
@@ -209,13 +216,13 @@ return static function (RectorConfig $rectorConfig): void {
     // getContext()
     // getContext()->getWorkspace()
     $rectorConfig->rule(NodeGetContextGetWorkspaceRector::class);
-        // TODO: Fusion
+    // TODO: Fusion
     // getContext()->getWorkspaceName()
     $rectorConfig->rule(NodeGetContextGetWorkspaceNameRector::class);
-        // TODO: Fusion
+    // TODO: Fusion
     // getDimensions()
     $rectorConfig->rule(NodeGetDimensionsRector::class);
-        // TODO: Fusion
+    // TODO: Fusion
     // createVariantForContext()
     // isAutoCreated()
     // TODO: PHP
@@ -251,8 +258,21 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos\ContentRepository\Core\NodeType\NodeType
      */
     // getName()
-    $rectorConfig->rule(rectorClass: FusionNodeTypeNameRector::class);
-    $rectorConfig->rule(rectorClass: NodeTypeGetNameRector::class);
+    $rectorConfig->rule(FusionNodeTypeNameRector::class);
+    $rectorConfig->rule(NodeTypeGetNameRector::class);
+    // getAutoCreatedChildNodes
+    $rectorConfig->rule(NodeTypeGetAutoCreatedChildNodesRector::class);
+    // hasAutoCreatedChildNode
+    $rectorConfig->ruleWithConfiguration(RenameMethodRector::class, [new MethodCallRename(
+        NodeType::class,
+        'hasAutoCreatedChildNode',
+        'hasTetheredNode'
+    )]);
+    // getTypeOfAutoCreatedChildNode
+    $rectorConfig->rule(NodeTypeGetTypeOfAutoCreatedChildNodeRector::class);
+    // allowsGrandchildNodeType
+    $rectorConfig->rule(NodeTypeAllowsGrandchildNodeTypeRector::class);
+
 
     /**
      * Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface
@@ -261,17 +281,17 @@ return static function (RectorConfig $rectorConfig): void {
     // findParentNode() -> TraversableNodeInterface
     $rectorConfig->rule(NodeFindParentNodeRector::class);
     // findNodePath() -> NodePath
-        // TODO: PHP
+    // TODO: PHP
     // findNamedChildNode(NodeName $nodeName): TraversableNodeInterface;
-        // TODO: PHP
+    // TODO: PHP
     // findChildNodes(NodeTypeConstraints $nodeTypeConstraints = null, int $limit = null, int $offset = null): TraversableNodes;
-        // TODO: PHP
+    // TODO: PHP
     // countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int;
-        // TODO: PHP
+    // TODO: PHP
     // findReferencedNodes(): TraversableNodes;
-        // TODO: PHP
+    // TODO: PHP
     // findNamedReferencedNodes(PropertyName $edgeName): TraversableNodes;
-        // TODO: PHP
+    // TODO: PHP
     // findReferencingNodes() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // findNamedReferencingNodes() -> threw exception in <= Neos 8.0 - so nobody could have used this
 
@@ -348,7 +368,7 @@ return static function (RectorConfig $rectorConfig): void {
     /**
      * Neos.Neos:PrimaryContent
      */
-    $rectorConfig->rule(FusionPrimaryContentRector::class );
+    $rectorConfig->rule(FusionPrimaryContentRector::class);
 
     /**
      * SPECIAL rules
