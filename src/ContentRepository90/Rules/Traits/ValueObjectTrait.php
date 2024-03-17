@@ -4,8 +4,8 @@ declare (strict_types=1);
 namespace Neos\Rector\ContentRepository90\Rules\Traits;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar\String_;
