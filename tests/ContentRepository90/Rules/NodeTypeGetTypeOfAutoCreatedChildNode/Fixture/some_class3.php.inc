@@ -29,7 +29,7 @@ class SomeClass
         $nodeName = NodeName::fromString('name');
         $parent = $node->getParent();
         // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\Factory\ContentRepositoryId::fromString('default'));
+        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
         $contentRepository->getNodeTypeManager()->getTypeOfTetheredNode($parent->getNodeType(), $nodeName);
     }
 }

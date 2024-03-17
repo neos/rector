@@ -21,7 +21,7 @@
      public function run()
      {
 -        $combinations = $this->contentDimensionCombinator->getAllAllowedCombinations();
-+        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\Factory\ContentRepositoryId::fromString('default'));
++        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
 +        $dimensionSpacePoints = $contentRepository->getVariationGraph()->getDimensionSpacePoints();
 +        // TODO 9.0 migration: try to directly work with $dimensionSpacePoints, instead of converting them to the legacy dimension format
 +
@@ -112,7 +112,7 @@
      {
 -        return $context->getRootNode();
 +        // TODO 9.0 migration: !! MEGA DIRTY CODE! Ensure to rewrite this; by getting rid of LegacyContextStub.
-+        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\Factory\ContentRepositoryId::fromString('default'));
++        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
 +        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(\Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName::fromString($context->workspaceName ?? 'live'));
 +        $rootNodeAggregate = $contentRepository->getContentGraph()->findRootNodeAggregateByType($workspace->currentContentStreamId, \Neos\ContentRepository\Core\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
 +        $subgraph = $contentRepository->getContentGraph()->getSubgraph($workspace->currentContentStreamId, \Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint::fromLegacyDimensionArray($context->dimensions ?? []), $context->invisibleContentShown ? \Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints::withoutRestrictions() : \Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints::frontend());
@@ -1001,7 +1001,7 @@ return static function (RectorConfig $rectorConfig): void {
      {
 -        $nt = $this->nodeTypeManager->getNodeTypes(false);
 +        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-+        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\Factory\ContentRepositoryId::fromString('default'));
++        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
 +        $nt = $contentRepository->getNodeTypeManager()->getNodeTypes(false);
      }
  }
@@ -1160,7 +1160,7 @@ return static function (RectorConfig $rectorConfig): void {
      public function run(string $workspace)
      {
 -        return $this->workspaceRepository->countByName($workspace);
-+        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\Factory\ContentRepositoryId::fromString('default'));
++        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
 +        // TODO 9.0 migration: remove ternary operator (...? 1 : 0 ) - unnecessary complexity
 +
 +        return $contentRepository->getWorkspaceFinder()->findOneByName(\Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName::fromString($workspace)) !== null ? 1 : 0;
