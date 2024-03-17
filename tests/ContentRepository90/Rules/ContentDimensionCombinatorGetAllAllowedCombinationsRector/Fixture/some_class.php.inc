@@ -32,7 +32,7 @@ class SomeClass
     protected $contentDimensionCombinator;
     public function run()
     {
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\Factory\ContentRepositoryId::fromString('default'));
+        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
         $dimensionSpacePoints = $contentRepository->getVariationGraph()->getDimensionSpacePoints();
         // TODO 9.0 migration: try to directly work with $dimensionSpacePoints, instead of converting them to the legacy dimension format
 
