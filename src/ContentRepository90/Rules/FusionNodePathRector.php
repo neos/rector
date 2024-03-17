@@ -28,6 +28,16 @@ class FusionNodePathRector implements FusionRectorInterface
             ->addCommentsIfRegexMatches(
                 '/\.path$/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.path" to Neos.Node.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
-            )->getProcessedContent();
+            )
+            ->process(fn(string $eelExpression) => preg_replace(
+                '/(node|documentNode|site)\.property\\(\'_path\'\\)/',
+                'Neos.Node.path($1)',
+                $eelExpression
+            ))
+            ->addCommentsIfRegexMatches(
+                '/\.property\\(\'_path\'\\)/',
+                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.property(\'_path\')" to Neos.Node.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+            )
+            ->getProcessedContent();
     }
 }
