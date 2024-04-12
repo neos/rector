@@ -3,8 +3,6 @@
 declare (strict_types=1);
 
 use Neos\Rector\Core\FusionProcessing\FusionFileProcessor;
-use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
-use Neos\Rector\Generic\ValueObject\FusionNodePropertyPathToWarningComment;
 use Rector\Config\RectorConfig;
 use Neos\Rector\Generic\ValueObject\FusionPrototypeNameReplacement;
 use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;

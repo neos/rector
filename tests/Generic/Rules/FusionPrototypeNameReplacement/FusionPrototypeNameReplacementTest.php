@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
+namespace Neos\Rector\Tests\Generic\Rules\FusionPrototypeNameReplacement;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
