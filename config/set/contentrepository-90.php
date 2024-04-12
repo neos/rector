@@ -68,6 +68,8 @@ use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenAfterDateTimeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenBeforeDateTimeRector;
+use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;
+use Neos\Rector\Generic\ValueObject\FusionPrototypeNameReplacement;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -95,6 +97,13 @@ return static function (RectorConfig $rectorConfig): void {
         'Neos\ContentRepository\Utility' => \Neos\ContentRepositoryRegistry\Utility::class,
 
         'Neos\ContentRepository\Domain\Model\Workspace' => \Neos\ContentRepository\Core\Projection\Workspace\Workspace::class,
+    ]);
+
+    $rectorConfig->ruleWithConfiguration(FusionReplacePrototypeNameRector::class, [
+        new FusionPrototypeNameReplacement('Neos.Fusion:Array' , 'Neos.Fusion:Join'),
+        new FusionPrototypeNameReplacement('Neos.Fusion:RawArray' , 'Neos.Fusion:DataStructure'),
+        new FusionPrototypeNameReplacement('Neos.Fusion:Collection' , 'Neos.Fusion:Loop'),
+        new FusionPrototypeNameReplacement('Neos.Fusion:RawCollection', 'Neos.Fusion:Map'),
     ]);
 
 
