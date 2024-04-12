@@ -5,7 +5,8 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
         #
         # pass down props
         #
-        attributes = ${node.contextPath || documentNode.contextPath}
+        attributes = ${node.contextPath || documentNode.contextPath || node.property('_contextPath') || documentNode.property("_contextPath")}
+        foo = ${bar.property('_contextPath') || bar.property("_contextPath")}
 
         #
         # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -30,7 +31,8 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     }
 }
 -----
-// TODO 9.0 migration: Line 26: !! You very likely need to rewrite "VARIABLE.contextPath" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 11: !! You very likely need to rewrite "VARIABLE.property('_contextPath')" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 27: !! You very likely need to rewrite "VARIABLE.contextPath" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
     renderer = Neos.Fusion:Component {
@@ -38,7 +40,8 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
         #
         # pass down props
         #
-        attributes = ${Neos.Node.serializedNodeAddress(node) || Neos.Node.serializedNodeAddress(documentNode)}
+        attributes = ${Neos.Node.serializedNodeAddress(node) || Neos.Node.serializedNodeAddress(documentNode) || Neos.Node.serializedNodeAddress(node) || Neos.Node.serializedNodeAddress(documentNode)}
+        foo = ${bar.property('_contextPath') || bar.property("_contextPath")}
 
         #
         # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`

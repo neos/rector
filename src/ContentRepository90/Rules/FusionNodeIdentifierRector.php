@@ -28,6 +28,15 @@ class FusionNodeIdentifierRector implements FusionRectorInterface
             ->addCommentsIfRegexMatches(
                 '/\.identifier/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.identifier" to VARIABLE.nodeAggregateId.value. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+            )
+            ->process(fn(string $eelExpression) => preg_replace(
+                '/(node|documentNode|site)\.property\\(\'_identifier\'\\)/',
+                '$1.nodeAggregateId.value',
+                $eelExpression
+            ))
+            ->addCommentsIfRegexMatches(
+                '/\.property\\(\'_identifier\'\\)/',
+                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.identifier" to VARIABLE.nodeAggregateId.value. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
 }

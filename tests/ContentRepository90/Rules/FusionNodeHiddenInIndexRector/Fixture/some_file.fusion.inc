@@ -30,7 +30,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
   }
 }
 -----
-// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.properties._hiddenInIndex. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.property('hiddenInIndex'). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
   renderer = Neos.Fusion:Component {
@@ -38,7 +38,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.properties._hiddenInIndex || documentNode.properties._hiddenInIndex || site.properties._hiddenInIndex}
+    attributes = ${node.property('hiddenInIndex') || documentNode.property('hiddenInIndex') || site.property('hiddenInIndex')}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -54,10 +54,10 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     renderer = afx`
       <input
         type="checkbox"
-        name={node.properties._hiddenInIndex}
+        name={node.property('hiddenInIndex')}
         value={someOtherVariable.hiddenInIndex}
         checked={props.checked}
-        {...node.properties._hiddenInIndex}
+        {...node.property('hiddenInIndex')}
       />
     `
   }

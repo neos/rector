@@ -152,7 +152,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NodeIsHiddenInIndexRector::class);
     // Fusion: .hiddenInIndex -> node.properties._hiddenInIndex
     $rectorConfig->rule(FusionNodeHiddenInIndexRector::class);
-    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_hiddenInIndex', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_hiddenInIndex")" to "VARIABLE.properties._hiddenInIndex". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_hiddenInIndex', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_hiddenInIndex")" to "VARIABLE.property(\'hiddenInMenu\')". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // setAccessRoles
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setAccessRoles', '!! Node::setAccessRoles() is not supported by the new CR.');
     // getAccessRoles
