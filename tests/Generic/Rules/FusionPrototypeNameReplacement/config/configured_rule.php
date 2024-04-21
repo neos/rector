@@ -17,7 +17,9 @@ return static function (RectorConfig $rectorConfig) : void {
     $rectorConfig->disableParallel(); // does not work for fusion files - see https://github.com/rectorphp/rector-src/pull/2597#issuecomment-1190120688
 
     $rectorConfig->ruleWithConfiguration(FusionReplacePrototypeNameRector::class, [
-        new FusionPrototypeNameReplacement('Neos.Neos:Raw', 'Neos.Neos:NewRaw'),
+        new FusionPrototypeNameReplacement('Neos.Neos:Raw', 'Neos.Neos:NewRaw', 'Neos.Neos:Raw: This comment should be added on top of the file.'),
+        new FusionPrototypeNameReplacement('Neos.Neos:NotExisting', 'Neos.Neos:NewNotExisting', 'Neos.Neos:NotExisting: This comment should NOT be added on top of the file.'),
         new FusionPrototypeNameReplacement('Neos.Neos:SomethingOld', 'Neos.Neos:SomethingNew'),
+        new FusionPrototypeNameReplacement('Neos.Neos:SomethingOlder', 'Neos.Neos:SomethingNewer', 'Neos.Neos:SomethingOlder: This comment should be added on top of the file.'),
     ]);
 };
