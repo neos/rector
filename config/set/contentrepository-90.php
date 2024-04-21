@@ -28,7 +28,6 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeParentRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodePathRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector;
-use Neos\Rector\ContentRepository90\Rules\FusionPrimaryContentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFactoryResetRector;
 use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
@@ -45,7 +44,6 @@ use Neos\Rector\ContentRepository90\Rules\NodeTypeAllowsGrandchildNodeTypeRector
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetAutoCreatedChildNodesRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetTypeOfAutoCreatedChildNodeRector;
-use Neos\Rector\ContentRepository90\Rules\NodeTypeHasAutoCreatedChildNodesRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
@@ -70,6 +68,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenAfterDateTimeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenBeforeDateTimeRector;
 use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;
 use Neos\Rector\Generic\ValueObject\FusionPrototypeNameReplacement;
+use Neos\Rector\Generic\ValueObject\FusionPrototypeNameAddComment;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -376,8 +375,12 @@ return static function (RectorConfig $rectorConfig): void {
 
     /**
      * Neos.Neos:PrimaryContent
+     * Neos.Fusion:Attributes
      */
-    $rectorConfig->rule(FusionPrimaryContentRector::class);
+    $rectorConfig->ruleWithConfiguration(FusionPrototypeNameAddComment::class, [
+        new FusionPrototypeNameAddComment("Neos.Neos:PrimaryContent", 'TODO 9.0 migration: You need to refactor "Neos.Neos:PrimaryContent" to use "Neos.Neos:ContentCollection" instead.'),
+        new FusionPrototypeNameAddComment("Neos.Fusion:Attributes", 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in Neos.Fusion:Tag')
+    ]);
 
     /**
      * SPECIAL rules
