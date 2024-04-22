@@ -25,10 +25,20 @@ class FusionReplacePrototypeNameRector implements FusionRectorInterface, Configu
 
     public function refactorFileContent(string $fileContent): string
     {
+        $comments = [];
         foreach ($this->fusionPrototypeNameReplacements as $fusionPrototypeNameReplacement) {
+            $replacementCount = 0;
             $pattern = '/(^|[=\s\(<\/])(' .$fusionPrototypeNameReplacement->oldName. ')([\s\{\)\/>]|$)/';
             $replacement = '$1'.$fusionPrototypeNameReplacement->newName.'$3';
-            $fileContent = preg_replace($pattern, $replacement, $fileContent);
+            $fileContent = preg_replace($pattern, $replacement, $fileContent, count: $replacementCount);
+
+            if($replacementCount > 0 &&  $fusionPrototypeNameReplacement->comment !== null) {
+                $comments[] = '// TODO 9.0 migration:' . $fusionPrototypeNameReplacement->comment;
+            }
+        }
+
+        if (count($comments) > 0){
+            $fileContent = implode("\n", $comments) . "\n" . $fileContent;
         }
 
         return $fileContent;

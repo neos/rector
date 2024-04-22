@@ -100,10 +100,14 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->ruleWithConfiguration(FusionReplacePrototypeNameRector::class, [
-        new FusionPrototypeNameReplacement('Neos.Fusion:Array' , 'Neos.Fusion:Join'),
-        new FusionPrototypeNameReplacement('Neos.Fusion:RawArray' , 'Neos.Fusion:DataStructure'),
-        new FusionPrototypeNameReplacement('Neos.Fusion:Collection' , 'Neos.Fusion:Loop'),
-        new FusionPrototypeNameReplacement('Neos.Fusion:RawCollection', 'Neos.Fusion:Map'),
+        new FusionPrototypeNameReplacement('Neos.Fusion:Array', 'Neos.Fusion:Join'),
+        new FusionPrototypeNameReplacement('Neos.Fusion:RawArray', 'Neos.Fusion:DataStructure'),
+        new FusionPrototypeNameReplacement('Neos.Fusion:Collection', 'Neos.Fusion:Loop',
+            'Migration of Neos.Fusion:Collection to Neos.Fusion:Loop needs manual action. The key `children` has to be renamed to `items` which cannot be done automatically'
+        ),
+        new FusionPrototypeNameReplacement('Neos.Fusion:RawCollection', 'Neos.Fusion:Map',
+            'Migration of Neos.Fusion:RawCollection to Neos.Fusion:Map needs manual action. The key `children` has to be renamed to `items` which cannot be done automatically'
+        ),
     ]);
 
 
