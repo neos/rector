@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Neos\Rector\Tests\ContentRepository90\Rules\FusionPrimaryContentRector;
+declare(strict_types=1);
+
+namespace Neos\Rector\Tests\Generic\Rules\FusionPrototypeNameReplacement;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class FusionPrimaryContentRectorTest extends AbstractRectorTestCase
+final class FusionPrototypeNameCommentTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
