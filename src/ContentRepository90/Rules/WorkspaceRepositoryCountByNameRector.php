@@ -8,8 +8,8 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class WorkspaceRepositoryCountByNameRector extends AbstractRector
@@ -17,7 +17,7 @@ final class WorkspaceRepositoryCountByNameRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
+
     ) {
     }
 
@@ -50,13 +50,13 @@ final class WorkspaceRepositoryCountByNameRector extends AbstractRector
         }
 
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
-                self::todoComment('remove ternary operator (...? 1 : 0 ) - unnecessary complexity',)
-            ],
-            $node
-        );
+//        $this->nodesToAddCollector->addNodesBeforeNode(
+//            [
+//                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
+//                self::todoComment('remove ternary operator (...? 1 : 0 ) - unnecessary complexity',)
+//            ],
+//            $node
+//        );
 
         return new Node\Expr\Ternary(
             new Node\Expr\BinaryOp\NotIdentical(

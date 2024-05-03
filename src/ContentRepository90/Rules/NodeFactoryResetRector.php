@@ -5,8 +5,9 @@ namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class NodeFactoryResetRector extends AbstractRector
@@ -33,7 +34,7 @@ final class NodeFactoryResetRector extends AbstractRector
     /**
      * @param \PhpParser\Node\Expr\MethodCall $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node)
     {
         assert($node instanceof Node\Expr\MethodCall);
 
@@ -44,6 +45,7 @@ final class NodeFactoryResetRector extends AbstractRector
             return null;
         }
 
+        // return NodeTraverser::REMOVE_NODE;
         $this->removeNode($node);
 
         return $node;

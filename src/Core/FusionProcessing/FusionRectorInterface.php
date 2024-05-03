@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Rector\Core\FusionProcessing;
 
-use Rector\Core\Contract\Rector\RectorInterface;
+use Rector\Contract\Rector\RectorInterface;
 
 interface FusionRectorInterface extends RectorInterface
 {

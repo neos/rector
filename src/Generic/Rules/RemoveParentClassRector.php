@@ -4,17 +4,13 @@ declare (strict_types=1);
 
 namespace Neos\Rector\Generic\Rules;
 
-use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Neos\Rector\Generic\ValueObject\RemoveParentClass;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Comment;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\NodeTypeResolver\NodeTypeResolver;
-use Rector\PostRector\Collector\NodesToRemoveCollector;
-use Rector\Removing\Rector\Class_\RemoveParentRector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -30,8 +26,8 @@ final class RemoveParentClassRector extends AbstractRector implements Configurab
      */
     private array $parentClassesToRemove = [];
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition

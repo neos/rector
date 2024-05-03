@@ -11,12 +11,12 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
-use Rector\Core\NodeManipulator\ClassInsertManipulator;
-use Rector\Core\Rector\AbstractRector;
+use Rector\NodeManipulator\ClassInsertManipulator;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 use Neos\Rector\Generic\ValueObject\AddInjection;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 
 // Modelled after https://raw.githubusercontent.com/sabbelasichon/typo3-rector/main/src/Rector/v10/v2/InjectEnvironmentServiceIfNeededInResponseRector.php
 final class InjectServiceIfNeededRector extends AbstractRector implements ConfigurableRectorInterface

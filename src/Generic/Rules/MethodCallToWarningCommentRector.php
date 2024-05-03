@@ -8,9 +8,9 @@ use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
@@ -25,7 +25,7 @@ final class MethodCallToWarningCommentRector extends AbstractRector implements C
     private array $methodCallsToWarningComments = [];
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
+
     )
     {
     }
@@ -59,12 +59,12 @@ final class MethodCallToWarningCommentRector extends AbstractRector implements C
                 continue;
             }
 
-            $this->nodesToAddCollector->addNodesBeforeNode(
-                [
-                    self::todoComment($methodCallToWarningComment->warningMessage)
-                ],
-                $node
-            );
+//            $this->nodesToAddCollector->addNodesBeforeNode(
+//                [
+//                    self::todoComment($methodCallToWarningComment->warningMessage)
+//                ],
+//                $node
+//            );
 
             return $node;
         }

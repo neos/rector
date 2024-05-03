@@ -4,14 +4,12 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules;
 
-use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class ContextGetFirstLevelNodeCacheRector extends AbstractRector
@@ -19,7 +17,6 @@ final class ContextGetFirstLevelNodeCacheRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
     ) {
     }
 
@@ -38,14 +35,14 @@ final class ContextGetFirstLevelNodeCacheRector extends AbstractRector
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param \PhpParser\Node\Stmt\Expression $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node)
     {
         assert($node instanceof Node\Stmt\Expression);
 
         if ($this->containsContextGetFirstLevelNodeCache($node->expr)) {
-            $this->removeNode($node);
+            return NodeTraverser::REMOVE_NODE;
         }
         return $node;
     }

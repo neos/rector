@@ -9,8 +9,8 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class ContentDimensionCombinatorGetAllAllowedCombinationsRector extends AbstractRector
@@ -18,7 +18,7 @@ final class ContentDimensionCombinatorGetAllAllowedCombinationsRector extends Ab
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
+
     )
     {
     }
@@ -49,14 +49,14 @@ final class ContentDimensionCombinatorGetAllAllowedCombinationsRector extends Ab
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
-                self::assign('dimensionSpacePoints', $this->contentRepository_getVariationGraph_getDimensionSpacePoints()),
-                self::todoComment('try to directly work with $dimensionSpacePoints, instead of converting them to the legacy dimension format')
-            ],
-            $node
-        );
+//        $this->nodesToAddCollector->addNodesBeforeNode(
+//            [
+//                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
+//                self::assign('dimensionSpacePoints', $this->contentRepository_getVariationGraph_getDimensionSpacePoints()),
+//                self::todoComment('try to directly work with $dimensionSpacePoints, instead of converting them to the legacy dimension format')
+//            ],
+//            $node
+//        );
 
         return $this->dimensionSpacePoints_toLegacyDimensionArray();
     }
