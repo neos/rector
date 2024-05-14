@@ -83,9 +83,11 @@ return static function (RectorConfig $rectorConfig): void {
 
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+        'Neos\\ContentRepository\\\Domain\\Model\\Node' => NodeLegacyStub::class,
         'Neos\\ContentRepository\\Domain\\Model\\NodeInterface' => NodeLegacyStub::class,
         'Neos\\ContentRepository\\Domain\\Projection\\Content\\NodeInterface' => NodeLegacyStub::class,
         'Neos\\ContentRepository\\Domain\\Projection\\Content\\TraversableNodeInterface' => NodeLegacyStub::class,
+        'Neos\\ContentRepository\\Domain\\Projection\\Content\\TraversableNodes' => \Neos\ContentRepository\Core\Projection\ContentGraph\Nodes::class,
 
         'Neos\ContentRepository\Domain\Service\Context' => LegacyContextStub::class,
         'Neos\Neos\Domain\Service\ContentContext' => LegacyContextStub::class,
@@ -96,6 +98,11 @@ return static function (RectorConfig $rectorConfig): void {
         'Neos\ContentRepository\Utility' => \Neos\ContentRepositoryRegistry\Utility::class,
 
         'Neos\ContentRepository\Domain\Model\Workspace' => \Neos\ContentRepository\Core\Projection\Workspace\Workspace::class,
+        'Neos\\ContentRepository\\Domain\\NodeAggregate\\NodeAggregateIdentifier' => \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class,
+        'Neos\\ContentRepository\\Domain\\NodeAggregate\\NodeName' => \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
+        'Neos\\ContentRepository\\Domain\\NodeType\\NodeTypeName' => \Neos\ContentRepository\Core\NodeType\NodeTypeName::class,
+        'Neos\\ContentRepository\\Domain\\Projection\\Content\\PropertyCollectionInterface' => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
+        'Neos\\ContentRepository\\Domain\\Model\\ArrayPropertyCollection' => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
     ]);
 
     $rectorConfig->ruleWithConfiguration(FusionReplacePrototypeNameRector::class, [
