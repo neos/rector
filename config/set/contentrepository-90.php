@@ -110,10 +110,10 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
 
-    /** @var $methodCallToPropertyFetches MethodCallToPropertyFetch[] */
+    /** @var MethodCallToPropertyFetch[] $methodCallToPropertyFetches */
     $methodCallToPropertyFetches = [];
 
-    /** @var $methodCallToWarningComments MethodCallToWarningComment[] */
+    /** @var MethodCallToWarningComment[] $methodCallToWarningComments */
     $methodCallToWarningComments = [];
 
 
@@ -382,8 +382,8 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos.Fusion:Attributes
      */
     $rectorConfig->ruleWithConfiguration(FusionPrototypeNameAddComment::class, [
-        new FusionPrototypeNameAddComment("Neos.Neos:PrimaryContent", 'TODO 9.0 migration: You need to refactor "Neos.Neos:PrimaryContent" to use "Neos.Neos:ContentCollection" instead.'),
-        new FusionPrototypeNameAddComment("Neos.Fusion:Attributes", 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in Neos.Fusion:Tag')
+        new FusionPrototypeNameAddComment('Neos.Neos:PrimaryContent', 'TODO 9.0 migration: You need to refactor "Neos.Neos:PrimaryContent" to use "Neos.Neos:ContentCollection" instead.'),
+        new FusionPrototypeNameAddComment('Neos.Fusion:Attributes', 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in Neos.Fusion:Tag')
     ]);
 
     /**
