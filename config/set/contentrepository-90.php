@@ -48,6 +48,7 @@ use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
+use Neos\Rector\Generic\Rules\FusionPrototypeNameAddCommentRector;
 use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
@@ -381,7 +382,7 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos.Neos:PrimaryContent
      * Neos.Fusion:Attributes
      */
-    $rectorConfig->ruleWithConfiguration(FusionPrototypeNameAddComment::class, [
+    $rectorConfig->ruleWithConfiguration(FusionPrototypeNameAddCommentRector::class, [
         new FusionPrototypeNameAddComment('Neos.Neos:PrimaryContent', 'TODO 9.0 migration: You need to refactor "Neos.Neos:PrimaryContent" to use "Neos.Neos:ContentCollection" instead.'),
         new FusionPrototypeNameAddComment('Neos.Fusion:Attributes', 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in Neos.Fusion:Tag')
     ]);
