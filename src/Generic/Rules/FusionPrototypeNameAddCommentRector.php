@@ -25,6 +25,7 @@ class FusionPrototypeNameAddCommentRector implements FusionRectorInterface, Conf
 
     public function refactorFileContent(string $fileContent): string
     {
+        $comments = [];
         foreach ($this->fusionPrototypeNameAddComments as $fusionPrototypeNameAddComment) {
             $matches = [];
             $pattern = '/(^|[=\s\(<\/])(' .$fusionPrototypeNameAddComment->name. ')([\s\{\)\/>]|$)/';
