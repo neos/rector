@@ -5,8 +5,8 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.depth || documentNode.depth || node.property('_depth') || documentNode.property("_depth")}
-    foo = ${bar.property('_depth') || bar.property("_depth")}
+    attributes = ${node.depth || documentNode.depth || q(node).property('_depth') || q(documentNode).property("_depth")}
+    foo = ${q(bar).property('_depth') || q(bar).property("_depth")}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -31,7 +31,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
   }
 }
 -----
-// TODO 9.0 migration: Line 11: You may need to rewrite "VARIABLE.property('_depth')" to Neos.Node.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 11: You may need to rewrite "q(VARIABLE).property('_depth')" to Neos.Node.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 // TODO 9.0 migration: Line 27: You may need to rewrite "VARIABLE.depth" to Neos.Node.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
@@ -41,7 +41,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     # pass down props
     #
     attributes = ${Neos.Node.depth(node) || Neos.Node.depth(documentNode) || Neos.Node.depth(node) || Neos.Node.depth(documentNode)}
-    foo = ${bar.property('_depth') || bar.property("_depth")}
+    foo = ${q(bar).property('_depth') || q(bar).property("_depth")}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
