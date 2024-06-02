@@ -5,7 +5,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.hiddenInIndex || documentNode.hiddenInIndex || site.hiddenInIndex}
+    attributes = ${node.hiddenInIndex || documentNode.hiddenInIndex || site.hiddenInIndex || q(node).property('_hiddenInIndex') || q(documentNode).property("_hiddenInIndex")}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -38,7 +38,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.property('hiddenInIndex') || documentNode.property('hiddenInIndex') || site.property('hiddenInIndex')}
+    attributes = ${node.property('hiddenInIndex') || documentNode.property('hiddenInIndex') || site.property('hiddenInIndex') || q(node).property('hiddenInIndex') || q(documentNode).property('hiddenInIndex')}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
