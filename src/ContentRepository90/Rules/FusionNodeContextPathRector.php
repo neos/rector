@@ -30,13 +30,13 @@ class FusionNodeContextPathRector implements FusionRectorInterface
                 '// TODO 9.0 migration: Line %LINE: !! You very likely need to rewrite "VARIABLE.contextPath" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(
-                '/(node|documentNode|site)\.property\\((\'|")_contextPath(\'|")\\)/',
+                '/q\((node|documentNode|site)\)\.property\\((\'|")_contextPath(\'|")\\)/',
                 'Neos.Node.serializedNodeAddress($1)',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
                 '/\.property\\((\'|")_contextPath(\'|")\\)/',
-                '// TODO 9.0 migration: Line %LINE: !! You very likely need to rewrite "VARIABLE.property(\'_contextPath\')" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '// TODO 9.0 migration: Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property(\'_contextPath\')" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->getProcessedContent();
     }
