@@ -5,7 +5,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.path || documentNode.path}
+    attributes = ${node.path || documentNode.path || q(node).property('_path') || q(documentNode).property("_path")}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -38,7 +38,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${Neos.Node.path(node) || Neos.Node.path(documentNode)}
+    attributes = ${Neos.Node.path(node) || Neos.Node.path(documentNode) || Neos.Node.path(node) || Neos.Node.path(documentNode)}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
