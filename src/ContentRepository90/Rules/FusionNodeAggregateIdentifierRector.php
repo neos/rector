@@ -14,7 +14,7 @@ class FusionNodeAggregateIdentifierRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.nodeAggregateIdentifier to node.nodeAggregateId.value', __CLASS__);
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.nodeAggregateIdentifier to q(node).id()', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string
@@ -22,7 +22,7 @@ class FusionNodeAggregateIdentifierRector implements FusionRectorInterface
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
                 '/(node|documentNode|site)\.nodeAggregateIdentifier/',
-                '$1.nodeAggregateId.value',
+                'q($1).id()',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(

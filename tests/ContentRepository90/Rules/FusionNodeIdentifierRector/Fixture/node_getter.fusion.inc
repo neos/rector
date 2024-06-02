@@ -16,7 +16,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
   }
 }
 -----
-// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.identifier" to VARIABLE.nodeAggregateId.value. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.identifier" to "q(VARIABLE).id()". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
   renderer = Neos.Fusion:Component {
@@ -24,12 +24,12 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.nodeAggregateId.value || documentNode.nodeAggregateId.value}
+    attributes = ${q(node).id() || q(documentNode).id()}
     renderer = afx`
       <input
-        name={node.nodeAggregateId.value}
+        name={q(node).id()}
         value={someOtherVariable.identifier}
-        {...node.nodeAggregateId.value}
+        {...q(node).id()}
       />
     `
   }
