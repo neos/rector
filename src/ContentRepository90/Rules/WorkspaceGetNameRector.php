@@ -7,8 +7,8 @@ namespace Neos\Rector\ContentRepository90\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 
@@ -17,7 +17,6 @@ final class WorkspaceGetNameRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector,
     ) {
     }
 
@@ -48,12 +47,12 @@ final class WorkspaceGetNameRector extends AbstractRector
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::todoComment('Check if you could change your code to work with the WorkspaceName value object instead.')
-            ],
-            $node
-        );
+//        $this->nodesToAddCollector->addNodesBeforeNode(
+//            [
+//                self::todoComment('Check if you could change your code to work with the WorkspaceName value object instead.')
+//            ],
+//            $node
+//        );
 
         $propertyFetchAggregateId = $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName');
         return $this->nodeFactory->createPropertyFetch($propertyFetchAggregateId, 'value');

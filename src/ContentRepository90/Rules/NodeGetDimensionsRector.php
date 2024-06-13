@@ -6,8 +6,8 @@ namespace Neos\Rector\ContentRepository90\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class NodeGetDimensionsRector extends AbstractRector
@@ -15,7 +15,7 @@ final class NodeGetDimensionsRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
+
     )
     {
     }
@@ -46,12 +46,12 @@ final class NodeGetDimensionsRector extends AbstractRector
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::todoComment('Try to remove the toLegacyDimensionArray() call and make your codebase more typesafe.')
-            ],
-            $node
-        );
+//        $this->nodesToAddCollector->addNodesBeforeNode(
+//            [
+//                self::todoComment('Try to remove the toLegacyDimensionArray() call and make your codebase more typesafe.')
+//            ],
+//            $node
+//        );
 
         return $this->node_originDimensionSpacePoint_toLegacyDimensionArray($node->var);
     }
