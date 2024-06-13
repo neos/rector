@@ -422,6 +422,8 @@ return static function (RectorConfig $rectorConfig): void {
         new RemoveInjection(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class)
     ]);
 
+    // todo these ToStringToMethodCallOrPropertyFetchRector rules are likely mostly obsolete and only to migrate from one Neos 9 beta to another but NOT for upgrading from 8.3
+    // see https://github.com/neos/neos-development-collection/pull/4156
     $rectorConfig->ruleWithConfiguration(ToStringToMethodCallOrPropertyFetchRector::class, [
         \Neos\ContentRepository\Core\Dimension\ContentDimensionId::class => 'value',
         \Neos\ContentRepository\Core\Dimension\ContentDimensionValue::class => 'value',
@@ -441,14 +443,10 @@ return static function (RectorConfig $rectorConfig): void {
         \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription::class => 'value',
         \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName::class => 'value',
         \Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle::class => 'value',
-        \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints::class => 'toFilterString()',
-        \Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes::class => 'toFilterString()',
         \Neos\ContentRepository\Core\DimensionSpace\AbstractDimensionSpacePoint::class => 'toJson()',
         \Neos\ContentRepository\Core\DimensionSpace\ContentSubgraphVariationWeight::class => 'toJson()',
         \Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet::class => 'toJson()',
         \Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet::class => 'toJson()',
-        \Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination::class => 'toJson()',
-        \Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination::class => 'toJson()',
         \Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin::class => 'toJson()',
         \Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage::class => 'toJson()',
         \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds::class => 'toJson()',
