@@ -398,7 +398,7 @@ return static function (RectorConfig $rectorConfig): void {
         \Neos\ContentRepository\Utility::class,
         'renderValidNodeName',
         \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
-        'fromString'
+        'transliterateFromString'
     )]);
 
     /**
