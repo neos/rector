@@ -62,7 +62,9 @@ use Neos\Rector\Generic\ValueObject\RemoveParentClass;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
+use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
+use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenAfterDateTimeRector;
@@ -95,8 +97,6 @@ return static function (RectorConfig $rectorConfig): void {
 
         'Neos\ContentRepository\Domain\Model\NodeType' => \Neos\ContentRepository\Core\NodeType\NodeType::class,
         'Neos\ContentRepository\Domain\Service\NodeTypeManager' => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
-
-        'Neos\ContentRepository\Utility' => \Neos\ContentRepositoryRegistry\Utility::class,
 
         'Neos\ContentRepository\Domain\Model\Workspace' => \Neos\ContentRepository\Core\Projection\Workspace\Workspace::class,
         'Neos\\ContentRepository\\Domain\\NodeAggregate\\NodeAggregateIdentifier' => \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class,
@@ -393,6 +393,13 @@ return static function (RectorConfig $rectorConfig): void {
         new FusionPrototypeNameAddComment('Neos.Neos:PrimaryContent', 'TODO 9.0 migration: You need to refactor "Neos.Neos:PrimaryContent" to use "Neos.Neos:ContentCollection" instead.'),
         new FusionPrototypeNameAddComment('Neos.Fusion:Attributes', 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in Neos.Fusion:Tag')
     ]);
+
+    $rectorConfig->ruleWithConfiguration(RenameStaticMethodRector::class, [new RenameStaticMethod(
+        \Neos\ContentRepository\Utility::class,
+        'renderValidNodeName',
+        \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
+        'fromString'
+    )]);
 
     /**
      * SPECIAL rules
