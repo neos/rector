@@ -26,11 +26,11 @@ class FusionNodePathRector implements FusionRectorInterface
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
-                '/\.path$/',
+                '/\.path([^(]|$)/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.path" to Neos.Node.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(
-                '/q\((node|documentNode|site)\)\.property\\((\'|")_path(\'|")\\)/',
+                '/q\(([^)]+)\)\.property\([^)]+_path[^)]+\)/',
                 'Neos.Node.path($1)',
                 $eelExpression
             )

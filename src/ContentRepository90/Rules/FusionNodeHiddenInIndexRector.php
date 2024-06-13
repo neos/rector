@@ -26,11 +26,11 @@ class FusionNodeHiddenInIndexRector implements FusionRectorInterface
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
-                '/\.hiddenInIndex/',
+                '/\.hiddenInIndex$/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.property(\'hiddenInIndex\'). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(
-                '/\.property\\((\'|")_hiddenInIndex(\'|")\\)/',
+                '/\.property\([^)]+_hiddenInIndex[^)]+\)/',
                 '.property(\'hiddenInIndex\')',
                 $eelExpression
             )
