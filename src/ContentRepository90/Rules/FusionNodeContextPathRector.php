@@ -21,12 +21,12 @@ class FusionNodeContextPathRector implements FusionRectorInterface
     {
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
-                '/(node|documentNode|site)\.contextPath/',
-                'Neos.Node.serializedNodeAddress($1)',
+                '/(node|documentNode|site)\.contextPath([^\w(]|$)/',
+                'Neos.Node.serializedNodeAddress($1)$2',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
-                '/\.contextPath/',
+                '/\.contextPath([^\w(]|$)/',
                 '// TODO 9.0 migration: Line %LINE: !! You very likely need to rewrite "VARIABLE.contextPath" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(
