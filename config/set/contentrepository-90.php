@@ -72,6 +72,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenBeforeDateTimeRector;
 use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;
 use Neos\Rector\Generic\ValueObject\FusionPrototypeNameReplacement;
 use Neos\Rector\Generic\ValueObject\FusionPrototypeNameAddComment;
+use Neos\Rector\ContentRepository90\Rules\ContentRepositoryUtilityRenderValidNodeNameRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -394,12 +395,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FusionPrototypeNameAddComment('Neos.Fusion:Attributes', 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in Neos.Fusion:Tag')
     ]);
 
-    $rectorConfig->ruleWithConfiguration(RenameStaticMethodRector::class, [new RenameStaticMethod(
-        \Neos\ContentRepository\Utility::class,
-        'renderValidNodeName',
-        \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
-        'transliterateFromString'
-    )]);
+    $rectorConfig->rule(ContentRepositoryUtilityRenderValidNodeNameRector::class);
 
     /**
      * SPECIAL rules
