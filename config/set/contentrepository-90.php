@@ -86,24 +86,24 @@ return static function (RectorConfig $rectorConfig): void {
 
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
-        'Neos\\ContentRepository\\\Domain\\Model\\Node' => NodeLegacyStub::class,
-        'Neos\\ContentRepository\\Domain\\Model\\NodeInterface' => NodeLegacyStub::class,
-        'Neos\\ContentRepository\\Domain\\Projection\\Content\\NodeInterface' => NodeLegacyStub::class,
-        'Neos\\ContentRepository\\Domain\\Projection\\Content\\TraversableNodeInterface' => NodeLegacyStub::class,
-        'Neos\\ContentRepository\\Domain\\Projection\\Content\\TraversableNodes' => \Neos\ContentRepository\Core\Projection\ContentGraph\Nodes::class,
+        \Neos\ContentRepository\Domain\Model\Node::class => NodeLegacyStub::class,
+        \Neos\ContentRepository\Domain\Model\NodeInterface::class => NodeLegacyStub::class,
+        \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class => NodeLegacyStub::class,
+        \Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface::class => NodeLegacyStub::class,
+        \Neos\ContentRepository\Domain\Projection\Content\TraversableNodes::class => \Neos\ContentRepository\Core\Projection\ContentGraph\Nodes::class,
 
-        'Neos\ContentRepository\Domain\Service\Context' => LegacyContextStub::class,
-        'Neos\Neos\Domain\Service\ContentContext' => LegacyContextStub::class,
+        \Neos\ContentRepository\Domain\Service\Context::class => LegacyContextStub::class,
+        \Neos\Neos\Domain\Service\ContentContext::class => LegacyContextStub::class,
 
-        'Neos\ContentRepository\Domain\Model\NodeType' => \Neos\ContentRepository\Core\NodeType\NodeType::class,
-        'Neos\ContentRepository\Domain\Service\NodeTypeManager' => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
+        \Neos\ContentRepository\Domain\Model\NodeType::class => \Neos\ContentRepository\Core\NodeType\NodeType::class,
+        \Neos\ContentRepository\Domain\Service\NodeTypeManager::class => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
 
-        'Neos\ContentRepository\Domain\Model\Workspace' => \Neos\ContentRepository\Core\Projection\Workspace\Workspace::class,
-        'Neos\\ContentRepository\\Domain\\NodeAggregate\\NodeAggregateIdentifier' => \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class,
-        'Neos\\ContentRepository\\Domain\\NodeAggregate\\NodeName' => \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
-        'Neos\\ContentRepository\\Domain\\NodeType\\NodeTypeName' => \Neos\ContentRepository\Core\NodeType\NodeTypeName::class,
-        'Neos\\ContentRepository\\Domain\\Projection\\Content\\PropertyCollectionInterface' => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
-        'Neos\\ContentRepository\\Domain\\Model\\ArrayPropertyCollection' => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
+        \Neos\ContentRepository\Domain\Model\Workspace::class => \Neos\ContentRepository\Core\Projection\Workspace\Workspace::class,
+        \Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class,
+        \Neos\ContentRepository\Domain\NodeAggregate\NodeName::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
+        \Neos\ContentRepository\Domain\NodeType\NodeTypeName::class => \Neos\ContentRepository\Core\NodeType\NodeTypeName::class,
+        \Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
+        \Neos\ContentRepository\Domain\Model\ArrayPropertyCollection::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
     ]);
 
     $rectorConfig->ruleWithConfiguration(FusionReplacePrototypeNameRector::class, [
