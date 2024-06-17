@@ -21,12 +21,12 @@ class FusionNodePathRector implements FusionRectorInterface
     {
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
-                '/(node|documentNode|site)\.path([^\w(]|$)/',
-                'Neos.Node.path($1)$2',
+                '/(node|documentNode|site)\.path\b(?!\.|\()/',
+                'Neos.Node.path($1)',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
-                '/\.path([^\w(]|$)/',
+                '/\.path\b(?!\.|\()/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.path" to Neos.Node.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(

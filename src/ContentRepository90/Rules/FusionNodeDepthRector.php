@@ -21,12 +21,12 @@ class FusionNodeDepthRector implements FusionRectorInterface
     {
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
-                '/([a-zA-Z.]+)?(site|node|documentNode)\.depth([^\w(]|$)/',
-                'Neos.Node.depth($1$2)$3',
+                '/([a-zA-Z.]+)?(site|node|documentNode)\.depth\b(?!\.|\()/',
+                'Neos.Node.depth($1$2)',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
-                '/\.depth([^\w(]|$)/',
+                '/\.depth\b(?!\.|\()/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.depth" to Neos.Node.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(

@@ -21,12 +21,12 @@ class FusionNodeHiddenInIndexRector implements FusionRectorInterface
     {
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
-                '/(node|documentNode|site)\.hiddenInIndex([^\w(]|$)/',
-                '$1.property(\'hiddenInIndex\')$2',
+                '/(node|documentNode|site)\.hiddenInIndex\b(?!\.|\()/',
+                '$1.property(\'hiddenInIndex\')',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
-                '/\.hiddenInIndex([^\w(]|$)/',
+                '/\.hiddenInIndex\b(?!\.|\()/',
                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.property(\'hiddenInIndex\'). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(
