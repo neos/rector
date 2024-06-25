@@ -48,6 +48,6 @@ final class NodeIsHiddenInIndexRector extends AbstractRector
             return null;
         }
 
-        return $this->nodeFactory->createMethodCall($node->var, 'getProperty', ['_hiddenInIndex']);
+        return $this->nodeFactory->createMethodCall($node->var, 'getProperty', ['hiddenInMenu']);
     }
 }

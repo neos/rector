@@ -20,7 +20,7 @@ class SomeClass
 {
     public function run(NodeLegacyStub $node)
     {
-        return $node->getProperty('_hiddenInIndex');
+        return $node->getProperty('hiddenInMenu');
     }
 }
 
