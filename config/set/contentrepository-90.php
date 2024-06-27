@@ -25,6 +25,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeContextPathRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeNodeTypeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeParentRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodePathRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector;
@@ -152,7 +153,9 @@ return static function (RectorConfig $rectorConfig): void {
     // setNodeType
     // getNodeType: NodeType
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeType', 'nodeType');
-    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_nodeType', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_nodeType")" to "VARIABLE.nodeType". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+    // Fusion: node.nodeType -> Neos.Node.getNodeType(node)
+    // Fusion: node.nodeType.name -> q(node).nodeTypeName()
+    $rectorConfig->rule(FusionNodeNodeTypeRector::class);
     // setHidden
     // isHidden
     $rectorConfig->rule(NodeIsHiddenRector::class);
