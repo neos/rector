@@ -25,6 +25,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeContextPathRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeLabelRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeParentRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodePathRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector;
@@ -134,8 +135,8 @@ return static function (RectorConfig $rectorConfig): void {
     // getName
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getName', 'nodeName');
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_name', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_name")" to "VARIABLE.nodeName.value". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
-    // getLabel -> compatible with ES CR node (nothing to do)
-    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_label', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_label")" to "VARIABLE.label". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+    // getLabel
+    $rectorConfig->rule(FusionNodeLabelRector::class);
     // setProperty
     // hasProperty -> compatible with ES CR Node (nothing to do)
     // getProperty -> compatible with ES CR Node (nothing to do)
