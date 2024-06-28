@@ -8,6 +8,7 @@ use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 use Neos\Rector\ContentRepository90\Rules\ContentDimensionCombinatorGetAllAllowedCombinationsRector;
+use Neos\Rector\ContentRepository90\Rules\ContentRepositoryUtilityRenderValidNodeNameRector;
 use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetCurrentRenderingModeRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
@@ -23,9 +24,12 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeAutoCreatedRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeContextPathRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenAfterDateTimeRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenBeforeDateTimeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeLabelRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeNodeTypeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeParentRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodePathRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector;
@@ -50,6 +54,7 @@ use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\FusionPrototypeNameAddCommentRector;
+use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;
 use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
@@ -57,23 +62,17 @@ use Neos\Rector\Generic\Rules\ToStringToMethodCallOrPropertyFetchRector;
 use Neos\Rector\Generic\ValueObject\AddInjection;
 use Neos\Rector\Generic\ValueObject\FusionFlowQueryNodePropertyToWarningComment;
 use Neos\Rector\Generic\ValueObject\FusionNodePropertyPathToWarningComment;
+use Neos\Rector\Generic\ValueObject\FusionPrototypeNameAddComment;
+use Neos\Rector\Generic\ValueObject\FusionPrototypeNameReplacement;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Neos\Rector\Generic\ValueObject\RemoveParentClass;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
-use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
-use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
 use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
-use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenAfterDateTimeRector;
-use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenBeforeDateTimeRector;
-use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;
-use Neos\Rector\Generic\ValueObject\FusionPrototypeNameReplacement;
-use Neos\Rector\Generic\ValueObject\FusionPrototypeNameAddComment;
-use Neos\Rector\ContentRepository90\Rules\ContentRepositoryUtilityRenderValidNodeNameRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // Register FusionFileProcessor. All Fusion Rectors will be auto-registered at this processor.
@@ -153,7 +152,9 @@ return static function (RectorConfig $rectorConfig): void {
     // setNodeType
     // getNodeType: NodeType
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeType', 'nodeType');
-    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_nodeType', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_nodeType")" to "VARIABLE.nodeType". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+    // Fusion: node.nodeType -> Neos.Node.getNodeType(node)
+    // Fusion: node.nodeType.name -> q(node).nodeTypeName()
+    $rectorConfig->rule(FusionNodeNodeTypeRector::class);
     // setHidden
     // isHidden
     $rectorConfig->rule(NodeIsHiddenRector::class);
