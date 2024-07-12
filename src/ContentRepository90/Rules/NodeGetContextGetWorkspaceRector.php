@@ -7,8 +7,8 @@ namespace Neos\Rector\ContentRepository90\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class NodeGetContextGetWorkspaceRector extends AbstractRector
@@ -16,7 +16,7 @@ final class NodeGetContextGetWorkspaceRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
+
     )
     {
     }
@@ -56,17 +56,17 @@ final class NodeGetContextGetWorkspaceRector extends AbstractRector
         }
 
         $nodeVar = $node->var->var;
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::assign(
-                    'contentRepository',
-                    $this->this_contentRepositoryRegistry_get(
-                        $this->node_subgraphIdentity_contentRepositoryId($nodeVar)
-                    )
-                )
-            ],
-            $node
-        );
+//        $this->nodesToAddCollector->addNodesBeforeNode(
+//            [
+//                self::assign(
+//                    'contentRepository',
+//                    $this->this_contentRepositoryRegistry_get(
+//                        $this->node_subgraphIdentity_contentRepositoryId($nodeVar)
+//                    )
+//                )
+//            ],
+//            $node
+//        );
 
         return $this->contentRepository_getWorkspaceFinder_findOneByCurrentContentStreamId(
             $this->node_subgraphIdentity_contentStreamId($nodeVar)
