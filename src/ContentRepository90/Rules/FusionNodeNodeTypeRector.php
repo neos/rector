@@ -25,7 +25,7 @@ class FusionNodeNodeTypeRector implements FusionRectorInterface
                 $eelExpression
             ))
             ->process(fn(string $eelExpression) => preg_replace(
-                '/(node|documentNode|site)\.nodeType/',
+                '/(node|documentNode|site)\.nodeType\b/',
                 'Neos.Node.getNodeType($1)',
                 $eelExpression
             ))
@@ -34,7 +34,7 @@ class FusionNodeNodeTypeRector implements FusionRectorInterface
                 '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.nodeType" to "Neos.Node.getNodeType(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(
-                '/\.property\\((\'|")_nodeType.name(\'|")\\)/',
+                '/\.property\\((\'|")_nodeType\.name(\'|")\\)/',
                 '.nodeTypeName()',
                 $eelExpression
             ))
