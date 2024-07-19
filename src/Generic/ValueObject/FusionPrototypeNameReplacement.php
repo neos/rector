@@ -8,7 +8,8 @@ class FusionPrototypeNameReplacement
     public function __construct(
         public readonly string $oldName,
         public readonly string $newName,
-        public readonly ?string $comment = null
+        public readonly ?string $comment = null,
+        public readonly bool $skipPrototypeDefinitions = false,
     ) {
     }
 }
