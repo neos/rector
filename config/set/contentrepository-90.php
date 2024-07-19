@@ -393,9 +393,12 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos.Fusion:Attributes
      */
     $rectorConfig->ruleWithConfiguration(FusionPrototypeNameAddCommentRector::class, [
-        new FusionPrototypeNameAddComment('Neos.Neos:PrimaryContent', 'TODO 9.0 migration: You need to refactor "Neos.Neos:PrimaryContent" to use "Neos.Neos:ContentCollection" instead.'),
         new FusionPrototypeNameAddComment('Neos.Fusion:Attributes', 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in Neos.Fusion:Tag')
     ]);
+    $rectorConfig->ruleWithConfiguration(FusionReplacePrototypeNameRector::class, [
+        new FusionPrototypeNameReplacement('Neos.Neos:PrimaryContent', 'Neos.Neos:ContentCollection', 'TODO 9.0 migration: bla bla', true),
+    ]);
+
 
     $rectorConfig->rule(ContentRepositoryUtilityRenderValidNodeNameRector::class);
 
