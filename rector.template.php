@@ -7,7 +7,8 @@ use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->sets([
-        NeosRectorSets::CONTENTREPOSITORY_9_0
+        NeosRectorSets::CONTENTREPOSITORY_9_0,
+        //NeosRectorSets::NEOS_8_4,
     ]);
 
     $rectorConfig->paths([
