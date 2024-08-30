@@ -10,8 +10,8 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class NodeTypeManagerAccessRector extends AbstractRector
@@ -19,7 +19,7 @@ final class NodeTypeManagerAccessRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
+
     )
     {
     }
@@ -47,15 +47,15 @@ final class NodeTypeManagerAccessRector extends AbstractRector
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::withTodoComment(
-                    'Make this code aware of multiple Content Repositories.',
-                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
-                )
-            ],
-            $node
-        );
+//        $this->nodesToAddCollector->addNodesBeforeNode(
+//            [
+//                self::withTodoComment(
+//                    'Make this code aware of multiple Content Repositories.',
+//                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
+//                )
+//            ],
+//            $node
+//        );
 
         return $this->contentRepository_getNodeTypeManager();
     }

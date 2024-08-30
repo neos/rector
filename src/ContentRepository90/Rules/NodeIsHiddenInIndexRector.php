@@ -8,8 +8,7 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class NodeIsHiddenInIndexRector extends AbstractRector
@@ -17,7 +16,6 @@ final class NodeIsHiddenInIndexRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
     )
     {
     }

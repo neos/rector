@@ -10,7 +10,7 @@ use Neos\Rector\Core\FusionProcessing\FusionParser\Exception\ParserException;
 use Neos\Rector\Core\FusionProcessing\FusionRectorInterface;
 use Neos\Rector\Core\FusionProcessing\Helper\RegexCommentTemplatePair;
 use Neos\Rector\Utility\CodeSampleLoader;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 use Neos\Rector\Generic\ValueObject\FusionFlowQueryNodePropertyToWarningComment;
