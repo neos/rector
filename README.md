@@ -8,11 +8,13 @@ Right now we focus especially on rules to migrate from the old Content Repositor
 Event Sourced Content Repository (>= 9.0).
 
 ## Installation
+As Rector has strict dependency requirements, which might not match your own project, we strongly recommend to install 
+neos/rector in a dedicated directory and not to add it to your project.
 
 ```bash
 # inside your Distribution folder
-composer require --dev neos/rector:dev-main
-cp Packages/Libraries/neos/rector/rector.template.php rector.php
+composer create-project neos/rector:dev-main --stability=dev rector
+cp rector/rector.template.php rector.php
 ```
 
 ## Configuration
@@ -31,11 +33,12 @@ Run the following command at the root of your distribution (i.e. where `rector.p
 
 ```bash
 # for trying out what would be done
-./bin/rector --dry-run
+./rector/vendor/bin/rector --dry-run
 
 # for running the migrations
-./bin/rector
+./rector/vendor/bin/rector
 ```
+---
 
 # Developing Rector Rules for Neos
 
@@ -45,7 +48,7 @@ Run the following command at the root of your distribution (i.e. where `rector.p
 
 Make sure to run Rector with the `--clear-cache` flag while developing rules, when you run them on a full codebase.
 
-Otherwise, 
+Otherwise, ...
 
 ## Running Tests
 
@@ -55,7 +58,7 @@ The test setup runs completely local; does not need *any* Distribution set up.
 
 ```bash
 # if inside a Neos Distribution, change to the Package's folder
-cd Packages/Libraries/neos/rector
+cd rector
 
 # install PHPunit 
 composer install
@@ -99,12 +102,12 @@ To create/update this patch, do the following:
 cd Packages/Neos
 
 # apply the current patch
-patch -p1 < ../Libraries/neos/rector/scripts/afx-eel-positions.patch
+patch -p1 < ../../rector/scripts/afx-eel-positions.patch
 
 # Now, do your modifications as needed.
 
 # when you are finished, create the new patch 
-git diff -- Neos.Fusion.Afx/ > ../Libraries/neos/rector/scripts/afx-eel-positions.patch
+git diff -- Neos.Fusion.Afx/ > ../../rector/scripts/afx-eel-positions.patch
 
 # ... and reset the code changes inside Neos.Fusion.Afx.
 git restore -- Neos.Fusion.Afx/
