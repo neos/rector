@@ -17,7 +17,6 @@ trait AllTraits
     use FunctionsTrait;
 
     use ContentRepositoryTrait;
-    use NodeHiddenStateFinderTrait;
     use NodeTrait;
     use SubgraphTrait;
     use ThisTrait;
