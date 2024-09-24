@@ -37,7 +37,7 @@ class FusionReplacePrototypeNameRector implements FusionRectorInterface, Configu
             $fileContent = preg_replace($pattern, $replacement, $fileContent, count: $replacementCount);
 
             if($replacementCount > 0 &&  $fusionPrototypeNameReplacement->comment !== null) {
-                $comments[] = '// TODO 9.0 migration:' . $fusionPrototypeNameReplacement->comment;
+                $comments[] = '// TODO 9.0 migration: ' . $fusionPrototypeNameReplacement->comment;
             }
         }
 

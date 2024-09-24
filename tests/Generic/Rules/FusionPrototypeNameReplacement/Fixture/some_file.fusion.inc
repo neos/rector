@@ -16,8 +16,8 @@ prototype(Neos.Neos:SomethingOld)  < prototype(Neos.Neos:Raw) {
     }
 }
 -----
-// TODO 9.0 migration:Neos.Neos:Raw: This comment should be added on top of the file.
-// TODO 9.0 migration:Neos.Neos:SomethingOlder: This comment should be added on top of the file.
+// TODO 9.0 migration: Neos.Neos:Raw: This comment should be added on top of the file.
+// TODO 9.0 migration: Neos.Neos:SomethingOlder: This comment should be added on top of the file.
 prototype(Neos.Neos:SomethingNew)  < prototype(Neos.Neos:NewRaw) {
 
     raw = Neos.Neos:NewRaw
