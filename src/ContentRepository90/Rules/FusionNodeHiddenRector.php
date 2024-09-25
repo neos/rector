@@ -33,7 +33,10 @@ class FusionNodeHiddenRector implements FusionRectorInterface
                 '/q\(([^)]+)\)\.property\([\'"]_hidden[\'"]\)/',
                 'Neos.Node.isDisabled($1)',
                 $eelExpression
-            )
+            ))
+            ->addCommentsIfRegexMatches(
+                '/\.property\([\'"]_hidden[\'"]\)/',
+                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "q(VARIABLE).property(\'_hidden\')" to Neos.Node.isDisabled(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
 }
