@@ -27,6 +27,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenAfterDateTimeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenBeforeDateTimeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector;
+use Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeLabelRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeNodeTypeRector;
@@ -158,7 +159,7 @@ return static function (RectorConfig $rectorConfig): void {
     // setHidden
     // isHidden
     $rectorConfig->rule(NodeIsHiddenRector::class);
-    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_hidden', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_hidden")". Use the NodeHiddenStateFinder of CR to determine the hidden state. ');
+    $rectorConfig->rule(FusionNodeHiddenRector::class);
     // TODO: Fusion NodeAccess
     // setHiddenBeforeDateTime
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
