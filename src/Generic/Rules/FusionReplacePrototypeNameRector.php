@@ -28,12 +28,16 @@ class FusionReplacePrototypeNameRector implements FusionRectorInterface, Configu
         $comments = [];
         foreach ($this->fusionPrototypeNameReplacements as $fusionPrototypeNameReplacement) {
             $replacementCount = 0;
-            $pattern = '/(^|[=\s\(<\/])(' .$fusionPrototypeNameReplacement->oldName. ')([\s\{\)\/>]|$)/';
+            if ($fusionPrototypeNameReplacement->skipPrototypeDefinitions) {
+                $pattern = '/(^|[=\s<\/])(' .$fusionPrototypeNameReplacement->oldName. ')([\s{\/>]|$)/';
+            } else {
+                $pattern = '/(^|[=\s(<\/])(' .$fusionPrototypeNameReplacement->oldName. ')([\s{)\/>]|$)/';
+            }
             $replacement = '$1'.$fusionPrototypeNameReplacement->newName.'$3';
             $fileContent = preg_replace($pattern, $replacement, $fileContent, count: $replacementCount);
 
             if($replacementCount > 0 &&  $fusionPrototypeNameReplacement->comment !== null) {
-                $comments[] = '// TODO 9.0 migration:' . $fusionPrototypeNameReplacement->comment;
+                $comments[] = '// TODO 9.0 migration: ' . $fusionPrototypeNameReplacement->comment;
             }
         }
 

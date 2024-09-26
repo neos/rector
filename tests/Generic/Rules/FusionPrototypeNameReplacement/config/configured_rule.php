@@ -21,5 +21,7 @@ return static function (RectorConfig $rectorConfig) : void {
         new FusionPrototypeNameReplacement('Neos.Neos:NotExisting', 'Neos.Neos:NewNotExisting', 'Neos.Neos:NotExisting: This comment should NOT be added on top of the file.'),
         new FusionPrototypeNameReplacement('Neos.Neos:SomethingOld', 'Neos.Neos:SomethingNew'),
         new FusionPrototypeNameReplacement('Neos.Neos:SomethingOlder', 'Neos.Neos:SomethingNewer', 'Neos.Neos:SomethingOlder: This comment should be added on top of the file.'),
+        new FusionPrototypeNameReplacement('Neos.Neos:Foo', 'Neos.Neos:FooReplaced', 'Neos.Neos:FooReplaced: This comment should be added on top of the file.', true),
+        new FusionPrototypeNameReplacement('Neos.Neos:Bar', 'Neos.Neos:BarReplaced', 'Neos.Neos:BarReplaced: This comment should be added on top of the file.', true),
     ]);
 };
