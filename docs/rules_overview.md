@@ -1,4 +1,4 @@
-# 34 Rules Overview
+# 57 Rules Overview
 
 ## ContentDimensionCombinatorGetAllAllowedCombinationsRector
 
@@ -36,6 +36,19 @@
 
 <br>
 
+## ContentRepositoryUtilityRenderValidNodeNameRector
+
+Replaces Utility::renderValidNodeName(...) into NodeName::fromString(...)->value.
+
+- class: [`Neos\Rector\ContentRepository90\Rules\ContentRepositoryUtilityRenderValidNodeNameRector`](../src/ContentRepository90/Rules/ContentRepositoryUtilityRenderValidNodeNameRector.php)
+
+```diff
+-\Neos\ContentRepository\Utility::renderValidNodeName('foo');
++\Neos\ContentRepository\Core\SharedModel\Node\NodeName::fromString('foo')->value;
+```
+
+<br>
+
 ## ContextFactoryToLegacyContextStubRector
 
 `"ContextFactory::create()"` will be rewritten.
@@ -65,6 +78,31 @@
 -  public function run2(): Neos\Neos\Domain\Service\ContentContext {
 +  public function run2(): \Neos\Rector\ContentRepository90\Legacy\LegacyContextStub {
    }
+ }
+
+ ?>
+```
+
+<br>
+
+## ContextGetCurrentRenderingModeRector
+
+`"ContentContext::getCurrentRenderingMode()"` will be replaced with `RenderingModeService::findByCurrentUser().`
+
+- class: [`Neos\Rector\ContentRepository90\Rules\ContextGetCurrentRenderingModeRector`](../src/ContentRepository90/Rules/ContextGetCurrentRenderingModeRector.php)
+
+```diff
+ <?php
+
+ class SomeClass
+ {
++    #[\Neos\Flow\Annotations\Inject]
++    protected \Neos\Neos\Domain\Service\RenderingModeService $renderingModeService;
+     public function run(\Neos\Rector\ContentRepository90\Legacy\LegacyContextStub $context)
+     {
+-        $renderingMode = $context->getCurrentRenderingMode();
++        $renderingMode = $this->renderingModeService->findByCurrentUser();
+     }
  }
 
  ?>
@@ -125,6 +163,64 @@
 
 <br>
 
+## ContextIsInBackendRector
+
+`"ContentContext::isLive()"` will be replaced with `RenderingModeService::findByCurrentUser().`
+
+- class: [`Neos\Rector\ContentRepository90\Rules\ContextIsInBackendRector`](../src/ContentRepository90/Rules/ContextIsInBackendRector.php)
+
+```diff
+ <?php
+
+ class SomeClass
+ {
++    #[\Neos\Flow\Annotations\Inject]
++    protected \Neos\Neos\Domain\Service\RenderingModeService $renderingModeService;
+     public function run(\Neos\Rector\ContentRepository90\Legacy\LegacyContextStub $context)
+     {
+-        $isInBackend = $context->isInBackend();
+-        if ($context->isInBackend() && $foo == 'bar') {
++        $isInBackend = $this->renderingModeService->findByCurrentUser()->isEdit;
++        if ($this->renderingModeService->findByCurrentUser()->isEdit && $foo == 'bar') {
+             return true;
+         }
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## ContextIsLiveRector
+
+`"ContentContext::isLive()"` will be replaced with `RenderingModeService::findByCurrentUser().`
+
+- class: [`Neos\Rector\ContentRepository90\Rules\ContextIsLiveRector`](../src/ContentRepository90/Rules/ContextIsLiveRector.php)
+
+```diff
+ <?php
+
+ class SomeClass
+ {
++    #[\Neos\Flow\Annotations\Inject]
++    protected \Neos\Neos\Domain\Service\RenderingModeService $renderingModeService;
+     public function run(\Neos\Rector\ContentRepository90\Legacy\LegacyContextStub $context)
+     {
+-        $isLive = $context->isLive();
+-        if ($context->isLive() && $foo == 'bar') {
++        $isLive = !$this->renderingModeService->findByCurrentUser()->isEdit && !$this->renderingModeService->findByCurrentUser()->isPreview;
++        if (!$this->renderingModeService->findByCurrentUser()->isEdit && !$this->renderingModeService->findByCurrentUser()->isPreview && $foo == 'bar') {
+             return true;
+         }
+     }
+ }
+
+ ?>
+```
+
+<br>
+
 ## FusionCachingNodeInEntryIdentifierRector
 
 Fusion: Rewrite node to Neos.Caching.entryIdentifierForNode(...) in @cache.entryIdentifier segments
@@ -154,9 +250,48 @@ Fusion: Rewrite node to Neos.Caching.entryIdentifierForNode(...) in @cache.entry
 
 <br>
 
+## FusionContextCurrentRenderingModeRector
+
+Fusion: Rewrite node.context.currentRenderingMode... to renderingMode...
+
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionContextCurrentRenderingModeRector`](../src/ContentRepository90/Rules/FusionContextCurrentRenderingModeRector.php)
+
+```diff
++// TODO 9.0 migration: Line 9: You very likely need to rewrite "VARIABLE.context.currentRenderingMode..." to "renderingMode...". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
+
+   renderer = Neos.Fusion:Component {
+
+-    nodeAttributes = ${node.context.currentRenderingMode.edit || node.context.currentRenderingMode.preview || node.context.currentRenderingMode.title || node.context.currentRenderingMode.name || node.context.currentRenderingMode.fusionPath || node.context.currentRenderingMode.options['foo']}
+-    siteAttributes = ${site.context.currentRenderingMode.edit || site.context.currentRenderingMode.preview || site.context.currentRenderingMode.title || site.context.currentRenderingMode.name || site.context.currentRenderingMode.fusionPath || site.context.currentRenderingMode.options['foo']}
+-    documentNodeAttributes = ${documentNode.context.currentRenderingMode.edit || documentNode.context.currentRenderingMode.preview || documentNode.context.currentRenderingMode.title || documentNode.context.currentRenderingMode.name || documentNode.context.currentRenderingMode.fusionPath || documentNode.context.currentRenderingMode.options['foo']}
++    nodeAttributes = ${renderingMode.isEdit || renderingMode.isPreview || renderingMode.title || renderingMode.name || renderingMode.fusionPath || renderingMode.options['foo']}
++    siteAttributes = ${renderingMode.isEdit || renderingMode.isPreview || renderingMode.title || renderingMode.name || renderingMode.fusionPath || renderingMode.options['foo']}
++    documentNodeAttributes = ${renderingMode.isEdit || renderingMode.isPreview || renderingMode.title || renderingMode.name || renderingMode.fusionPath || renderingMode.options['foo']}
+     other = ${other.context.currentRenderingMode.edit || other.context.currentRenderingMode.preview || other.context.currentRenderingMode.title || other.context.currentRenderingMode.name || other.context.currentRenderingMode.fusionPath || other.context.currentRenderingMode.options['foo']}
+
+     renderer = afx`
+       <input
+         type="checkbox"
+-        name={node.context.currentRenderingMode.name}
+-        value={node.context.currentRenderingMode.title}
+-        checked={node.context.currentRenderingMode.edit}
+-        {...node.context.currentRenderingMode.options}
++        name={renderingMode.name}
++        value={renderingMode.title}
++        checked={renderingMode.isEdit}
++        {...renderingMode.options}
+       />
+     `
+   }
+ }
+```
+
+<br>
+
 ## FusionContextCurrentSiteRector
 
-Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)
+Fusion: Rewrite node.context.currentSite to Neos.Site.findBySiteNode(site)
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionContextCurrentSiteRector`](../src/ContentRepository90/Rules/FusionContextCurrentSiteRector.php)
 
@@ -183,12 +318,12 @@ Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)
 
 ## FusionContextInBackendRector
 
-Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)
+Fusion: Rewrite "node.context.inBackend" to "renderingMode.isEdit"
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector`](../src/ContentRepository90/Rules/FusionContextInBackendRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 26: You very likely need to rewrite "VARIABLE.context.inBackend" to Neos.Node.inBackend(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 26: You very likely need to rewrite "VARIABLE.context.inBackend" to "renderingMode.isEdit". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
    renderer = Neos.Fusion:Component {
@@ -197,7 +332,7 @@ Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)
      # pass down props
      #
 -    attributes = ${node.context.inBackend || site.context.inBackend || documentNode.context.inBackend}
-+    attributes = ${Neos.Node.inBackend(node) || Neos.Node.inBackend(site) || Neos.Node.inBackend(documentNode)}
++    attributes = ${renderingMode.isEdit || renderingMode.isEdit || renderingMode.isEdit}
 
      #
      # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -214,11 +349,11 @@ Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)
        <input
          type="checkbox"
 -        name={node.context.inBackend}
-+        name={Neos.Node.inBackend(node)}
++        name={renderingMode.isEdit}
          value={someOtherVariable.context.inBackend}
          checked={props.checked}
 -        {...node.context.inBackend}
-+        {...Neos.Node.inBackend(node)}
++        {...renderingMode.isEdit}
        />
      `
    }
@@ -229,12 +364,12 @@ Fusion: Rewrite node.context.inBackend to Neos.Node.inBackend(...)
 
 ## FusionContextLiveRector
 
-Fusion: Rewrite node.context.live to Neos.Node.isLive(...)
+Fusion: Rewrite "node.context.live" to "!renderingMode.isEdit"
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector`](../src/ContentRepository90/Rules/FusionContextLiveRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 26: You very likely need to rewrite "VARIABLE.context.live" to Neos.Node.isLive(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 26: You very likely need to rewrite "VARIABLE.context.live" to "!renderingMode.isEdit". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
    renderer = Neos.Fusion:Component {
@@ -243,7 +378,7 @@ Fusion: Rewrite node.context.live to Neos.Node.isLive(...)
      # pass down props
      #
 -    attributes = ${node.context.live || site.context.live || documentNode.context.live}
-+    attributes = ${Neos.Node.isLive(node) || Neos.Node.isLive(site) || Neos.Node.isLive(documentNode)}
++    attributes = ${!renderingMode.isEdit || !renderingMode.isEdit || !renderingMode.isEdit}
 
      #
      # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -260,11 +395,11 @@ Fusion: Rewrite node.context.live to Neos.Node.isLive(...)
        <input
          type="checkbox"
 -        name={node.context.live}
-+        name={Neos.Node.isLive(node)}
++        name={!renderingMode.isEdit}
          value={someOtherVariable.context.live}
          checked={props.checked}
 -        {...node.context.live}
-+        {...Neos.Node.isLive(node)}
++        {...!renderingMode.isEdit}
        />
      `
    }
@@ -273,9 +408,61 @@ Fusion: Rewrite node.context.live to Neos.Node.isLive(...)
 
 <br>
 
+## FusionFlowQueryNodePropertyToWarningCommentRector
+
+Fusion: Adds a warning comment when the defined property is used within an FlowQuery `"property()".`
+
+:wrench: **configure it!**
+
+- class: [`Neos\Rector\Generic\Rules\FusionFlowQueryNodePropertyToWarningCommentRector`](../src/Generic/Rules/FusionFlowQueryNodePropertyToWarningCommentRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Neos\Rector\Generic\Rules\FusionFlowQueryNodePropertyToWarningCommentRector;
+use Neos\Rector\Generic\ValueObject\FusionFlowQueryNodePropertyToWarningComment;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => FusionFlowQueryNodePropertyToWarningCommentRector::class,
+            'configuration' => [
+                new FusionFlowQueryNodePropertyToWarningComment('_autoCreated', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_autoCreated")" to "VARIABLE.classification.tethered". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'),
+            ],
+        ],
+    ]);
+};
+```
+
+↓
+
+```diff
++// TODO 9.0 migration: Line 11: !! You very likely need to rewrite "q(VARIABLE).property("_autoCreated")" to "VARIABLE.classification.tethered". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 12: !! You very likely need to rewrite "q(VARIABLE).property("_autoCreated")" to "VARIABLE.classification.tethered". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 13: !! You very likely need to rewrite "q(VARIABLE).property("_autoCreated")" to "VARIABLE.classification.tethered". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 11: !! You very likely need to rewrite "q(VARIABLE).property("_contextPath")" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 12: !! You very likely need to rewrite "q(VARIABLE).property("_contextPath")" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 13: !! You very likely need to rewrite "q(VARIABLE).property("_contextPath")" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
+
+   renderer = Neos.Fusion:Component {
+
+     attributes = ${q(node).property('_autoCreated') || q(site).property("_contextPath")}
+     attributes2 = ${q(site).property('_autoCreated') || q(site).property("_contextPath")}
+     attributes3 = ${q(node).parent().property('_autoCreated') || q(node).parent().property("_contextPath")}
+
+   }
+ }
+```
+
+<br>
+
 ## FusionNodeAggregateIdentifierRector
 
-Fusion: Rewrite node.nodeAggregateIdentifier to node.nodeAggregateId.value
+Fusion: Rewrite node.nodeAggregateIdentifier to `q(node).id()`
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector`](../src/ContentRepository90/Rules/FusionNodeAggregateIdentifierRector.php)
 
@@ -289,14 +476,14 @@ Fusion: Rewrite node.nodeAggregateIdentifier to node.nodeAggregateId.value
      # pass down props
      #
 -    attributes = ${node.nodeAggregateIdentifier || documentNode.nodeAggregateIdentifier}
-+    attributes = ${node.nodeAggregateId.value || documentNode.nodeAggregateId.value}
++    attributes = ${q(node).id() || q(documentNode).id()}
      renderer = afx`
        <input
 -        name={node.nodeAggregateIdentifier}
-+        name={node.nodeAggregateId.value}
++        name={q(node).id()}
          value={someOtherVariable.nodeAggregateIdentifier}
 -        {...node.nodeAggregateIdentifier}
-+        {...node.nodeAggregateId.value}
++        {...q(node).id()}
        />
      `
    }
@@ -305,14 +492,112 @@ Fusion: Rewrite node.nodeAggregateIdentifier to node.nodeAggregateId.value
 
 <br>
 
+## FusionNodeAutoCreatedRector
+
+Fusion: Rewrite node.autoCreated to node.classification.tethered
+
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeAutoCreatedRector`](../src/ContentRepository90/Rules/FusionNodeAutoCreatedRector.php)
+
+```diff
++// TODO 9.0 migration: Line 26: !! You very likely need to rewrite "VARIABLE.autoCreated" to "VARIABLE.classification.tethered". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
+
+     renderer = Neos.Fusion:Component {
+
+         #
+         # pass down props
+         #
+-        attributes = ${node.autoCreated || documentNode.autoCreated}
++        attributes = ${node.classification.tethered || documentNode.classification.tethered}
+
+         #
+         # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
+         #
+         checked = false
+         checked.@process.checkMultiValue = ${Array.indexOf(field.getCurrentMultivalueStringified(), field.getTargetValueStringified()) > -1}
+         checked.@process.checkMultiValue.@if.hasValue = ${field.hasCurrentValue()}
+         checked.@process.checkMultiValue.@if.isMultiple = ${field.isMultiple()}
+         checked.@process.checkSingleValue = ${field.getCurrentValueStringified() == field.getTargetValueStringified()}
+         checked.@process.checkSingleValue.@if.hasValue = ${field.hasCurrentValue()}
+         checked.@process.checkSingleValue.@if.isSingle = ${!field.isMultiple()}
+
+         renderer = afx`
+         <input
+                 type="checkbox"
+-                name={node.autoCreated}
++                name={node.classification.tethered}
+                 value={someOtherVariable.autoCreated}
+                 checked={props.checked}
+-                {...node.autoCreated}
++                {...node.classification.tethered}
+         />
+         `
+     }
+ }
+```
+
+<br>
+
+## FusionNodeContextPathRector
+
+Fusion: Rewrite node.contextPath to Neos.Node.serializedNodeAddress(node)
+
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeContextPathRector`](../src/ContentRepository90/Rules/FusionNodeContextPathRector.php)
+
+```diff
++// TODO 9.0 migration: Line 12: !! You very likely need to rewrite "q(VARIABLE).property('_contextPath')" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 28: !! You very likely need to rewrite "VARIABLE.contextPath" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
+
+     renderer = Neos.Fusion:Component {
+
+         #
+         # pass down props
+         #
+-        attributes = ${node.contextPath || documentNode.contextPath || q(node).property('_contextPath') || q(documentNode).property("_contextPath")}
+-        foo = ${q(bar).property('_contextPath') || q(bar).property("_contextPath")}
++        attributes = ${Neos.Node.serializedNodeAddress(node) || Neos.Node.serializedNodeAddress(documentNode) || Neos.Node.serializedNodeAddress(node) || Neos.Node.serializedNodeAddress(documentNode)}
++        foo = ${Neos.Node.serializedNodeAddress(bar) || Neos.Node.serializedNodeAddress(bar)}
+         boo = ${q(nodes).first().property('_contextPath') || q(nodes).first().property("_contextPath")}
+
+         #
+         # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
+         #
+         checked = false
+         checked.@process.checkMultiValue = ${Array.indexOf(field.getCurrentMultivalueStringified(), field.getTargetValueStringified()) > -1}
+         checked.@process.checkMultiValue.@if.hasValue = ${field.hasCurrentValue()}
+         checked.@process.checkMultiValue.@if.isMultiple = ${field.isMultiple()}
+         checked.@process.checkSingleValue = ${field.getCurrentValueStringified() == field.getTargetValueStringified()}
+         checked.@process.checkSingleValue.@if.hasValue = ${field.hasCurrentValue()}
+         checked.@process.checkSingleValue.@if.isSingle = ${!field.isMultiple()}
+
+         renderer = afx`
+         <input
+                 type="checkbox"
+-                name={node.contextPath}
++                name={Neos.Node.serializedNodeAddress(node)}
+                 value={someOtherVariable.contextPath}
+                 checked={props.checked}
+-                {...node.contextPath}
++                {...Neos.Node.serializedNodeAddress(node)}
+         />
+         `
+     }
+ }
+```
+
+<br>
+
 ## FusionNodeDepthRector
 
-Fusion: Rewrite node.depth to Neos.Node.depth(node)
+Fusion: Rewrite node.depth and q(node).property("_depth") to Neos.Node.depth(node)
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeDepthRector`](../src/ContentRepository90/Rules/FusionNodeDepthRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.depth" to Neos.Node.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 13: You may need to rewrite "q(VARIABLE).property('_depth')" to Neos.Node.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 29: You may need to rewrite "VARIABLE.depth" to Neos.Node.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 30: You may need to rewrite "VARIABLE.depth" to Neos.Node.depth(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
    renderer = Neos.Fusion:Component {
@@ -320,8 +605,11 @@ Fusion: Rewrite node.depth to Neos.Node.depth(node)
      #
      # pass down props
      #
--    attributes = ${node.depth || documentNode.depth}
-+    attributes = ${Neos.Node.depth(node) || Neos.Node.depth(documentNode)}
+-    attributes = ${node.depth || documentNode.depth || q(node).property('_depth') || q(documentNode).property("_depth")}
+-    foo = ${q(bar).property('_depth') || q(bar).property("_depth")}
++    attributes = ${Neos.Node.depth(node) || Neos.Node.depth(documentNode) || Neos.Node.depth(node) || Neos.Node.depth(documentNode)}
++    foo = ${Neos.Node.depth(bar) || Neos.Node.depth(bar)}
+     boo = ${q(nodes).first().property('_depth') || q(nodes).first().property("_depth")}
 
      #
      # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -339,7 +627,8 @@ Fusion: Rewrite node.depth to Neos.Node.depth(node)
          type="checkbox"
 -        name={node.depth}
 +        name={Neos.Node.depth(node)}
-         value={someOtherVariable.depth}
+         value={someOtherVariable.depth || something}
+         path={someOtherVariable.depth}
          checked={props.checked}
 -        {...node.depth}
 +        {...Neos.Node.depth(node)}
@@ -351,14 +640,14 @@ Fusion: Rewrite node.depth to Neos.Node.depth(node)
 
 <br>
 
-## FusionNodeHiddenInIndexRector
+## FusionNodeHiddenAfterDateTimeRector
 
-Fusion: Rewrite node.hiddenInIndex to node.properties._hiddenInIndex
+Fusion: Rewrite node.hiddenAfterDateTime to q(node).property("disableAfterDateTime")
 
-- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector`](../src/ContentRepository90/Rules/FusionNodeHiddenInIndexRector.php)
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenAfterDateTimeRector`](../src/ContentRepository90/Rules/FusionNodeHiddenAfterDateTimeRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.properties._hiddenInIndex. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 16: You may need to rewrite "VARIABLE.hiddenAfterDateTime" to q(VARIABLE).property("disableAfterDateTime"). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
    renderer = Neos.Fusion:Component {
@@ -366,8 +655,82 @@ Fusion: Rewrite node.hiddenInIndex to node.properties._hiddenInIndex
      #
      # pass down props
      #
--    attributes = ${node.hiddenInIndex || documentNode.hiddenInIndex || site.hiddenInIndex}
-+    attributes = ${node.properties._hiddenInIndex || documentNode.properties._hiddenInIndex || site.properties._hiddenInIndex}
+-    attributes = ${node.hiddenAfterDateTime || documentNode.hiddenAfterDateTime}
+-    attributes2 = ${q(node).property("_hiddenAfterDateTime")}
++    attributes = ${q(node).property("disableAfterDateTime") || q(documentNode).property("disableAfterDateTime")}
++    attributes2 = ${q(node).property("disableAfterDateTime")}
+
+     renderer = afx`
+       <input
+         type="checkbox"
+-        name={node.hiddenAfterDateTime}
++        name={q(node).property("disableAfterDateTime")}
+         value={someOtherVariable.hiddenAfterDateTime}
+         checked={props.checked}
+-        {...node.hiddenAfterDateTime}
++        {...q(node).property("disableAfterDateTime")}
+       />
+     `
+   }
+ }
+```
+
+<br>
+
+## FusionNodeHiddenBeforeDateTimeRector
+
+Fusion: Rewrite node.hiddenBeforeDateTime to q(node).property("enableAfterDateTime")
+
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenBeforeDateTimeRector`](../src/ContentRepository90/Rules/FusionNodeHiddenBeforeDateTimeRector.php)
+
+```diff
++// TODO 9.0 migration: Line 16: You may need to rewrite "VARIABLE.hiddenBeforeDateTime" to q(VARIABLE).property("enableAfterDateTime"). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
+
+   renderer = Neos.Fusion:Component {
+
+     #
+     # pass down props
+     #
+-    attributes = ${node.hiddenBeforeDateTime || documentNode.hiddenBeforeDateTime}
+-    attribute2 = ${q(node).property("_hiddenBeforeDateTime")}
++    attributes = ${q(node).property("enableAfterDateTime") || q(documentNode).property("enableAfterDateTime")}
++    attribute2 = ${q(node).property("enableAfterDateTime")}
+
+     renderer = afx`
+       <input
+         type="checkbox"
+-        name={node.hiddenBeforeDateTime}
++        name={q(node).property("enableAfterDateTime")}
+         value={someOtherVariable.hiddenBeforeDateTime}
+         checked={props.checked}
+-        {...node.hiddenBeforeDateTime}
++        {...q(node).property("enableAfterDateTime")}
+       />
+     `
+   }
+ }
+```
+
+<br>
+
+## FusionNodeHiddenInIndexRector
+
+Fusion: Rewrite node.hiddenInIndex and q(node).property("_hiddenInIndex") to node.property('hiddenInIndex')
+
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenInIndexRector`](../src/ContentRepository90/Rules/FusionNodeHiddenInIndexRector.php)
+
+```diff
++// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.property('hiddenInMenu'). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
+
+   renderer = Neos.Fusion:Component {
+
+     #
+     # pass down props
+     #
+-    attributes = ${node.hiddenInIndex || documentNode.hiddenInIndex || site.hiddenInIndex || q(node).property('_hiddenInIndex') || q(documentNode).property("_hiddenInIndex")}
++    attributes = ${node.property('hiddenInMenu') || documentNode.property('hiddenInMenu') || site.property('hiddenInMenu') || q(node).property('hiddenInMenu') || q(documentNode).property('hiddenInMenu')}
 
      #
      # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -384,14 +747,35 @@ Fusion: Rewrite node.hiddenInIndex to node.properties._hiddenInIndex
        <input
          type="checkbox"
 -        name={node.hiddenInIndex}
-+        name={node.properties._hiddenInIndex}
++        name={node.property('hiddenInMenu')}
          value={someOtherVariable.hiddenInIndex}
          checked={props.checked}
 -        {...node.hiddenInIndex}
-+        {...node.properties._hiddenInIndex}
++        {...node.property('hiddenInMenu')}
        />
      `
    }
+ }
+```
+
+<br>
+
+## FusionNodeHiddenRector
+
+Fusion: Rewrite node.hidden and q(node).property("_hidden") to Neos.Node.isDisabled(node)
+
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeHiddenRector`](../src/ContentRepository90/Rules/FusionNodeHiddenRector.php)
+
+```diff
++// TODO 9.0 migration: Line 5: You may need to rewrite "q(VARIABLE).property('_hidden')" to Neos.Node.isDisabled(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+ prototype(Neos.Rector:Test)  < prototype(Neos.Fusion:Value) {
+-  node = ${q(node).property('_hidden') || q(documentNode).property("_hidden") || q(site).property("_hidden")}
+-  otherVariable = ${q(someOtherVariable).property('_hidden')}
++  node = ${Neos.Node.isDisabled(node) || Neos.Node.isDisabled(documentNode) || Neos.Node.isDisabled(site)}
++  otherVariable = ${Neos.Node.isDisabled(someOtherVariable)}
+   flowQuery = ${q(someOtherVariable).first().property('_hidden')}
+-  inAfx = afx`<Neos.Fusion:Value value={q(node).property('_hidden')}/>`
++  inAfx = afx`<Neos.Fusion:Value value={Neos.Node.isDisabled(node)}/>`
  }
 ```
 
@@ -399,12 +783,11 @@ Fusion: Rewrite node.hiddenInIndex to node.properties._hiddenInIndex
 
 ## FusionNodeIdentifierRector
 
-Fusion: Rewrite node.identifier to node.nodeAggregateId.value
+Fusion: Rewrite "node.identifier" and "q(node).property('_identifier')" to `"q(node).id()"`
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector`](../src/ContentRepository90/Rules/FusionNodeIdentifierRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.identifier" to VARIABLE.nodeAggregateId.value. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
    renderer = Neos.Fusion:Component {
@@ -412,15 +795,16 @@ Fusion: Rewrite node.identifier to node.nodeAggregateId.value
      #
      # pass down props
      #
--    attributes = ${node.identifier || documentNode.identifier}
-+    attributes = ${node.nodeAggregateId.value || documentNode.nodeAggregateId.value}
+-    attributes = ${q(node).property("_identifier") || q(documentNode).property("_identifier")}
++    attributes = ${q(node).id() || q(documentNode).id()}
      renderer = afx`
        <input
--        name={node.identifier}
-+        name={node.nodeAggregateId.value}
-         value={someOtherVariable.identifier}
--        {...node.identifier}
-+        {...node.nodeAggregateId.value}
+-        name={q(node).property('_identifier')}
+-        value={q(someOtherVariable).property("_identifier")}
+-        {...q(node).property("_identifier")}
++        name={q(node).id()}
++        value={q(someOtherVariable).id()}
++        {...q(node).id()}
        />
      `
    }
@@ -429,14 +813,56 @@ Fusion: Rewrite node.identifier to node.nodeAggregateId.value
 
 <br>
 
+## FusionNodeLabelRector
+
+Fusion: Rewrite "node.label" and "q(node).property('_label')" to `"q(node).label()"`
+
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeLabelRector`](../src/ContentRepository90/Rules/FusionNodeLabelRector.php)
+
+```diff
+ prototype(Neos.Rector:Test)  < prototype(Neos.Fusion:Value) {
+-  node = ${q(node).property('_label') || q(documentNode).property("_label") || q(site).property("_label")}
+-  otherVariable = ${q(someOtherVariable).property('_label')}
+-  inAfx = afx`<Neos.Fusion:Value value={q(node).property('_label')}/>`
++  node = ${q(node).label() || q(documentNode).label() || q(site).label()}
++  otherVariable = ${q(someOtherVariable).label()}
++  inAfx = afx`<Neos.Fusion:Value value={q(node).label()}/>`
+ }
+```
+
+<br>
+
+## FusionNodeNodeTypeRector
+
+Fusion: Rewrite "node.nodeType" and "q(node).property('_nodeType')" to "Neos.Node.getNodeType(node)"
+
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeNodeTypeRector`](../src/ContentRepository90/Rules/FusionNodeNodeTypeRector.php)
+
+```diff
+ prototype(Neos.Rector:Test)  < prototype(Neos.Fusion:Value) {
+-  node = ${q(node).property('_nodeType') || q(documentNode).property("_nodeType") || q(site).property("_nodeType")}
+-  otherVariable = ${q(someOtherVariable).property('_nodeType')}
+-  nested = ${q(someOtherVariable).property('_nodeType.properties')}
+-  deepNested = ${q(someOtherVariable).property('_nodeType.options.myOption')}
+-  inAfx = afx`<Neos.Fusion:Value value={q(node).property('_nodeType')}/>`
++  node = ${Neos.Node.getNodeType(node) || Neos.Node.getNodeType(documentNode) || Neos.Node.getNodeType(site)}
++  otherVariable = ${Neos.Node.getNodeType(someOtherVariable)}
++  nested = ${Neos.Node.getNodeType(someOtherVariable).properties}
++  deepNested = ${Neos.Node.getNodeType(someOtherVariable).options.myOption}
++  inAfx = afx`<Neos.Fusion:Value value={Neos.Node.getNodeType(node)}/>`
+ }
+```
+
+<br>
+
 ## FusionNodeParentRector
 
-Fusion: Rewrite node.parent to Neos.NodeAccess.findParent(node)
+Fusion: Rewrite node.parent to `q(node).parent().get(0)`
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeParentRector`](../src/ContentRepository90/Rules/FusionNodeParentRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.parent" to Neos.NodeAccess.findParent(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 15: You may need to rewrite "VARIABLE.parent" to "q(VARIABLE).parent().get(0)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
    renderer = Neos.Fusion:Component {
@@ -445,28 +871,18 @@ Fusion: Rewrite node.parent to Neos.NodeAccess.findParent(node)
      # pass down props
      #
 -    attributes = ${node.parent || documentNode.parent}
-+    attributes = ${Neos.NodeAccess.findParent(node) || Neos.NodeAccess.findParent(documentNode)}
-
-     #
-     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
-     #
-     checked = false
-     checked.@process.checkMultiValue = ${Array.indexOf(field.getCurrentMultivalueStringified(), field.getTargetValueStringified()) > -1}
-     checked.@process.checkMultiValue.@if.hasValue = ${field.hasCurrentValue()}
-     checked.@process.checkMultiValue.@if.isMultiple = ${field.isMultiple()}
-     checked.@process.checkSingleValue = ${field.getCurrentValueStringified() == field.getTargetValueStringified()}
-     checked.@process.checkSingleValue.@if.hasValue = ${field.hasCurrentValue()}
-     checked.@process.checkSingleValue.@if.isSingle = ${!field.isMultiple()}
++    attributes = ${q(node).parent().get(0) || q(documentNode).parent().get(0)}
 
      renderer = afx`
        <input
          type="checkbox"
 -        name={node.parent}
-+        name={Neos.NodeAccess.findParent(node)}
++        name={q(node).parent().get(0)}
          value={someOtherVariable.parent}
+         data-parents={q(node).parents()}
          checked={props.checked}
 -        {...node.parent}
-+        {...Neos.NodeAccess.findParent(node)}
++        {...q(node).parent().get(0)}
        />
      `
    }
@@ -477,12 +893,13 @@ Fusion: Rewrite node.parent to Neos.NodeAccess.findParent(node)
 
 ## FusionNodePathRector
 
-Fusion: Rewrite node.path to Neos.Node.path(node)
+Fusion: Rewrite node.path and q(node).property("_path") to Neos.Node.path(node)
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodePathRector`](../src/ContentRepository90/Rules/FusionNodePathRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.path" to Neos.Node.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 29: You may need to rewrite "VARIABLE.path" to Neos.Node.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 30: You may need to rewrite "VARIABLE.path" to Neos.Node.path(VARIABLE). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
    renderer = Neos.Fusion:Component {
@@ -490,8 +907,11 @@ Fusion: Rewrite node.path to Neos.Node.path(node)
      #
      # pass down props
      #
--    attributes = ${node.path || documentNode.path}
-+    attributes = ${Neos.Node.path(node) || Neos.Node.path(documentNode)}
+-    attributes = ${node.path || documentNode.path || q(node).property('_path') || q(documentNode).property("_path")}
+-    foo = ${q(bar).property('_path') || q(bar).property("_path")}
++    attributes = ${Neos.Node.path(node) || Neos.Node.path(documentNode) || Neos.Node.path(node) || Neos.Node.path(documentNode)}
++    foo = ${Neos.Node.path(bar) || Neos.Node.path(bar)}
+     boo = ${q(nodes).first().property('_path') || q(nodes).first().property("_path")}
 
      #
      # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -509,7 +929,8 @@ Fusion: Rewrite node.path to Neos.Node.path(node)
          type="checkbox"
 -        name={node.path}
 +        name={Neos.Node.path(node)}
-         value={someOtherVariable.path}
+         value={someOtherVariable.path || something}
+         path={someOtherVariable.path}
          checked={props.checked}
 -        {...node.path}
 +        {...Neos.Node.path(node)}
@@ -539,11 +960,16 @@ use Neos\Rector\Generic\ValueObject\FusionNodePropertyPathToWarningComment;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(FusionNodePropertyPathToWarningCommentRector::class, [
-        new FusionNodePropertyPathToWarningComment('removed', 'Line %LINE: !! node.removed - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.'),
-        new FusionNodePropertyPathToWarningComment('hiddenBeforeDateTime', 'Line %LINE: !! node.hiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.'),
-        new FusionNodePropertyPathToWarningComment('hiddenAfterDateTime', 'Line %LINE: !! node.hiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.'),
-        new FusionNodePropertyPathToWarningComment('foo.bar', 'Line %LINE: !! node.foo.bar is not supported anymore.'),
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => FusionNodePropertyPathToWarningCommentRector::class,
+            'configuration' => [
+                new FusionNodePropertyPathToWarningComment('removed', 'Line %LINE: !! node.removed - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.'),
+                new FusionNodePropertyPathToWarningComment('hiddenBeforeDateTime', 'Line %LINE: !! node.hiddenBeforeDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.'),
+                new FusionNodePropertyPathToWarningComment('hiddenAfterDateTime', 'Line %LINE: !! node.hiddenAfterDateTime is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.'),
+                new FusionNodePropertyPathToWarningComment('foo.bar', 'Line %LINE: !! node.foo.bar is not supported anymore.'),
+            ],
+        ],
     ]);
 };
 ```
@@ -613,24 +1039,181 @@ return static function (RectorConfig $rectorConfig): void {
 
 <br>
 
-## InjectContentRepositoryRegistryIfNeededRector
+## FusionNodeTypeNameRector
+
+Fusion: Rewrite node.nodeType.name to node.nodeTypeName.value
+
+- class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector`](../src/ContentRepository90/Rules/FusionNodeTypeNameRector.php)
+
+```diff
++// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.nodeType.name" to "VARIABLE.nodeTypeName.value". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
+
+ renderer = Neos.Fusion:Component {
+
+ #
+ # pass down props
+ #
+-attributes = ${node.nodeType.name || documentNode.nodeType.name}
++attributes = ${node.nodeTypeName.value || documentNode.nodeTypeName.value}
+ renderer = afx`
+ <input
+-        name={node.nodeType.name}
++        name={node.nodeTypeName.value}
+         value={someOtherVariable.nodeType.name}
+-        {...node.nodeType.name}
++        {...node.nodeTypeName.value}
+ />
+ `
+ }
+ }
+```
+
+<br>
+
+## FusionPrototypeNameAddCommentRector
+
+Fusion: Add comment to file if prototype name matches at least once.
+
+:wrench: **configure it!**
+
+- class: [`Neos\Rector\Generic\Rules\FusionPrototypeNameAddCommentRector`](../src/Generic/Rules/FusionPrototypeNameAddCommentRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Neos\Rector\Generic\Rules\FusionPrototypeNameAddCommentRector;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => FusionPrototypeNameAddCommentRector::class,
+            'configuration' => [
+                'Neos.Neos:Raw',
+                'Neos.Neos:Raw: Add this comment to top of file.',
+            ],
+        ],
+    ]);
+};
+```
+
+↓
+
+```diff
++// TODO 9.0 migration: You need to refactor "Neos.Neos:PrimaryContent" to use "Neos.Neos:ContentCollection" instead.
+ prototype(My.Fancy:Component) < prototype(Neos.Fusion:Join) {
+   main = Neos.Neos:PrimaryContent {
+     nodePath = 'main'
+   }
+
+   content = Neos.Neos:PrimaryContent
+   content.nodePath = 'content'
+ }
+
+ prototype(My.Evil:Component) < prototype(Neos.Neos:PrimaryContent) {
+
+ }
+```
+
+<br>
+
+## FusionReplacePrototypeNameRector
+
+Fusion: Rewrite prototype names form e.g Foo.Bar:Boo to Boo.Bar:Foo
+
+:wrench: **configure it!**
+
+- class: [`Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector`](../src/Generic/Rules/FusionReplacePrototypeNameRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => FusionReplacePrototypeNameRector::class,
+            'configuration' => [
+                'Neos.Neos:Raw',
+                'Neos.Neos:NewRaw',
+                'Neos.Neos:Raw: This comment should be added on top of the file.',
+            ],
+        ],
+    ]);
+};
+```
+
+↓
+
+```diff
++// TODO 9.0 migration: Neos.Neos:FooReplaced: This comment should be added on top of the file.
++// TODO 9.0 migration: Neos.Neos:BarReplaced: This comment should be added on top of the file.
+ prototype(Neos.Neos:Foo) < prototype(Neos.Neos:Bar) {
+
+-    raw = Neos.Neos:Foo
++    raw = Neos.Neos:FooReplaced
+     renderer = afx`
+-        <Neos.Neos:Bar />
++        <Neos.Neos:BarReplaced />
+     `
+ }
+```
+
+<br>
+
+## InjectServiceIfNeededRector
 
 add injection for `$contentRepositoryRegistry` if in use.
 
-- class: [`Neos\Rector\ContentRepository90\Rules\InjectContentRepositoryRegistryIfNeededRector`](../src/ContentRepository90/Rules/InjectContentRepositoryRegistryIfNeededRector.php)
+:wrench: **configure it!**
+
+- class: [`Neos\Rector\Generic\Rules\InjectServiceIfNeededRector`](../src/Generic/Rules/InjectServiceIfNeededRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
+use Neos\Rector\Generic\ValueObject\AddInjection;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => InjectServiceIfNeededRector::class,
+            'configuration' => [
+                new AddInjection('contentRepositoryRegistry', 'Neos\ContentRepositoryRegistry\ContentRepositoryRegistry'),
+            ],
+        ],
+    ]);
+};
+```
+
+↓
 
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
 +    #[\Neos\Flow\Annotations\Inject]
 +    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
-     public function run(Node $node)
++    #[\Neos\Flow\Annotations\Inject]
++    protected \Neos\Neos\Domain\Service\RenderingModeService $renderingModeService;
+     public function run(NodeLegacyStub $node)
      {
          $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+         $currentRenderingMode = $this->renderingModeService->findByCurrentUser();
      }
  }
 
@@ -657,8 +1240,13 @@ use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(MethodCallToWarningCommentRector::class, [
-        new MethodCallToWarningComment('PhpParser\Node', 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.'),
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => MethodCallToWarningCommentRector::class,
+            'configuration' => [
+                new MethodCallToWarningComment('Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub', 'getWorkspace', '!! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.'),
+            ],
+        ],
     ]);
 };
 ```
@@ -668,11 +1256,11 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 +        // TODO 9.0 migration: !! Node::getWorkspace() does not make sense anymore concept-wise. In Neos < 9, it pointed to the workspace where the node was *at home at*. Now, the closest we have here is the node identity.
 +
@@ -723,11 +1311,11 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 -        $parentNode = $node->findParentNode();
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
@@ -749,17 +1337,17 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
--        foreach ($node->getChildNodes() as $node) {
+-        foreach ($node->getChildNodes(offset: 100, limit: 10) as $node) {
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 +        // TODO 9.0 migration: Try to remove the iterator_to_array($nodes) call.
 +
-+        foreach (iterator_to_array($subgraph->findChildNodes($node->nodeAggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter::all())) as $node) {
++        foreach (iterator_to_array($subgraph->findChildNodes($node->nodeAggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter::create(pagination: ['limit' => 10, 'offset' => 100]))) as $node) {
          }
      }
  }
@@ -778,11 +1366,11 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 -        return $node->getContext()->getWorkspaceName();
 +        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
@@ -804,11 +1392,11 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 -        return $node->getContext()->getWorkspace();
 +        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
@@ -830,11 +1418,11 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 -        return $node->getDepth();
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
@@ -856,16 +1444,43 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 -        return $node->getDimensions();
 +        // TODO 9.0 migration: Try to remove the toLegacyDimensionArray() call and make your codebase more typesafe.
 +
 +        return $node->originDimensionSpacePoint->toLegacyDimensionArray();
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeGetIdentifierRector
+
+`"NodeInterface::getIdentifier()"` will be rewritten
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector`](../src/ContentRepository90/Rules/NodeGetIdentifierRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class SomeClass
+ {
+     public function run(NodeLegacyStub $node)
+     {
+-        $nodeIdentifier = $node->getIdentifier();
++        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
++
++        $nodeIdentifier = $node->nodeAggregateId->value;
      }
  }
 
@@ -883,11 +1498,11 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 -        return $node->getParent();
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
@@ -909,11 +1524,11 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 -        return $node->getPath();
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
@@ -937,14 +1552,14 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 -        return $node->isHiddenInIndex();
-+        return $node->getProperty('_hiddenInIndex');
++        return $node->getProperty('hiddenInMenu');
      }
  }
 
@@ -962,17 +1577,135 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
  <?php
 
- use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
  class SomeClass
  {
-     public function run(Node $node)
+     public function run(NodeLegacyStub $node)
      {
 -        return $node->isHidden();
-+        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-+        $nodeHiddenStateFinder = $contentRepository->projectionState(\Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder::class);
-+        $hiddenState = $nodeHiddenStateFinder->findHiddenState($node->subgraphIdentity->contentStreamId, $node->subgraphIdentity->dimensionSpacePoint, $node->nodeAggregateId);
-+        return $hiddenState->isHidden();
++        return $node->tags->contain(\Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag::disabled());
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeTypeAllowsGrandchildNodeTypeRector
+
+"$nodeType->allowsGrandchildNodeType($parentNodeName, `$nodeType)"` will be rewritten.
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeTypeAllowsGrandchildNodeTypeRector`](../src/ContentRepository90/Rules/NodeTypeAllowsGrandchildNodeTypeRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+
+ class SomeClass
+ {
++    #[\Neos\Flow\Annotations\Inject]
++    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
+     public function run(NodeLegacyStub $node)
+     {
+         $parentNodeName = 'name';
+         $nodeType = $node->getNodeType();
+         $grandParentsNodeType = $node->getParent()->getParent()->getNodeType();
++        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
++        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
+
+-        $grandParentsNodeType->allowsGrandchildNodeType($parentNodeName, $nodeType);
++        $contentRepository->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType, \Neos\ContentRepository\Core\SharedModel\Node\NodeName::fromString($parentNodeName), $nodeType);
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeTypeGetAutoCreatedChildNodesRector
+
+`"$nodeType->getAutoCreatedChildNodes()"` will be rewritten.
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeTypeGetAutoCreatedChildNodesRector`](../src/ContentRepository90/Rules/NodeTypeGetAutoCreatedChildNodesRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class SomeClass
+ {
++    #[\Neos\Flow\Annotations\Inject]
++    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
+     public function run(NodeLegacyStub $node)
+     {
+         $nodeType = $node->getNodeType();
+-        $childNodes = $nodeType->getAutoCreatedChildNodes();
++        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
++        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
++        $childNodes = $contentRepository->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType);
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeTypeGetNameRector
+
+`"NodeType::getName()"` will be rewritten
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector`](../src/ContentRepository90/Rules/NodeTypeGetNameRector.php)
+
+```diff
+ <?php
+
+ use Neos\ContentRepository\Core\NodeType\NodeType;
+
+ class SomeClass
+ {
+     public function run(NodeType $nodetype)
+     {
+-        $nodetype = $nodetype->getName();
++        $nodetype = $nodetype->name->value;
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeTypeGetTypeOfAutoCreatedChildNodeRector
+
+"$nodeType->getTypeOfAutoCreatedChildNode($nodeName)" will be rewritten.
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeTypeGetTypeOfAutoCreatedChildNodeRector`](../src/ContentRepository90/Rules/NodeTypeGetTypeOfAutoCreatedChildNodeRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+
+ class SomeClass
+ {
++    #[\Neos\Flow\Annotations\Inject]
++    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
+     public function run(NodeLegacyStub $node)
+     {
+         $nodeName = NodeName::fromString('name');
+         $nodeType = $node->getNodeType();
+-        $type = $nodeType->getTypeOfAutoCreatedChildNode($nodeName);
++        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
++        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
++        $type = $contentRepository->getNodeTypeManager()->getTypeOfTetheredNode($nodeType, $nodeName);
      }
  }
 
@@ -1049,8 +1782,13 @@ use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(RemoveInjectionsRector::class, [
-        new RemoveInjection('Foo\Bar\Baz'),
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => RemoveInjectionsRector::class,
+            'configuration' => [
+                new RemoveInjection('Foo\Bar\Baz'),
+            ],
+        ],
     ]);
 };
 ```
@@ -1114,8 +1852,13 @@ use Neos\Rector\Generic\ValueObject\RemoveParentClass;
 use Rector\Config\RectorConfig;
 
 return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->ruleWithConfiguration(RemoveParentClassRector::class, [
-        new RemoveParentClass('Foo\Bar\Baz', '// TODO: Neos 9.0 Migration: Stuff'),
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => RemoveParentClassRector::class,
+            'configuration' => [
+                new RemoveParentClass('Foo\Bar\Baz', '// TODO: Neos 9.0 Migration: Stuff'),
+            ],
+        ],
     ]);
 };
 ```
@@ -1129,6 +1872,73 @@ return static function (RectorConfig $rectorConfig): void {
 +// TODO: Neos 9.0 Migration: Stuff
 +class SomeClass
  {
+ }
+
+ ?>
+```
+
+<br>
+
+## ToStringToMethodCallOrPropertyFetchRector
+
+Turns defined code uses of `"__toString()"` method to specific method calls or property fetches.
+
+:wrench: **configure it!**
+
+- class: [`Neos\Rector\Generic\Rules\ToStringToMethodCallOrPropertyFetchRector`](../src/Generic/Rules/ToStringToMethodCallOrPropertyFetchRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Neos\Rector\Generic\Rules\ToStringToMethodCallOrPropertyFetchRector;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => ToStringToMethodCallOrPropertyFetchRector::class,
+            'configuration' => [
+                'SomeObject' => 'getPath()',
+            ],
+        ],
+    ]);
+};
+```
+
+↓
+
+```diff
+ $someValue = new SomeObject;
+-$result = (string) $someValue;
+-$result = $someValue->__toString();
++$result = $someValue->getPath();
++$result = $someValue->getPath();
+```
+
+<br>
+
+## WorkspaceGetNameRector
+
+`"Workspace::getName()"` will be rewritten
+
+- class: [`Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector`](../src/ContentRepository90/Rules/WorkspaceGetNameRector.php)
+
+```diff
+ <?php
+
+ use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+
+ class SomeClass
+ {
+     public function run(Workspace $workspace)
+     {
+-        $workspaceName = $workspace->getName();
++        // TODO 9.0 migration: Check if you could change your code to work with the WorkspaceName value object instead.
++
++        $workspaceName = $workspace->workspaceName->value;
+     }
  }
 
  ?>
