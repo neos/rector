@@ -134,7 +134,7 @@ return static function (RectorConfig $rectorConfig): void {
     // setName
     // getName
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getName', 'nodeName');
-    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_name', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_name")" to "VARIABLE.nodeName.value". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_name', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_name")" to "VARIABLE.nodeName". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getLabel
     $rectorConfig->rule(FusionNodeLabelRector::class);
     // setProperty
@@ -154,7 +154,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getNodeType: NodeType
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeType', 'nodeType');
     // Fusion: node.nodeType -> Neos.Node.nodeType(node)
-    // Fusion: node.nodeType.name -> q(node).nodeTypeName()
+    // Fusion: node.nodeType.name -> node.nodeTypeName
     $rectorConfig->rule(FusionNodeNodeTypeRector::class);
     // setHidden
     // isHidden
@@ -201,7 +201,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getIdentifier
     $rectorConfig->rule(NodeGetIdentifierRector::class);
     $rectorConfig->rule(FusionNodeIdentifierRector::class);
-    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_identifier', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_identifier")" to "q(VARIABLE).id()". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_identifier', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_identifier")" to "VARIABLE.nodeAggregateId". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // setIndex -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setIndex', '!! Node::setIndex() was always internal. To reorder nodes, use the "MoveNodeAggregate" command');
     // getIndex

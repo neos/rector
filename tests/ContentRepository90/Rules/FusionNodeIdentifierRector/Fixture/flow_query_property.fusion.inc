@@ -23,12 +23,12 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${q(node).id() || q(documentNode).id()}
+    attributes = ${node.nodeAggregateId || documentNode.nodeAggregateId}
     renderer = afx`
       <input
-        name={q(node).id()}
-        value={q(someOtherVariable).id()}
-        {...q(node).id()}
+        name={node.nodeAggregateId}
+        value={someOtherVariable.nodeAggregateId}
+        {...node.nodeAggregateId}
       />
     `
   }
