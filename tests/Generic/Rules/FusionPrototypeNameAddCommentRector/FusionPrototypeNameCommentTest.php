@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Generic\Rules\FusionPrototypeNameReplacement;
+namespace Neos\Rector\Tests\Generic\Rules\FusionReplacePrototypeNameRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 

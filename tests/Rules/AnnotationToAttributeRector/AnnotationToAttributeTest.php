@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Rules\AnnotationToAttribute;
+namespace Neos\Rector\Tests\Rules\AnnotationToAttributeRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
