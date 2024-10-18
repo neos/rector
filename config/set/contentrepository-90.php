@@ -153,7 +153,7 @@ return static function (RectorConfig $rectorConfig): void {
     // setNodeType
     // getNodeType: NodeType
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeType', 'nodeType');
-    // Fusion: node.nodeType -> Neos.Node.getNodeType(node)
+    // Fusion: node.nodeType -> Neos.Node.nodeType(node)
     // Fusion: node.nodeType.name -> node.nodeTypeName
     $rectorConfig->rule(FusionNodeNodeTypeRector::class);
     // setHidden

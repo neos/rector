@@ -13,7 +13,7 @@ class FusionNodeNodeTypeRector implements FusionRectorInterface
 {
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite "node.nodeType" and "q(node).property(\'_nodeType\')" to "Neos.Node.getNodeType(node)"', __CLASS__);
+        return CodeSampleLoader::fromFile('Fusion: Rewrite "node.nodeType" and "q(node).property(\'_nodeType\')" to "Neos.Node.nodeType(node)"', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string
@@ -26,12 +26,12 @@ class FusionNodeNodeTypeRector implements FusionRectorInterface
             ))
             ->process(fn(string $eelExpression) => preg_replace(
                 '/(node|documentNode|site)\.nodeType\b/',
-                'Neos.Node.getNodeType($1)',
+                'Neos.Node.nodeType($1)',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
                 '/\.nodeType\b(?!\()/',
-                '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.nodeType" to "Neos.Node.getNodeType(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '// TODO 9.0 migration: Line %LINE: You very likely need to rewrite "VARIABLE.nodeType" to "Neos.Node.nodeType(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(
                 '/q\(([^)]+)\)\.property\\([\'"]_nodeType\.name[\'"]\\)/',
@@ -40,7 +40,7 @@ class FusionNodeNodeTypeRector implements FusionRectorInterface
             ))
             ->process(fn(string $eelExpression) => preg_replace(
                 '/q\(([^)]+)\)\.property\\([\'"]_nodeType(\.[^\'"]*)?[\'"]\\)/',
-                'Neos.Node.getNodeType($1)$2',
+                'Neos.Node.nodeType($1)$2',
                 $eelExpression
             ))
             ->getProcessedContent();
