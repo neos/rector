@@ -7,9 +7,9 @@ prototype(Neos.Rector:Test)  < prototype(Neos.Fusion:Value) {
 }
 -----
 prototype(Neos.Rector:Test)  < prototype(Neos.Fusion:Value) {
-  node = ${Neos.Node.getNodeType(node) || Neos.Node.getNodeType(documentNode) || Neos.Node.getNodeType(site)}
-  otherVariable = ${Neos.Node.getNodeType(someOtherVariable)}
-  nested = ${Neos.Node.getNodeType(someOtherVariable).properties}
-  deepNested = ${Neos.Node.getNodeType(someOtherVariable).options.myOption}
-  inAfx = afx`<Neos.Fusion:Value value={Neos.Node.getNodeType(node)}/>`
+  node = ${Neos.Node.nodeType(node) || Neos.Node.nodeType(documentNode) || Neos.Node.nodeType(site)}
+  otherVariable = ${Neos.Node.nodeType(someOtherVariable)}
+  nested = ${Neos.Node.nodeType(someOtherVariable).properties}
+  deepNested = ${Neos.Node.nodeType(someOtherVariable).options.myOption}
+  inAfx = afx`<Neos.Fusion:Value value={Neos.Node.nodeType(node)}/>`
 }
