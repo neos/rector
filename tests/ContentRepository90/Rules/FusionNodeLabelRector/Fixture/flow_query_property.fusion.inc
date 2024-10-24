@@ -5,7 +5,7 @@ prototype(Neos.Rector:Test)  < prototype(Neos.Fusion:Value) {
 }
 -----
 prototype(Neos.Rector:Test)  < prototype(Neos.Fusion:Value) {
-  node = ${q(node).label() || q(documentNode).label() || q(site).label()}
-  otherVariable = ${q(someOtherVariable).label()}
-  inAfx = afx`<Neos.Fusion:Value value={q(node).label()}/>`
+  node = ${Neos.Node.label(node) || Neos.Node.label(documentNode) || Neos.Node.label(site)}
+  otherVariable = ${Neos.Node.label(someOtherVariable)}
+  inAfx = afx`<Neos.Fusion:Value value={Neos.Node.label(node)}/>`
 }

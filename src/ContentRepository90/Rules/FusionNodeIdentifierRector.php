@@ -14,7 +14,7 @@ class FusionNodeIdentifierRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite "node.identifier" and "q(node).property(\'_identifier\')" to "q(node).id()"', __CLASS__);
+        return CodeSampleLoader::fromFile('Fusion: Rewrite "node.identifier" and "q(node).property(\'_identifier\')" to "node.nodeAggregateId"', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string
@@ -22,18 +22,21 @@ class FusionNodeIdentifierRector implements FusionRectorInterface
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
                 '/(node|documentNode|site)\.identifier/',
-                'q($1).id()',
+                '$1.nodeAggregateId',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
                 '/\.identifier/',
-                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.identifier" to "q(VARIABLE).id()". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.identifier" to "VARIABLE.nodeAggregateId". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(
-                '/\.property\\((\'|")_identifier(\'|")\\)/',
-                '.id()',
+                '/q\(([^)]+)\)\.property\([\'"]_identifier[\'"]\)/',
+                '$1.nodeAggregateId',
                 $eelExpression
-            )
+            ))
+            ->addCommentsIfRegexMatches(
+                    '/\.property\([\'"]_identifier[\'"]\)/',
+                 '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.identifier" to "VARIABLE.nodeAggregateId". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
 }

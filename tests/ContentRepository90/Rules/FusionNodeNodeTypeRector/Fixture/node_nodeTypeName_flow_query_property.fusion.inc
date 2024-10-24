@@ -6,8 +6,8 @@ prototype(Neos.Rector:Test)  < prototype(Neos.Fusion:Value) {
 }
 -----
 prototype(Neos.Rector:Test)  < prototype(Neos.Fusion:Value) {
-  node = ${q(node).nodeTypeName() || q(documentNode).nodeTypeName() || q(site).nodeTypeName()}
-  otherVariable = ${q(someOtherVariable).nodeTypeName()}
-  inAfx = afx`<Neos.Fusion:Value value={q(node).nodeTypeName()}/>`
+  node = ${node.nodeTypeName || documentNode.nodeTypeName || site.nodeTypeName}
+  otherVariable = ${someOtherVariable.nodeTypeName}
+  inAfx = afx`<Neos.Fusion:Value value={node.nodeTypeName}/>`
   dontReplaceThis = ${q(node).property('_nodeTypesname')}
 }

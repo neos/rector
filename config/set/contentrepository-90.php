@@ -4,6 +4,7 @@ declare (strict_types=1);
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
@@ -46,6 +47,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetParentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
+use Neos\Rector\ContentRepository90\Rules\NodeLabelGeneratorRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeAllowsGrandchildNodeTypeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetAutoCreatedChildNodesRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector;
@@ -134,9 +136,10 @@ return static function (RectorConfig $rectorConfig): void {
     // setName
     // getName
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getName', 'nodeName');
-    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_name', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_name")" to "VARIABLE.nodeName.value". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_name', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_name")" to "VARIABLE.nodeName". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getLabel
     $rectorConfig->rule(FusionNodeLabelRector::class);
+    $rectorConfig->rule(NodeLabelGeneratorRector::class);
     // setProperty
     // hasProperty -> compatible with ES CR Node (nothing to do)
     // getProperty -> compatible with ES CR Node (nothing to do)
@@ -153,8 +156,8 @@ return static function (RectorConfig $rectorConfig): void {
     // setNodeType
     // getNodeType: NodeType
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeType', 'nodeType');
-    // Fusion: node.nodeType -> Neos.Node.getNodeType(node)
-    // Fusion: node.nodeType.name -> q(node).nodeTypeName()
+    // Fusion: node.nodeType -> Neos.Node.nodeType(node)
+    // Fusion: node.nodeType.name -> node.nodeTypeName
     $rectorConfig->rule(FusionNodeNodeTypeRector::class);
     // setHidden
     // isHidden
@@ -201,7 +204,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getIdentifier
     $rectorConfig->rule(NodeGetIdentifierRector::class);
     $rectorConfig->rule(FusionNodeIdentifierRector::class);
-    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_identifier', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_identifier")" to "q(VARIABLE).id()". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
+    $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_identifier', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_identifier")" to "VARIABLE.nodeAggregateId". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // setIndex -> internal
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setIndex', '!! Node::setIndex() was always internal. To reorder nodes, use the "MoveNodeAggregate" command');
     // getIndex
@@ -469,6 +472,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(InjectServiceIfNeededRector::class, [
         new AddInjection('contentRepositoryRegistry', ContentRepositoryRegistry::class),
         new AddInjection('renderingModeService', RenderingModeService::class),
+        new AddInjection('nodeLabelGenerator', NodeLabelGeneratorInterface::class),
     ]);
     // TODO: does not fully seem to work.$rectorConfig->rule(RemoveDuplicateCommentRector::class);
 };
