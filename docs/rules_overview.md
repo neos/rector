@@ -1,4 +1,4 @@
-# 57 Rules Overview
+# 58 Rules Overview
 
 ## ContentDimensionCombinatorGetAllAllowedCombinationsRector
 
@@ -462,12 +462,12 @@ return static function (RectorConfig $rectorConfig): void {
 
 ## FusionNodeAggregateIdentifierRector
 
-Fusion: Rewrite node.nodeAggregateIdentifier to `q(node).id()`
+Fusion: Rewrite node.nodeAggregateIdentifier to node.nodeAggregateId
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector`](../src/ContentRepository90/Rules/FusionNodeAggregateIdentifierRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.nodeAggregateIdentifier" to VARIABLE.nodeAggregateId.value. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.nodeAggregateIdentifier" to VARIABLE.nodeAggregateId. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
    renderer = Neos.Fusion:Component {
@@ -476,14 +476,14 @@ Fusion: Rewrite node.nodeAggregateIdentifier to `q(node).id()`
      # pass down props
      #
 -    attributes = ${node.nodeAggregateIdentifier || documentNode.nodeAggregateIdentifier}
-+    attributes = ${q(node).id() || q(documentNode).id()}
++    attributes = ${node.nodeAggregateId || documentNode.nodeAggregateId}
      renderer = afx`
        <input
 -        name={node.nodeAggregateIdentifier}
-+        name={q(node).id()}
++        name={node.nodeAggregateId}
          value={someOtherVariable.nodeAggregateIdentifier}
 -        {...node.nodeAggregateIdentifier}
-+        {...q(node).id()}
++        {...node.nodeAggregateId}
        />
      `
    }
@@ -783,7 +783,7 @@ Fusion: Rewrite node.hidden and q(node).property("_hidden") to Neos.Node.isDisab
 
 ## FusionNodeIdentifierRector
 
-Fusion: Rewrite "node.identifier" and "q(node).property('_identifier')" to `"q(node).id()"`
+Fusion: Rewrite "node.identifier" and "q(node).property('_identifier')" to "node.nodeAggregateId"
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector`](../src/ContentRepository90/Rules/FusionNodeIdentifierRector.php)
 
@@ -796,15 +796,15 @@ Fusion: Rewrite "node.identifier" and "q(node).property('_identifier')" to `"q(n
      # pass down props
      #
 -    attributes = ${q(node).property("_identifier") || q(documentNode).property("_identifier")}
-+    attributes = ${q(node).id() || q(documentNode).id()}
++    attributes = ${node.nodeAggregateId || documentNode.nodeAggregateId}
      renderer = afx`
        <input
 -        name={q(node).property('_identifier')}
 -        value={q(someOtherVariable).property("_identifier")}
 -        {...q(node).property("_identifier")}
-+        name={q(node).id()}
-+        value={q(someOtherVariable).id()}
-+        {...q(node).id()}
++        name={node.nodeAggregateId}
++        value={someOtherVariable.nodeAggregateId}
++        {...node.nodeAggregateId}
        />
      `
    }
@@ -815,7 +815,7 @@ Fusion: Rewrite "node.identifier" and "q(node).property('_identifier')" to `"q(n
 
 ## FusionNodeLabelRector
 
-Fusion: Rewrite "node.label" and "q(node).property('_label')" to `"q(node).label()"`
+Fusion: Rewrite "node.label" and "q(node).property('_label')" to "Neos.Node.label(node)"
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeLabelRector`](../src/ContentRepository90/Rules/FusionNodeLabelRector.php)
 
@@ -824,9 +824,9 @@ Fusion: Rewrite "node.label" and "q(node).property('_label')" to `"q(node).label
 -  node = ${q(node).property('_label') || q(documentNode).property("_label") || q(site).property("_label")}
 -  otherVariable = ${q(someOtherVariable).property('_label')}
 -  inAfx = afx`<Neos.Fusion:Value value={q(node).property('_label')}/>`
-+  node = ${q(node).label() || q(documentNode).label() || q(site).label()}
-+  otherVariable = ${q(someOtherVariable).label()}
-+  inAfx = afx`<Neos.Fusion:Value value={q(node).label()}/>`
++  node = ${Neos.Node.label(node) || Neos.Node.label(documentNode) || Neos.Node.label(site)}
++  otherVariable = ${Neos.Node.label(someOtherVariable)}
++  inAfx = afx`<Neos.Fusion:Value value={Neos.Node.label(node)}/>`
  }
 ```
 
@@ -834,7 +834,7 @@ Fusion: Rewrite "node.label" and "q(node).property('_label')" to `"q(node).label
 
 ## FusionNodeNodeTypeRector
 
-Fusion: Rewrite "node.nodeType" and "q(node).property('_nodeType')" to "Neos.Node.getNodeType(node)"
+Fusion: Rewrite "node.nodeType" and "q(node).property('_nodeType')" to "Neos.Node.nodeType(node)"
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeNodeTypeRector`](../src/ContentRepository90/Rules/FusionNodeNodeTypeRector.php)
 
@@ -845,11 +845,11 @@ Fusion: Rewrite "node.nodeType" and "q(node).property('_nodeType')" to "Neos.Nod
 -  nested = ${q(someOtherVariable).property('_nodeType.properties')}
 -  deepNested = ${q(someOtherVariable).property('_nodeType.options.myOption')}
 -  inAfx = afx`<Neos.Fusion:Value value={q(node).property('_nodeType')}/>`
-+  node = ${Neos.Node.getNodeType(node) || Neos.Node.getNodeType(documentNode) || Neos.Node.getNodeType(site)}
-+  otherVariable = ${Neos.Node.getNodeType(someOtherVariable)}
-+  nested = ${Neos.Node.getNodeType(someOtherVariable).properties}
-+  deepNested = ${Neos.Node.getNodeType(someOtherVariable).options.myOption}
-+  inAfx = afx`<Neos.Fusion:Value value={Neos.Node.getNodeType(node)}/>`
++  node = ${Neos.Node.nodeType(node) || Neos.Node.nodeType(documentNode) || Neos.Node.nodeType(site)}
++  otherVariable = ${Neos.Node.nodeType(someOtherVariable)}
++  nested = ${Neos.Node.nodeType(someOtherVariable).properties}
++  deepNested = ${Neos.Node.nodeType(someOtherVariable).options.myOption}
++  inAfx = afx`<Neos.Fusion:Value value={Neos.Node.nodeType(node)}/>`
  }
 ```
 
@@ -1041,12 +1041,12 @@ return static function (RectorConfig $rectorConfig): void {
 
 ## FusionNodeTypeNameRector
 
-Fusion: Rewrite node.nodeType.name to node.nodeTypeName.value
+Fusion: Rewrite node.nodeType.name to node.nodeTypeName
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeTypeNameRector`](../src/ContentRepository90/Rules/FusionNodeTypeNameRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.nodeType.name" to "VARIABLE.nodeTypeName.value". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.nodeType.name" to "VARIABLE.nodeTypeName". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
  renderer = Neos.Fusion:Component {
@@ -1055,14 +1055,14 @@ Fusion: Rewrite node.nodeType.name to node.nodeTypeName.value
  # pass down props
  #
 -attributes = ${node.nodeType.name || documentNode.nodeType.name}
-+attributes = ${node.nodeTypeName.value || documentNode.nodeTypeName.value}
++attributes = ${node.nodeTypeName || documentNode.nodeTypeName}
  renderer = afx`
  <input
 -        name={node.nodeType.name}
-+        name={node.nodeTypeName.value}
++        name={node.nodeTypeName}
          value={someOtherVariable.nodeType.name}
 -        {...node.nodeType.name}
-+        {...node.nodeTypeName.value}
++        {...node.nodeTypeName}
  />
  `
  }
@@ -1585,6 +1585,33 @@ return static function (RectorConfig $rectorConfig): void {
      {
 -        return $node->isHidden();
 +        return $node->tags->contain(\Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag::disabled());
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeLabelGeneratorRector
+
+`"$node->getLabel()"` will be rewritten.
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeLabelGeneratorRector`](../src/ContentRepository90/Rules/NodeLabelGeneratorRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class SomeClass
+ {
++    #[\Neos\Flow\Annotations\Inject]
++    protected \Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface $nodeLabelGenerator;
+     public function run(NodeLegacyStub $node)
+     {
+-        $label = $node->getLabel();
++        $label = $this->nodeLabelGenerator->getLabel($node);
      }
  }
 
