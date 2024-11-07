@@ -155,7 +155,6 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'unsetContentObject', '!! Node::unsetContentObject() is not supported by the new CR. Referencing objects can be done by storing them in Node::properties (and the serialization/deserialization is extensible).');
     // setNodeType
     // getNodeType: NodeType
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeType', 'nodeType');
     // Fusion: node.nodeType -> Neos.Node.nodeType(node)
     // Fusion: node.nodeType.name -> node.nodeTypeName
     $rectorConfig->rule(FusionNodeNodeTypeRector::class);
