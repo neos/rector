@@ -46,7 +46,7 @@ trait NodeTrait
     {
         return $this->nodeFactory->createPropertyFetch(
             $nodeVariable,
-            'nodeAggregateId'
+            'aggregateId'
         );
     }
 
