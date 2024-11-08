@@ -37,10 +37,10 @@ class SomeClass extends AnotherClass
         // TODO 9.0 migration: Try to remove the iterator_to_array($nodes) call.
 
         /** @var array<\Neos\ContentRepository\Core\Projection\ContentGraph\Node> $childNodes */
-        $childNodes = iterator_to_array($subgraph->findChildNodes($node->nodeAggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter::create()));
+        $childNodes = iterator_to_array($subgraph->findChildNodes($node->aggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter::create()));
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($targetNode);
 
-        $parent = $subgraph->findParentNode($targetNode->nodeAggregateId);
+        $parent = $subgraph->findParentNode($targetNode->aggregateId);
     }
 
 }
