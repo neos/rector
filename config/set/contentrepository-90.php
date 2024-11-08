@@ -55,6 +55,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeTypeGetTypeOfAutoCreatedChildNodeR
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
+use Neos\Rector\Generic\Rules\FusionFlowQueryNodePropertyToWarningCommentRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\FusionPrototypeNameAddCommentRector;
 use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;
@@ -119,6 +120,7 @@ return static function (RectorConfig $rectorConfig): void {
         new FusionPrototypeNameReplacement('Neos.Fusion:RawCollection', 'Neos.Fusion:Map',
             'Migration of Neos.Fusion:RawCollection to Neos.Fusion:Map needs manual action. The key `children` has to be renamed to `items` which cannot be done automatically'
         ),
+        new FusionPrototypeNameReplacement('Neos.Neos:PrimaryContent', 'Neos.Neos:ContentCollection', '"Neos.Neos:PrimaryContent" has been removed without a complete replacement. We replaced all usages with "Neos.Neos:ContentCollection" but not the prototype definition. Please check the replacements and if you have overridden the "Neos.Neos:PrimaryContent" prototype and rewrite it for your needs.', true),
     ]);
 
 
@@ -257,7 +259,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // getOtherNodeVariants()
 
-    $rectorConfig->ruleWithConfiguration(FusionNodePropertyPathToWarningCommentRector::class, $fusionFlowQueryPropertyToComments);
+    $rectorConfig->ruleWithConfiguration(FusionFlowQueryNodePropertyToWarningCommentRector::class, $fusionFlowQueryPropertyToComments);
 
 
     /**
@@ -392,16 +394,11 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(WorkspaceGetNameRector::class);
 
     /**
-     * Neos.Neos:PrimaryContent
      * Neos.Fusion:Attributes
      */
     $rectorConfig->ruleWithConfiguration(FusionPrototypeNameAddCommentRector::class, [
         new FusionPrototypeNameAddComment('Neos.Fusion:Attributes', 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in Neos.Fusion:Tag')
     ]);
-    $rectorConfig->ruleWithConfiguration(FusionReplacePrototypeNameRector::class, [
-        new FusionPrototypeNameReplacement('Neos.Neos:PrimaryContent', 'Neos.Neos:ContentCollection', '"Neos.Neos:PrimaryContent" has been removed without a complete replacement. We replaced all usages with "Neos.Neos:ContentCollection" but not the prototype definition. Please check the replacements and if you have overridden the "Neos.Neos:PrimaryContent" prototype and rewrite it for your needs.', true),
-    ]);
-
 
     $rectorConfig->rule(ContentRepositoryUtilityRenderValidNodeNameRector::class);
 
@@ -463,7 +460,10 @@ return static function (RectorConfig $rectorConfig): void {
         \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds::class => 'toJson()',
     ]);
 
-    $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
+    // We can only add one rule per class name. As workaround, we need to alias the RenameClassRector, so we are able to
+    // add this rule twice.
+    class_alias(RenameClassRector::class, \Alias\RenameClassRectorLegacy::class);
+    $rectorConfig->ruleWithConfiguration(\Alias\RenameClassRectorLegacy::class, [
         NodeLegacyStub::class => Node::class,
     ]);
 
