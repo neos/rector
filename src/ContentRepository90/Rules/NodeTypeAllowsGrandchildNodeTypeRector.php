@@ -4,14 +4,13 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Neos\ContentRepository\Core\NodeType\NodeType;
-use PhpParser\NodeDumper;
 
 final class NodeTypeAllowsGrandchildNodeTypeRector extends AbstractRector
 {
@@ -64,7 +63,10 @@ final class NodeTypeAllowsGrandchildNodeTypeRector extends AbstractRector
             $this->contentRepository_getNodeTypeManager(),
             'isNodeTypeAllowedAsChildToTetheredNode',
             [
-                $node->var,
+                $this->nodeFactory->createPropertyFetch(
+                    $node->var,
+                    'name'
+                ),
                 $this->nodeFactory->createStaticCall(
                     \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
                     'fromString',
@@ -72,7 +74,10 @@ final class NodeTypeAllowsGrandchildNodeTypeRector extends AbstractRector
                         $node->args[0]
                     ]
                 ),
-                $node->args[1]
+                $this->nodeFactory->createPropertyFetch(
+                    $node->args[1]->value,
+                    'name'
+                )
             ]
         );
     }

@@ -7,8 +7,6 @@ class SomeClass
     public function run(NodeLegacyStub $node)
     {
         $nodeType = $node->getNodeType();
-        foreach ($nodeType->getAutoCreatedChildNodes() as $key => $_x) {
-        }
     }
 }
 
@@ -20,15 +18,11 @@ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 class SomeClass
 {
-    #[\Neos\Flow\Annotations\Inject]
-    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
     public function run(NodeLegacyStub $node)
     {
-        $nodeType = $node->getNodeType();
         // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
         $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
-        foreach ($contentRepository->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $key => $_x) {
-        }
+        $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
     }
 }
 

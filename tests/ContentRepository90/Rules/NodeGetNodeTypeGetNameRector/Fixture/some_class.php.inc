@@ -7,7 +7,9 @@ class SomeClass
     public function run(NodeLegacyStub $node)
     {
         $nodeType = $node->getNodeType();
-        $childNodes = $nodeType->getAutoCreatedChildNodes();
+        $nodeTypeName = $nodeType->getName();
+
+        $nodeTypeName = $node->getNodeType()->getName();
     }
 }
 
@@ -22,9 +24,9 @@ class SomeClass
     public function run(NodeLegacyStub $node)
     {
         $nodeType = $node->getNodeType();
-        // TODO 9.0 migration: NodeType::tetheredNodeTypeDefinitions() is not a 1:1 replacement of NodeType::getAutoCreatedChildNodes(). You need to change your code to work with new TetheredNodeTypeDefinition object.
+        $nodeTypeName = $nodeType->getName();
 
-        $childNodes = $nodeType->tetheredNodeTypeDefinitions;
+        $nodeTypeName = $node->nodeTypeName->value;
     }
 }
 
