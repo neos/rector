@@ -29,7 +29,7 @@ class SomeClass
     {
         $nodeName = NodeName::fromString('name');
         $nodeType = $node->getNodeType();
-        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories. If you have a Node object around you can use $node->contentRepositoryId.
         $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
         $type = $contentRepository->getNodeTypeManager()->getNodeType($nodeType->tetheredNodeTypeDefinitions->get($nodeName));
     }

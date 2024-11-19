@@ -20,8 +20,7 @@ class SomeClass
 {
     public function run(NodeLegacyStub $node)
     {
-        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
     }
 }

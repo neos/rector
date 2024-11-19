@@ -63,13 +63,11 @@ class SomeClass extends AnotherClass
     {
         $node->nodeTypeName;
         $node->nodeTypeName->value;
-        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
         $nodeType->name->value;
-        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         /** @var NodeType $nodeType */
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
@@ -80,13 +78,11 @@ class SomeClass extends AnotherClass
     {
         $node->nodeTypeName;
         $node->nodeTypeName->value;
-        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
         $nodeType->name->value;
-        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         /** @var NodeType $nodeType */
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
@@ -97,13 +93,11 @@ class SomeClass extends AnotherClass
     {
         $node->nodeTypeName;
         $node->nodeTypeName->value;
-        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
         $nodeType->name->value;
-        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         /** @var NodeType $nodeType */
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);

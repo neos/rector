@@ -4,14 +4,13 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Neos\ContentRepository\Core\NodeType\NodeType;
-use PhpParser\NodeDumper;
 
 final class NodeTypeGetTypeOfAutoCreatedChildNodeRector extends AbstractRector
 {
@@ -53,7 +52,7 @@ final class NodeTypeGetTypeOfAutoCreatedChildNodeRector extends AbstractRector
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
                 self::withTodoComment(
-                    'Make this code aware of multiple Content Repositories.',
+                    'Make this code aware of multiple Content Repositories. If you have a Node object around you can use $node->contentRepositoryId.',
                     self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
                 )
             ],

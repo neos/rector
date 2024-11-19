@@ -50,10 +50,12 @@ final class NodeGetNodeTypeRector extends AbstractRector
 
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
-                self::withTodoComment(
-                    'Make this code aware of multiple Content Repositories.',
-                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
-                )
+                self::assign(
+                    'contentRepository',
+                    $this->this_contentRepositoryRegistry_get(
+                        $this->nodeFactory->createPropertyFetch($node->var, 'contentRepositoryId')
+                    )
+                ),
             ],
             $node
         );
