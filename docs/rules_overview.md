@@ -1,4 +1,4 @@
-# 58 Rules Overview
+# 61 Rules Overview
 
 ## ContentDimensionCombinatorGetAllAllowedCombinationsRector
 
@@ -1319,7 +1319,7 @@ return static function (RectorConfig $rectorConfig): void {
      {
 -        $parentNode = $node->findParentNode();
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-+        $parentNode = $subgraph->findParentNode($node->nodeAggregateId);
++        $parentNode = $subgraph->findParentNode($node->aggregateId);
      }
  }
 
@@ -1347,7 +1347,7 @@ return static function (RectorConfig $rectorConfig): void {
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 +        // TODO 9.0 migration: Try to remove the iterator_to_array($nodes) call.
 +
-+        foreach (iterator_to_array($subgraph->findChildNodes($node->nodeAggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter::create(pagination: ['limit' => 10, 'offset' => 100]))) as $node) {
++        foreach (iterator_to_array($subgraph->findChildNodes($node->aggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter::create(pagination: ['limit' => 10, 'offset' => 100]))) as $node) {
          }
      }
  }
@@ -1426,7 +1426,7 @@ return static function (RectorConfig $rectorConfig): void {
      {
 -        return $node->getDepth();
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-+        return $subgraph->findNodePath($node->nodeAggregateId)->getDepth();
++        return $subgraph->findNodePath($node->aggregateId)->getDepth();
      }
  }
 
@@ -1480,7 +1480,62 @@ return static function (RectorConfig $rectorConfig): void {
 -        $nodeIdentifier = $node->getIdentifier();
 +        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
 +
-+        $nodeIdentifier = $node->nodeAggregateId->value;
++        $nodeIdentifier = $node->aggregateId->value;
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeGetNodeTypeGetNameRector
+
+`"NodeInterface::getNodeType()->getName()"` will be rewritten
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeGetNameRector`](../src/ContentRepository90/Rules/NodeGetNodeTypeGetNameRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class SomeClass
+ {
+     public function run(NodeLegacyStub $node)
+     {
+         $nodeType = $node->getNodeType();
+         $nodeTypeName = $nodeType->getName();
+
+-        $nodeTypeName = $node->getNodeType()->getName();
++        $nodeTypeName = $node->nodeTypeName->value;
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeGetNodeTypeRector
+
+`"NodeInterface::getNodeType()"` will be rewritten
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeRector`](../src/ContentRepository90/Rules/NodeGetNodeTypeRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class SomeClass
+ {
+     public function run(NodeLegacyStub $node)
+     {
+-        $nodeType = $node->getNodeType();
++        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
++        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
++        $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
      }
  }
 
@@ -1506,7 +1561,7 @@ return static function (RectorConfig $rectorConfig): void {
      {
 -        return $node->getParent();
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-+        return $subgraph->findParentNode($node->nodeAggregateId);
++        return $subgraph->findParentNode($node->aggregateId);
      }
  }
 
@@ -1534,7 +1589,32 @@ return static function (RectorConfig $rectorConfig): void {
 +        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 +        // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
 +
-+        return (string) $subgraph->findNodePath($node->nodeAggregateId);
++        return (string) $subgraph->findNodePath($node->aggregateId);
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeGetPropertyNamesRector
+
+"$nodeType->allowsGrandchildNodeType($parentNodeName, `$nodeType)"` will be rewritten.
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeGetPropertyNamesRector`](../src/ContentRepository90/Rules/NodeGetPropertyNamesRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class SomeClass
+ {
+     public function run(NodeLegacyStub $node)
+     {
+-        $propertyNames = $node->getPropertyNames();
++        $propertyNames = array_keys(iterator_to_array($node->properties));
      }
  }
 
@@ -1645,7 +1725,7 @@ return static function (RectorConfig $rectorConfig): void {
 +        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
 
 -        $grandParentsNodeType->allowsGrandchildNodeType($parentNodeName, $nodeType);
-+        $contentRepository->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType, \Neos\ContentRepository\Core\SharedModel\Node\NodeName::fromString($parentNodeName), $nodeType);
++        $contentRepository->getNodeTypeManager()->isNodeTypeAllowedAsChildToTetheredNode($grandParentsNodeType->name, \Neos\ContentRepository\Core\SharedModel\Node\NodeName::fromString($parentNodeName), $nodeType->name);
      }
  }
 
@@ -1667,15 +1747,13 @@ return static function (RectorConfig $rectorConfig): void {
 
  class SomeClass
  {
-+    #[\Neos\Flow\Annotations\Inject]
-+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
      public function run(NodeLegacyStub $node)
      {
          $nodeType = $node->getNodeType();
 -        $childNodes = $nodeType->getAutoCreatedChildNodes();
-+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
-+        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
-+        $childNodes = $contentRepository->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType);
++        // TODO 9.0 migration: NodeType::tetheredNodeTypeDefinitions() is not a 1:1 replacement of NodeType::getAutoCreatedChildNodes(). You need to change your code to work with new TetheredNodeTypeDefinition object.
++
++        $childNodes = $nodeType->tetheredNodeTypeDefinitions;
      }
  }
 
@@ -1732,7 +1810,7 @@ return static function (RectorConfig $rectorConfig): void {
 -        $type = $nodeType->getTypeOfAutoCreatedChildNode($nodeName);
 +        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
 +        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
-+        $type = $contentRepository->getNodeTypeManager()->getTypeOfTetheredNode($nodeType, $nodeName);
++        $type = $contentRepository->getNodeTypeManager()->getNodeType($nodeType->tetheredNodeTypeDefinitions->get($nodeName));
      }
  }
 

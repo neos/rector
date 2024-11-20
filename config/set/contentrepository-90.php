@@ -43,8 +43,11 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDepthRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeGetNameRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetParentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetPropertyNamesRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\ContentRepository90\Rules\NodeLabelGeneratorRector;
@@ -89,12 +92,14 @@ return static function (RectorConfig $rectorConfig): void {
     $services->set(\Neos\Rector\Core\YamlProcessing\YamlFileProcessor::class);
     $rectorConfig->disableParallel(); // parallel does not work for non-PHP-Files, so we need to disable it - see https://github.com/rectorphp/rector-src/pull/2597#issuecomment-1190120688
 
+    $rectorConfig->autoloadPaths([__DIR__ . '/../../src/ContentRepository90/Legacy']);
 
     $rectorConfig->ruleWithConfiguration(RenameClassRector::class, [
         \Neos\ContentRepository\Domain\Model\Node::class => NodeLegacyStub::class,
         \Neos\ContentRepository\Domain\Model\NodeInterface::class => NodeLegacyStub::class,
         \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class => NodeLegacyStub::class,
         \Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface::class => NodeLegacyStub::class,
+
         \Neos\ContentRepository\Domain\Projection\Content\TraversableNodes::class => \Neos\ContentRepository\Core\Projection\ContentGraph\Nodes::class,
 
         \Neos\ContentRepository\Domain\Service\Context::class => LegacyContextStub::class,
@@ -136,6 +141,7 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos\ContentRepository\Domain\Model\NodeInterface
      */
     // setName
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setName', '!! Node::setName() is not supported by the new CR. Use the "ChangeNodeAggregateName" command to change the node name.');
     // getName
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getName', 'nodeName');
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_name', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_name")" to "VARIABLE.nodeName". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
@@ -143,12 +149,15 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FusionNodeLabelRector::class);
     $rectorConfig->rule(NodeLabelGeneratorRector::class);
     // setProperty
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setProperty', '!! Node::setProperty() is not supported by the new CR. Use the "SetNodeProperties" command to change property values.');
     // hasProperty -> compatible with ES CR Node (nothing to do)
     // getProperty -> compatible with ES CR Node (nothing to do)
     // removeProperty
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'removeProperty', '!! Node::removeProperty() is not supported by the new CR. Use the "SetNodeProperties" command to remove a property values.');
     // getProperties -> PropertyCollectionInterface
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getProperties', 'properties');
     // getPropertyNames
+    $rectorConfig->rule(NodeGetPropertyNamesRector::class);
     // setContentObject -> DEPRECATED / NON-FUNCTIONAL
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setContentObject', '!! Node::setContentObject() is not supported by the new CR. Referencing objects can be done by storing them in Node::properties (and the serialization/deserialization is extensible).');
     // getContentObject -> DEPRECATED / NON-FUNCTIONAL
@@ -156,7 +165,11 @@ return static function (RectorConfig $rectorConfig): void {
     // unsetContentObject -> DEPRECATED / NON-FUNCTIONAL
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'unsetContentObject', '!! Node::unsetContentObject() is not supported by the new CR. Referencing objects can be done by storing them in Node::properties (and the serialization/deserialization is extensible).');
     // setNodeType
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setNodeType', '!! Node::setNodeType() is not supported by the new CR. Use the "ChangeNodeAggregateType" command to change nodetype.');
     // getNodeType: NodeType
+    // PHP: shortcut to Node->nodeTypeName->value
+    $rectorConfig->rule(NodeGetNodeTypeGetNameRector::class);
+    $rectorConfig->rule(NodeGetNodeTypeRector::class);
     // Fusion: node.nodeType -> Neos.Node.nodeType(node)
     // Fusion: node.nodeType.name -> node.nodeTypeName
     $rectorConfig->rule(FusionNodeNodeTypeRector::class);
@@ -176,6 +189,7 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
     $rectorConfig->rule(FusionNodeHiddenAfterDateTimeRector::class);
     // setHiddenInIndex
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenInIndex', '!! Node::setHiddenInIndex() is not supported by the new CR. Use the "SetNodeProperties" command to change the property value for "hiddenInMenu".');
     // isHiddenInIndex
     $rectorConfig->rule(NodeIsHiddenInIndexRector::class);
     // Fusion: .hiddenInIndex -> node.properties._hiddenInIndex
@@ -462,7 +476,9 @@ return static function (RectorConfig $rectorConfig): void {
 
     // We can only add one rule per class name. As workaround, we need to alias the RenameClassRector, so we are able to
     // add this rule twice.
-    class_alias(RenameClassRector::class, \Alias\RenameClassRectorLegacy::class);
+    if (!class_exists(\Alias\RenameClassRectorLegacy::class)){
+        class_alias(RenameClassRector::class, \Alias\RenameClassRectorLegacy::class);
+    }
     $rectorConfig->ruleWithConfiguration(\Alias\RenameClassRectorLegacy::class, [
         NodeLegacyStub::class => Node::class,
     ]);
