@@ -153,7 +153,7 @@ return static function (RectorConfig $rectorConfig): void {
     // hasProperty -> compatible with ES CR Node (nothing to do)
     // getProperty -> compatible with ES CR Node (nothing to do)
     // removeProperty
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'removeProperty', '!! Node::setProperty() is not supported by the new CR. Use the "SetNodeProperties" command to remove a property values.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'removeProperty', '!! Node::removeProperty() is not supported by the new CR. Use the "SetNodeProperties" command to remove a property values.');
     // getProperties -> PropertyCollectionInterface
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getProperties', 'properties');
     // getPropertyNames
