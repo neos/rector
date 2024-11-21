@@ -1,6 +1,7 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
@@ -16,26 +17,26 @@ final class NodeGetDimensionsRector extends AbstractRector
 
     public function __construct(
         private readonly NodesToAddCollector $nodesToAddCollector
-    )
-    {
+    ) {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('"NodeInterface::getChildNodes()" will be rewritten', __CLASS__);
+        return CodeSampleLoader::fromFile('"NodeInterface::getDimensions()" will be rewritten', __CLASS__);
     }
 
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
         return [\PhpParser\Node\Expr\MethodCall::class];
     }
+
     /**
      * @param \PhpParser\Node\Expr\MethodCall $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\MethodCall);
 
