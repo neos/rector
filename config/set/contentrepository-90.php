@@ -243,7 +243,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NodeGetChildNodesRector::class);
     // hasChildNodes($nodeTypeFilter) - deprecated
     // remove()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'remove', '!! Node::remove() is not supported by the new CR. Use the "RemoveNodeAggregate" command to remove a node.');
     // setRemoved()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setRemoved', '!! Node::setRemoved() is not supported by the new CR. Use the "RemoveNodeAggregate" command to remove a node.');
     // isRemoved()
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'isRemoved', '!! Node::isRemoved() - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('removed', 'Line %LINE: !! node.removed - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
