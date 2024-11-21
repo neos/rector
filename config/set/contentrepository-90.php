@@ -50,6 +50,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetParentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPropertyNamesRector;
+use Neos\Rector\ContentRepository90\Rules\NodeIsAutoCreatedRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\ContentRepository90\Rules\NodeLabelGeneratorRector;
@@ -270,7 +271,7 @@ return static function (RectorConfig $rectorConfig): void {
     // TODO: Fusion
     // createVariantForContext()
     // isAutoCreated()
-    // TODO: PHP
+    $rectorConfig->rule(NodeIsAutoCreatedRector::class);
     $rectorConfig->rule(FusionNodeAutoCreatedRector::class);
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_autoCreated', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_autoCreated")" to "VARIABLE.classification.tethered". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
 
