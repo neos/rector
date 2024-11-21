@@ -175,6 +175,7 @@ return static function (RectorConfig $rectorConfig): void {
     // Fusion: node.nodeType.name -> node.nodeTypeName
     $rectorConfig->rule(FusionNodeNodeTypeRector::class);
     // setHidden
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHidden', '!! Node::setHidden() is not supported by the new CR. Use the "EnableNodeAggregate" or "DisableNodeAggregate" command to change the visibility of the node.');
     // isHidden
     $rectorConfig->rule(NodeIsHiddenRector::class);
     $rectorConfig->rule(FusionNodeHiddenRector::class);
