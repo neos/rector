@@ -42,6 +42,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDepthRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetHiddenBeforeAfterDateTimeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeRector;
@@ -179,14 +180,14 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FusionNodeHiddenRector::class);
     // TODO: Fusion NodeAccess
     // setHiddenBeforeDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $rectorConfig->rule(NodeGetHiddenBeforeAfterDateTimeRector::class);
     // getHiddenBeforeDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenBeforeDateTime', '!! Node::getHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    // PHP: Covered by NodeGetHiddenBeforeAfterDateTimeRector
     $rectorConfig->rule(FusionNodeHiddenBeforeDateTimeRector::class);
     // setHiddenAfterDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenAfterDateTime', '!! Node::setHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    // PHP: Covered by NodeGetHiddenBeforeAfterDateTimeRector
     // getHiddenAfterDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    // PHP: Covered by NodeGetHiddenBeforeAfterDateTimeRector
     $rectorConfig->rule(FusionNodeHiddenAfterDateTimeRector::class);
     // setHiddenInIndex
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenInIndex', '!! Node::setHiddenInIndex() is not supported by the new CR. Use the "SetNodeProperties" command to change the property value for "hiddenInMenu".');
