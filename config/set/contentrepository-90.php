@@ -40,6 +40,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetContextPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDepthRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetHiddenBeforeAfterDateTimeRector;
@@ -206,7 +207,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FusionNodePathRector::class);
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_path', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_path")" to "Neos.Node.path(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getContextPath
-    // TODO: PHP
+    $rectorConfig->rule(NodeGetContextPathRector::class);
     $rectorConfig->rule(FusionNodeContextPathRector::class);
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_contextPath', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_contextPath")" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getDepth
