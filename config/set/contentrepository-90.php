@@ -252,11 +252,17 @@ return static function (RectorConfig $rectorConfig): void {
     // hasAccessRestrictions()
     // isNodeTypeAllowedAsChildNode()
     // moveBefore()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'moveBefore', '!! Node::moveBefore() is not supported by the new CR. Use the "MoveNodeAggregate" command to move a node.');
     // moveAfter()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'moveAfter', '!! Node::moveAfter() is not supported by the new CR. Use the "MoveNodeAggregate" command to move a node.');
     // moveInto()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'moveInto', '!! Node::moveInto() is not supported by the new CR. Use the "MoveNodeAggregate" command to move a node.');
     // copyBefore()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'copyBefore', '!! Node::copyBefore() is not supported by the new CR. Use the "NodeDuplicationService::copyNodesRecursively" to copy a node.');
     // copyAfter()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'copyAfter', '!! Node::copyAfter() is not supported by the new CR. Use the "NodeDuplicationService::copyNodesRecursively" to copy a node.');
     // copyInto()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'copyInto', '!! Node::copyInto() is not supported by the new CR. Use the "NodeDuplicationService::copyNodesRecursively" to copy a node.');
     // getNodeData()
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getNodeData', '!! Node::getNodeData() - the new CR is not based around the concept of NodeData anymore. You need to rewrite your code here.');
     // getContext()
