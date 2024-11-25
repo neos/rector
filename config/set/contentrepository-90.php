@@ -51,6 +51,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetPropertyNamesRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\ContentRepository90\Rules\NodeLabelGeneratorRector;
+use Neos\Rector\ContentRepository90\Rules\NodeSearchServiceRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeAllowsGrandchildNodeTypeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetAutoCreatedChildNodesRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector;
@@ -388,6 +389,11 @@ return static function (RectorConfig $rectorConfig): void {
      */
     // ContentDimensionCombinator::getAllAllowedCombinations
     $rectorConfig->rule(ContentDimensionCombinatorGetAllAllowedCombinationsRector::class);
+
+    /**
+     * Neos\Neos\Domain\Service\NodeSearchService
+     */
+    $rectorConfig->rule(NodeSearchServiceRector::class);
 
 
     /**
