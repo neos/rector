@@ -1794,6 +1794,52 @@ return static function (RectorConfig $rectorConfig): void {
 
 <br>
 
+## NodeSearchServiceRector
+
+`"NodeSearchService::findDescendantNodes()"` will be rewritten
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeSearchServiceRector`](../src/ContentRepository90/Rules/NodeSearchServiceRector.php)
+
+```diff
+ <?php
+
+ namespace Neos\Rector\Test;
+
+ use Neos\ContentRepository\Domain\Model\Node;
+ use Neos\ContentRepository\Domain\Service\Context;
+
+ class SomeClass extends AnotherClass
+ {
+     /**
+      * @var \Neos\Neos\Domain\Service\NodeSearchService
+      */
+     private $nodeSearchService;
+
+     public function startingPointNodeIsGiven(Node $node, Context $context)
+     {
+         $term = "term";
+         $searchNodeTypes = [];
+-        $nodes = $this->nodeSearchService->findByProperties($term, $searchNodeTypes, $context, $node);
++        // TODO 9.0 migration: This could be a suitable replacement. Please check if all your requirements are still fulfilled.
++        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
++        $nodes = $subgraph->findDescendantNodes($node->aggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::create(nodeTypes: \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::create(\Neos\ContentRepository\Core\NodeType\NodeTypeNames::fromStringArray($searchNodeTypes), \Neos\ContentRepository\Core\NodeType\NodeTypeNames::createEmpty()), searchTerm: $term));
+     }
+
+     public function startingPointNodeIsNotGiven(Context $context)
+     {
+         $term = "term";
+         $searchNodeTypes = [];
+-        $nodes = $this->nodeSearchService->findByProperties($term, $searchNodeTypes, $context);
++        // TODO 9.0 migration: The replacement needs a node as starting point for the search. Please provide a node, to make this replacement working.
++        $node = 'we-need-a-node-here';
++        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
++        $nodes = $subgraph->findDescendantNodes($node->aggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::create(nodeTypes: \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::create(\Neos\ContentRepository\Core\NodeType\NodeTypeNames::fromStringArray($searchNodeTypes), \Neos\ContentRepository\Core\NodeType\NodeTypeNames::createEmpty()), searchTerm: $term));
+     }
+ }
+```
+
+<br>
+
 ## NodeTypeAllowsGrandchildNodeTypeRector
 
 "$nodeType->allowsGrandchildNodeType($parentNodeName, `$nodeType)"` will be rewritten.
@@ -2071,6 +2117,91 @@ return static function (RectorConfig $rectorConfig): void {
 +// TODO: Neos 9.0 Migration: Stuff
 +class SomeClass
  {
+ }
+
+ ?>
+```
+
+<br>
+
+## SignalSlotToWarningCommentRector
+
+"Warning comments for various non-supported signals
+
+:wrench: **configure it!**
+
+- class: [`Neos\Rector\Generic\Rules\SignalSlotToWarningCommentRector`](../src/Generic/Rules/SignalSlotToWarningCommentRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Neos\Rector\Generic\Rules\SignalSlotToWarningCommentRector;
+use Neos\Rector\Generic\ValueObject\SignalSlotToWarningComment;
+use Rector\Config\RectorConfig;
+
+return static function (RectorConfig $rectorConfig): void {
+    $containerConfigurator->extension('rectorConfig', [
+        [
+            'class' => SignalSlotToWarningCommentRector::class,
+            'configuration' => [
+                new SignalSlotToWarningComment('PhpParser\Node', 'beforeMove', '!! This signal "beforeMove" on Node doesn\'t exist anymore'),
+            ],
+        ],
+    ]);
+};
+```
+
+↓
+
+```diff
+ <?php
+
+ use Neos\Flow\Core\Bootstrap;
+ use Neos\Flow\Package\Package as BasePackage;
+ use Neos\Flow\SignalSlot\Dispatcher;
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class Package extends BasePackage
+ {
+     public function boot(Bootstrap $bootstrap)
+     {
+         /** @var Dispatcher $dispatcher */
+         $dispatcher = $bootstrap->getSignalSlotDispatcher();
++        // TODO 9.0 migration: Signal "beforeMove" doesn't exist anymore
+
++
+         $dispatcher->connect(
+             NodeLegacyStub::class,
+             'beforeMove',
+             SomeOtherClass::class,
+             'someMethod'
+         );
++        // TODO 9.0 migration: Signal "afterMove" doesn't exist anymore
++
+
+         $dispatcher->connect(
+             'Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub',
+             'afterMove',
+             SomeOtherClass::class,
+             'someMethod'
+         );
+
+         $dispatcher->connect(
+             NodeLegacyStub::class,
+             'otherMethod',
+             SomeOtherClass::class,
+             'someMethod'
+         );
+
+         $dispatcher->connect(
+             OtherClass::class,
+             'afterMove',
+             SomeOtherClass::class,
+             'someMethod'
+         );
+     }
  }
 
  ?>
