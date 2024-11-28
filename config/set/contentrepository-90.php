@@ -40,14 +40,17 @@ use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetContextPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDepthRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetHiddenBeforeAfterDateTimeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetParentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPropertyNamesRector;
+use Neos\Rector\ContentRepository90\Rules\NodeIsAutoCreatedRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\ContentRepository90\Rules\NodeLabelGeneratorRector;
@@ -174,19 +177,20 @@ return static function (RectorConfig $rectorConfig): void {
     // Fusion: node.nodeType.name -> node.nodeTypeName
     $rectorConfig->rule(FusionNodeNodeTypeRector::class);
     // setHidden
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHidden', '!! Node::setHidden() is not supported by the new CR. Use the "EnableNodeAggregate" or "DisableNodeAggregate" command to change the visibility of the node.');
     // isHidden
     $rectorConfig->rule(NodeIsHiddenRector::class);
     $rectorConfig->rule(FusionNodeHiddenRector::class);
     // TODO: Fusion NodeAccess
     // setHiddenBeforeDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $rectorConfig->rule(NodeGetHiddenBeforeAfterDateTimeRector::class);
     // getHiddenBeforeDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenBeforeDateTime', '!! Node::getHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    // PHP: Covered by NodeGetHiddenBeforeAfterDateTimeRector
     $rectorConfig->rule(FusionNodeHiddenBeforeDateTimeRector::class);
     // setHiddenAfterDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenAfterDateTime', '!! Node::setHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    // PHP: Covered by NodeGetHiddenBeforeAfterDateTimeRector
     // getHiddenAfterDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    // PHP: Covered by NodeGetHiddenBeforeAfterDateTimeRector
     $rectorConfig->rule(FusionNodeHiddenAfterDateTimeRector::class);
     // setHiddenInIndex
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenInIndex', '!! Node::setHiddenInIndex() is not supported by the new CR. Use the "SetNodeProperties" command to change the property value for "hiddenInMenu".');
@@ -204,7 +208,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FusionNodePathRector::class);
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_path', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_path")" to "Neos.Node.path(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getContextPath
-    // TODO: PHP
+    $rectorConfig->rule(NodeGetContextPathRector::class);
     $rectorConfig->rule(FusionNodeContextPathRector::class);
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_contextPath', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_contextPath")" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getDepth
@@ -239,7 +243,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NodeGetChildNodesRector::class);
     // hasChildNodes($nodeTypeFilter) - deprecated
     // remove()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'remove', '!! Node::remove() is not supported by the new CR. Use the "RemoveNodeAggregate" command to remove a node.');
     // setRemoved()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setRemoved', '!! Node::setRemoved() is not supported by the new CR. Use the "RemoveNodeAggregate" command to remove a node.');
     // isRemoved()
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'isRemoved', '!! Node::isRemoved() - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('removed', 'Line %LINE: !! node.removed - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
@@ -248,11 +254,17 @@ return static function (RectorConfig $rectorConfig): void {
     // hasAccessRestrictions()
     // isNodeTypeAllowedAsChildNode()
     // moveBefore()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'moveBefore', '!! Node::moveBefore() is not supported by the new CR. Use the "MoveNodeAggregate" command to move a node.');
     // moveAfter()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'moveAfter', '!! Node::moveAfter() is not supported by the new CR. Use the "MoveNodeAggregate" command to move a node.');
     // moveInto()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'moveInto', '!! Node::moveInto() is not supported by the new CR. Use the "MoveNodeAggregate" command to move a node.');
     // copyBefore()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'copyBefore', '!! Node::copyBefore() is not supported by the new CR. Use the "NodeDuplicationService::copyNodesRecursively" to copy a node.');
     // copyAfter()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'copyAfter', '!! Node::copyAfter() is not supported by the new CR. Use the "NodeDuplicationService::copyNodesRecursively" to copy a node.');
     // copyInto()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'copyInto', '!! Node::copyInto() is not supported by the new CR. Use the "NodeDuplicationService::copyNodesRecursively" to copy a node.');
     // getNodeData()
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getNodeData', '!! Node::getNodeData() - the new CR is not based around the concept of NodeData anymore. You need to rewrite your code here.');
     // getContext()
@@ -267,7 +279,7 @@ return static function (RectorConfig $rectorConfig): void {
     // TODO: Fusion
     // createVariantForContext()
     // isAutoCreated()
-    // TODO: PHP
+    $rectorConfig->rule(NodeIsAutoCreatedRector::class);
     $rectorConfig->rule(FusionNodeAutoCreatedRector::class);
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_autoCreated', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_autoCreated")" to "VARIABLE.classification.tethered". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
 

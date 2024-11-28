@@ -17,13 +17,12 @@ final class NodeGetContextGetWorkspaceNameRector extends AbstractRector
 
     public function __construct(
         private readonly NodesToAddCollector $nodesToAddCollector
-    )
-    {
+    ) {
     }
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('"NodeInterface::getContext()::getWorkspace()" will be rewritten', __CLASS__);
+        return CodeSampleLoader::fromFile('"NodeInterface::getContext()::getWorkspaceName()" will be rewritten', __CLASS__);
     }
 
     /**
