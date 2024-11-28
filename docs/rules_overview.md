@@ -1,4 +1,4 @@
-# 63 Rules Overview
+# 64 Rules Overview
 
 ## ContentDimensionCombinatorGetAllAllowedCombinationsRector
 
@@ -1359,7 +1359,7 @@ return static function (RectorConfig $rectorConfig): void {
 
 ## NodeGetContextGetWorkspaceNameRector
 
-`"NodeInterface::getContext()::getWorkspace()"` will be rewritten
+`"NodeInterface::getContext()::getWorkspaceName()"` will be rewritten
 
 - class: [`Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector`](../src/ContentRepository90/Rules/NodeGetContextGetWorkspaceNameRector.php)
 
@@ -1409,6 +1409,31 @@ return static function (RectorConfig $rectorConfig): void {
 
 <br>
 
+## NodeGetContextPathRector
+
+`"NodeInterface::getContextPath()"` will be rewritten
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeGetContextPathRector`](../src/ContentRepository90/Rules/NodeGetContextPathRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class SomeClass
+ {
+     public function run(NodeLegacyStub $node)
+     {
+-        return $node->getContextPath();
++        return \Neos\ContentRepository\Core\SharedModel\Node\NodeAddress::fromNode($node)->toJson();
+     }
+ }
+
+ ?>
+```
+
+<br>
+
 ## NodeGetDepthRector
 
 `"NodeInterface::getDepth()"` will be rewritten
@@ -1437,7 +1462,7 @@ return static function (RectorConfig $rectorConfig): void {
 
 ## NodeGetDimensionsRector
 
-`"NodeInterface::getChildNodes()"` will be rewritten
+`"NodeInterface::getDimensions()"` will be rewritten
 
 - class: [`Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector`](../src/ContentRepository90/Rules/NodeGetDimensionsRector.php)
 
@@ -1454,6 +1479,51 @@ return static function (RectorConfig $rectorConfig): void {
 +        // TODO 9.0 migration: Try to remove the toLegacyDimensionArray() call and make your codebase more typesafe.
 +
 +        return $node->originDimensionSpacePoint->toLegacyDimensionArray();
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeGetHiddenBeforeAfterDateTimeRector
+
+`"NodeInterface::getHiddenBeforeDateTime()",` `"NodeInterface::setHiddenBeforeDateTime()",` `"NodeInterface::getHiddenAfterDateTime()"` and `"NodeInterface::setHiddenAfterDateTime()"` will be rewritten
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeGetHiddenBeforeAfterDateTimeRector`](../src/ContentRepository90/Rules/NodeGetHiddenBeforeAfterDateTimeRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class SomeClass
+ {
+     public function nodeHiddenBeforeDateTime(NodeLegacyStub $node)
+     {
+-        $dateTime = $node->getHiddenBeforeDateTime();
++        // TODO 9.0 migration: Timed publishing has been conceptually changed and has been extracted into a dedicated package. Please check https://github.com/neos/timeable-node-visibility for further details.
+
++        $dateTime = $node->getProperty('enableAfterDateTime');
++        // TODO 9.0 migration: Timed publishing has been conceptually changed and has been extracted into a dedicated package. Please check https://github.com/neos/timeable-node-visibility for further details.
++        // Use the "SetNodeProperties" command to change property values for "enableAfterDateTime" or "disableAfterDateTime".
++
++
+         $node->setHiddenBeforeDateTime($dateTime);
+     }
+
+     public function nodeHiddenAfterDateTime(NodeLegacyStub $node)
+     {
+-        $dateTime = $node->getHiddenAfterDateTime();
++        // TODO 9.0 migration: Timed publishing has been conceptually changed and has been extracted into a dedicated package. Please check https://github.com/neos/timeable-node-visibility for further details.
++
++        $dateTime = $node->getProperty('disableAfterDateTime');
++        // TODO 9.0 migration: Timed publishing has been conceptually changed and has been extracted into a dedicated package. Please check https://github.com/neos/timeable-node-visibility for further details.
++        // Use the "SetNodeProperties" command to change property values for "enableAfterDateTime" or "disableAfterDateTime".
++
+
+         $node->setHiddenAfterDateTime($dateTime);
      }
  }
 
@@ -1614,6 +1684,31 @@ return static function (RectorConfig $rectorConfig): void {
      {
 -        $propertyNames = $node->getPropertyNames();
 +        $propertyNames = array_keys(iterator_to_array($node->properties));
+     }
+ }
+
+ ?>
+```
+
+<br>
+
+## NodeIsAutoCreatedRector
+
+"NodeInterface::isAutoCreated" will be rewritten
+
+- class: [`Neos\Rector\ContentRepository90\Rules\NodeIsAutoCreatedRector`](../src/ContentRepository90/Rules/NodeIsAutoCreatedRector.php)
+
+```diff
+ <?php
+
+ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+
+ class SomeClass
+ {
+     public function run(NodeLegacyStub $node)
+     {
+-        $bool = $node->isAutoCreated();
++        $bool = $node->classification->isTethered();
      }
  }
 

@@ -40,14 +40,17 @@ use Neos\Rector\ContentRepository90\Rules\NodeFindParentNodeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetChildNodesRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetContextPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDepthRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetDimensionsRector;
+use Neos\Rector\ContentRepository90\Rules\NodeGetHiddenBeforeAfterDateTimeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetParentRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPathRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetPropertyNamesRector;
+use Neos\Rector\ContentRepository90\Rules\NodeIsAutoCreatedRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenInIndexRector;
 use Neos\Rector\ContentRepository90\Rules\NodeIsHiddenRector;
 use Neos\Rector\ContentRepository90\Rules\NodeLabelGeneratorRector;
@@ -66,6 +69,7 @@ use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;
 use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
+use Neos\Rector\Generic\Rules\SignalSlotToWarningCommentRector;
 use Neos\Rector\Generic\Rules\ToStringToMethodCallOrPropertyFetchRector;
 use Neos\Rector\Generic\ValueObject\AddInjection;
 use Neos\Rector\Generic\ValueObject\FusionFlowQueryNodePropertyToWarningComment;
@@ -75,6 +79,7 @@ use Neos\Rector\Generic\ValueObject\FusionPrototypeNameReplacement;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Neos\Rector\Generic\ValueObject\RemoveParentClass;
+use Neos\Rector\Generic\ValueObject\SignalSlotToWarningComment;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
@@ -175,19 +180,20 @@ return static function (RectorConfig $rectorConfig): void {
     // Fusion: node.nodeType.name -> node.nodeTypeName
     $rectorConfig->rule(FusionNodeNodeTypeRector::class);
     // setHidden
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHidden', '!! Node::setHidden() is not supported by the new CR. Use the "EnableNodeAggregate" or "DisableNodeAggregate" command to change the visibility of the node.');
     // isHidden
     $rectorConfig->rule(NodeIsHiddenRector::class);
     $rectorConfig->rule(FusionNodeHiddenRector::class);
     // TODO: Fusion NodeAccess
     // setHiddenBeforeDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenBeforeDateTime', '!! Node::setHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    $rectorConfig->rule(NodeGetHiddenBeforeAfterDateTimeRector::class);
     // getHiddenBeforeDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenBeforeDateTime', '!! Node::getHiddenBeforeDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    // PHP: Covered by NodeGetHiddenBeforeAfterDateTimeRector
     $rectorConfig->rule(FusionNodeHiddenBeforeDateTimeRector::class);
     // setHiddenAfterDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenAfterDateTime', '!! Node::setHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    // PHP: Covered by NodeGetHiddenBeforeAfterDateTimeRector
     // getHiddenAfterDateTime
-    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getHiddenAfterDateTime', '!! Node::getHiddenAfterDateTime() is not supported by the new CR. Timed publishing will be implemented not on the read model, but by dispatching commands at a given time.');
+    // PHP: Covered by NodeGetHiddenBeforeAfterDateTimeRector
     $rectorConfig->rule(FusionNodeHiddenAfterDateTimeRector::class);
     // setHiddenInIndex
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setHiddenInIndex', '!! Node::setHiddenInIndex() is not supported by the new CR. Use the "SetNodeProperties" command to change the property value for "hiddenInMenu".');
@@ -205,7 +211,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FusionNodePathRector::class);
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_path', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_path")" to "Neos.Node.path(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getContextPath
-    // TODO: PHP
+    $rectorConfig->rule(NodeGetContextPathRector::class);
     $rectorConfig->rule(FusionNodeContextPathRector::class);
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_contextPath', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_contextPath")" to "Neos.Node.serializedNodeAddress(VARIABLE)". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
     // getDepth
@@ -240,7 +246,9 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(NodeGetChildNodesRector::class);
     // hasChildNodes($nodeTypeFilter) - deprecated
     // remove()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'remove', '!! Node::remove() is not supported by the new CR. Use the "RemoveNodeAggregate" command to remove a node.');
     // setRemoved()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'setRemoved', '!! Node::setRemoved() is not supported by the new CR. Use the "RemoveNodeAggregate" command to remove a node.');
     // isRemoved()
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'isRemoved', '!! Node::isRemoved() - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('removed', 'Line %LINE: !! node.removed - the new CR *never* returns removed nodes; so you can simplify your code and just assume removed == FALSE in all scenarios.');
@@ -249,11 +257,17 @@ return static function (RectorConfig $rectorConfig): void {
     // hasAccessRestrictions()
     // isNodeTypeAllowedAsChildNode()
     // moveBefore()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'moveBefore', '!! Node::moveBefore() is not supported by the new CR. Use the "MoveNodeAggregate" command to move a node.');
     // moveAfter()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'moveAfter', '!! Node::moveAfter() is not supported by the new CR. Use the "MoveNodeAggregate" command to move a node.');
     // moveInto()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'moveInto', '!! Node::moveInto() is not supported by the new CR. Use the "MoveNodeAggregate" command to move a node.');
     // copyBefore()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'copyBefore', '!! Node::copyBefore() is not supported by the new CR. Use the "NodeDuplicationService::copyNodesRecursively" to copy a node.');
     // copyAfter()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'copyAfter', '!! Node::copyAfter() is not supported by the new CR. Use the "NodeDuplicationService::copyNodesRecursively" to copy a node.');
     // copyInto()
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'copyInto', '!! Node::copyInto() is not supported by the new CR. Use the "NodeDuplicationService::copyNodesRecursively" to copy a node.');
     // getNodeData()
     $methodCallToWarningComments[] = new MethodCallToWarningComment(NodeLegacyStub::class, 'getNodeData', '!! Node::getNodeData() - the new CR is not based around the concept of NodeData anymore. You need to rewrite your code here.');
     // getContext()
@@ -268,7 +282,7 @@ return static function (RectorConfig $rectorConfig): void {
     // TODO: Fusion
     // createVariantForContext()
     // isAutoCreated()
-    // TODO: PHP
+    $rectorConfig->rule(NodeIsAutoCreatedRector::class);
     $rectorConfig->rule(FusionNodeAutoCreatedRector::class);
     $fusionFlowQueryPropertyToComments[] = new FusionFlowQueryNodePropertyToWarningComment('_autoCreated', 'Line %LINE: !! You very likely need to rewrite "q(VARIABLE).property("_autoCreated")" to "VARIABLE.classification.tethered". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.');
 
@@ -414,6 +428,63 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(WorkspaceGetNameRector::class);
 
     /**
+     * Signals and Slots
+     * https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots
+     */
+    $signalsAndSlotsToComment = [];
+    // Neos\ContentRepository\Domain\Service\PublishingService
+    // - nodePublished
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Service\PublishingService::class, 'nodePublished', 'The signal "nodePublished" on "PublishingService" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - nodeDiscarded
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Service\PublishingService::class, 'nodeDiscarded', 'The signal "nodeDiscarded" on "PublishingService" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // Neos\ContentRepository\Domain\Service\Context
+    // - beforeAdoptNode
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Service\Context::class, 'beforeAdoptNode', 'The signal "beforeAdoptNode" on "Context" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - afterAdoptNode
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Service\Context::class, 'afterAdoptNode', 'The signal "afterAdoptNode" on "Context" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // Neos\ContentRepository\Domain\Repository\NodeDataRepository
+    // - repositoryObjectsPersisted
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class, 'repositoryObjectsPersisted', 'The signal "repositoryObjectsPersisted" on "NodeDataRepository" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // Neos\ContentRepository\Domain\Model\Workspace
+    // - baseWorkspaceChanged
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'baseWorkspaceChanged', 'The signal "baseWorkspaceChanged" on "Workspace" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - beforeNodePublishing
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'beforeNodePublishing', 'The signal "beforeNodePublishing" on "Workspace" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - afterNodePublishing
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'afterNodePublishing', 'The signal "afterNodePublishing" on "Workspace" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // Neos\ContentRepository\Domain\Model\NodeData
+    // - nodePathChanged
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'nodePathChanged', 'The signal "nodePathChanged" on "NodeData" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // Neos\ContentRepository\Domain\Model\Node
+    // - beforeNodeMove
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'beforeNodeMove', 'The signal "beforeNodeMove" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - afterNodeMove
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'afterNodeMove', 'The signal "afterNodeMove" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - beforeNodeCopy
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'beforeNodeCopy', 'The signal "beforeNodeCopy" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - afterNodeCopy
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'afterNodeCopy', 'The signal "afterNodeCopy" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - nodePathChanged
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'nodePathChanged', 'The signal "nodePathChanged" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - beforeNodeCreate
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'beforeNodeCreate', 'The signal "beforeNodeCreate" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - afterNodeCreate
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'afterNodeCreate', 'The signal "afterNodeCreate" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - nodeAdded
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'nodeAdded', 'The signal "nodeAdded" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - nodeUpdated
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'nodeUpdated', 'The signal "nodeUpdated" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - nodeRemoved
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'nodeRemoved', 'The signal "nodeRemoved" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - beforeNodePropertyChange
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'beforeNodePropertyChange', 'The signal "beforeNodePropertyChange" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - nodePropertyChanged
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Model\Node::class, 'nodePropertyChanged', 'The signal "nodePropertyChanged" on "Node" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+
+    $rectorConfig->ruleWithConfiguration(SignalSlotToWarningCommentRector::class, $signalsAndSlotsToComment);
+
+
+    /**
      * Neos.Fusion:Attributes
      */
     $rectorConfig->ruleWithConfiguration(FusionPrototypeNameAddCommentRector::class, [
@@ -482,7 +553,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // We can only add one rule per class name. As workaround, we need to alias the RenameClassRector, so we are able to
     // add this rule twice.
-    if (!class_exists(\Alias\RenameClassRectorLegacy::class)){
+    if (!class_exists(\Alias\RenameClassRectorLegacy::class)) {
         class_alias(RenameClassRector::class, \Alias\RenameClassRectorLegacy::class);
     }
     $rectorConfig->ruleWithConfiguration(\Alias\RenameClassRectorLegacy::class, [

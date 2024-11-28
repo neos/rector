@@ -11,7 +11,7 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeGetDimensionsRector extends AbstractRector
+final class NodeIsAutoCreatedRector extends AbstractRector
 {
     use AllTraits;
 
@@ -22,7 +22,7 @@ final class NodeGetDimensionsRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('"NodeInterface::getDimensions()" will be rewritten', __CLASS__);
+        return CodeSampleLoader::fromFile('"NodeInterface::isAutoCreated" will be rewritten', __CLASS__);
     }
 
     /**
@@ -43,17 +43,16 @@ final class NodeGetDimensionsRector extends AbstractRector
         if (!$this->isObjectType($node->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
             return null;
         }
-        if (!$this->isName($node->name, 'getDimensions')) {
+        if (!$this->isName($node->name, 'isAutoCreated')) {
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::todoComment('Try to remove the toLegacyDimensionArray() call and make your codebase more typesafe.')
-            ],
-            $node
-        );
-
-        return $this->node_originDimensionSpacePoint_toLegacyDimensionArray($node->var);
+        return
+            $this->nodeFactory->createMethodCall(
+                $this->nodeFactory->createPropertyFetch(
+                    $node->var,
+                    'classification'),
+                'isTethered'
+            );
     }
 }
