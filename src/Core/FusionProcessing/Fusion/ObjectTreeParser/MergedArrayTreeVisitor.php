@@ -286,7 +286,7 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
                 ->build();
         }
         if (str_starts_with($pathKey, '__')
-            && in_array($pathKey, Fusion\Core\Parser::$reservedParseTreeKeys, true)) {
+            && in_array($pathKey, \Neos\Rector\Core\FusionProcessing\Fusion\Parser::$reservedParseTreeKeys, true)) {
             throw $this->prepareParserException(new ParserException())
                 ->setCode(1437065270)
                 ->setMessage("Reversed key '$pathKey' used.")

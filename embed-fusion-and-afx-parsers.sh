@@ -22,6 +22,7 @@ pushd $FUSION_TARGETPATH
 patch -p4 < ../../../../scripts/fusion-object-parser.patch
 popd
 grep -rl 'Neos\\Fusion\\Core' $FUSION_TARGETPATH | xargs sed $SEDOPTION 's/Neos\\Fusion\\Core/Neos\\Rector\\Core\\FusionProcessing\\Fusion/g'
+grep -rl 'Fusion\\Core' $FUSION_TARGETPATH | xargs sed $SEDOPTION 's/Fusion\\Core/\\Neos\\Rector\\Core\\FusionProcessing\\Fusion/g'
 
 # To create the patch file for Neos.Fusion.Afx, do:
 # cd Packages/Neos
