@@ -1,4 +1,4 @@
-# 64 Rules Overview
+# 66 Rules Overview
 
 ## ContentDimensionCombinatorGetAllAllowedCombinationsRector
 
@@ -462,12 +462,12 @@ return static function (RectorConfig $rectorConfig): void {
 
 ## FusionNodeAggregateIdentifierRector
 
-Fusion: Rewrite node.nodeAggregateIdentifier to node.nodeAggregateId
+Fusion: Rewrite node.nodeAggregateIdentifier to node.aggregateId
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector`](../src/ContentRepository90/Rules/FusionNodeAggregateIdentifierRector.php)
 
 ```diff
-+// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.nodeAggregateIdentifier" to VARIABLE.nodeAggregateId. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
++// TODO 9.0 migration: Line 13: You may need to rewrite "VARIABLE.nodeAggregateIdentifier" to VARIABLE.aggregateId. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
  prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
    renderer = Neos.Fusion:Component {
@@ -476,14 +476,14 @@ Fusion: Rewrite node.nodeAggregateIdentifier to node.nodeAggregateId
      # pass down props
      #
 -    attributes = ${node.nodeAggregateIdentifier || documentNode.nodeAggregateIdentifier}
-+    attributes = ${node.nodeAggregateId || documentNode.nodeAggregateId}
++    attributes = ${node.aggregateId || documentNode.aggregateId}
      renderer = afx`
        <input
 -        name={node.nodeAggregateIdentifier}
-+        name={node.nodeAggregateId}
++        name={node.aggregateId}
          value={someOtherVariable.nodeAggregateIdentifier}
 -        {...node.nodeAggregateIdentifier}
-+        {...node.nodeAggregateId}
++        {...node.aggregateId}
        />
      `
    }
@@ -783,7 +783,7 @@ Fusion: Rewrite node.hidden and q(node).property("_hidden") to Neos.Node.isDisab
 
 ## FusionNodeIdentifierRector
 
-Fusion: Rewrite "node.identifier" and "q(node).property('_identifier')" to "node.nodeAggregateId"
+Fusion: Rewrite "node.identifier" and "q(node).property('_identifier')" to "node.aggregateId"
 
 - class: [`Neos\Rector\ContentRepository90\Rules\FusionNodeIdentifierRector`](../src/ContentRepository90/Rules/FusionNodeIdentifierRector.php)
 
@@ -796,15 +796,15 @@ Fusion: Rewrite "node.identifier" and "q(node).property('_identifier')" to "node
      # pass down props
      #
 -    attributes = ${q(node).property("_identifier") || q(documentNode).property("_identifier")}
-+    attributes = ${node.nodeAggregateId || documentNode.nodeAggregateId}
++    attributes = ${node.aggregateId || documentNode.aggregateId}
      renderer = afx`
        <input
 -        name={q(node).property('_identifier')}
 -        value={q(someOtherVariable).property("_identifier")}
 -        {...q(node).property("_identifier")}
-+        name={node.nodeAggregateId}
-+        value={someOtherVariable.nodeAggregateId}
-+        {...node.nodeAggregateId}
++        name={node.aggregateId}
++        value={someOtherVariable.aggregateId}
++        {...node.aggregateId}
        />
      `
    }
