@@ -2,7 +2,7 @@
 
 namespace Neos\Rector\Core\FusionProcessing\Helper;
 
-use Neos\Rector\Core\FusionProcessing\FusionParser\Ast\EelExpressionValue;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Ast\EelExpressionValue;
 
 final class EelExpressionPosition
 {

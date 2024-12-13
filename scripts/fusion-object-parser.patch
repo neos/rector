@@ -1,0 +1,13 @@
+diff --git a/Neos.Fusion/Classes/Core/ObjectTreeParser/ObjectTreeParser.php b/Neos.Fusion/Classes/Core/ObjectTreeParser/ObjectTreeParser.php
+index 06a31eb69c..eca9848de7 100644
+--- a/Neos.Fusion/Classes/Core/ObjectTreeParser/ObjectTreeParser.php
++++ b/Neos.Fusion/Classes/Core/ObjectTreeParser/ObjectTreeParser.php
+@@ -55,7 +55,7 @@ class ObjectTreeParser
+ 
+     protected ?string $contextPathAndFilename;
+ 
+-    private function __construct(Lexer $lexer, ?string $contextPathAndFilename)
++    public function __construct(Lexer $lexer, ?string $contextPathAndFilename)
+     {
+         $this->lexer = $lexer;
+         $this->contextPathAndFilename = $contextPathAndFilename;
