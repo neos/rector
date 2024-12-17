@@ -16,6 +16,7 @@ use Neos\Rector\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
 use Neos\Rector\ContentRepository90\Rules\ContextGetRootNodeRector;
 use Neos\Rector\ContentRepository90\Rules\ContextIsInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\ContextIsLiveRector;
+use Neos\Rector\ContentRepository90\Rules\FusionCacheLifetimeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionCachingNodeInEntryIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentRenderingModeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentSiteRector;
@@ -396,6 +397,11 @@ return static function (RectorConfig $rectorConfig): void {
     // ContentContext::getCurrentRenderingMode... -> renderingMode...
     $rectorConfig->rule(ContextGetCurrentRenderingModeRector::class);
     $rectorConfig->rule(FusionContextCurrentRenderingModeRector::class);
+
+    /**
+     * CacheLifetimeOperation
+     */
+    $rectorConfig->rule(FusionCacheLifetimeRector::class);
 
 
     /**
