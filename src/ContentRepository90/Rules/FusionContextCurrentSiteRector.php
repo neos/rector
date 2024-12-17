@@ -19,7 +19,7 @@ class FusionContextCurrentSiteRector implements FusionRectorInterface
     {
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
-                '/(node|documentNode|site|[a-zA-Z]+)\.context\.currentSite/',
+                '/(node|documentNode|site|[a-zA-Z]+)\.context\.currentSite\b/',
                 'Neos.Site.findBySiteNode(site)',
                 $eelExpression
             ))->getProcessedContent();

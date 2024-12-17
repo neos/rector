@@ -1,27 +1,16 @@
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
   renderer = Neos.Fusion:Component {
     attributes = ${node.context.currentSite.siteResourcesPackageKey || site.context.currentSite.siteResourcesPackageKey || documentNode.context.currentSite.siteResourcesPackageKey}
-    renderer = afx`
-      <input
-        name={node.context.currentSite.siteResourcesPackageKey}
-        value={someOtherVariable.context.currentSite.siteResourcesPackageKey}
-        {...node.context.currentSite.siteResourcesPackageKey}
-      />
-    `
-    somethingDifferent = ${node.context.currentSiteNode}
+    site = ${node.context.currentSite || site.context.currentSite || documentNode.context.currentSite}
+    currentSiteNode = ${node.context.currentSiteNode}
   }
 }
 -----
+// TODO 9.0 migration: Line 6: !! node.context.currentSiteNode is removed in Neos 9.0.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
   renderer = Neos.Fusion:Component {
     attributes = ${Neos.Site.findBySiteNode(site).siteResourcesPackageKey || Neos.Site.findBySiteNode(site).siteResourcesPackageKey || Neos.Site.findBySiteNode(site).siteResourcesPackageKey}
-    renderer = afx`
-      <input
-        name={Neos.Site.findBySiteNode(site).siteResourcesPackageKey}
-        value={Neos.Site.findBySiteNode(site).siteResourcesPackageKey}
-        {...Neos.Site.findBySiteNode(site).siteResourcesPackageKey}
-      />
-    `
-    somethingDifferent = ${node.context.currentSiteNode}
+    site = ${Neos.Site.findBySiteNode(site) || Neos.Site.findBySiteNode(site) || Neos.Site.findBySiteNode(site)}
+    currentSiteNode = ${node.context.currentSiteNode}
   }
 }
