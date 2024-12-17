@@ -62,6 +62,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeTypeGetTypeOfAutoCreatedChildNodeR
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
+use Neos\Rector\ContentRepository90\Rules\YamlRoutePartHandlerRector;
 use Neos\Rector\Generic\Rules\FusionFlowQueryNodePropertyToWarningCommentRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\FusionPrototypeNameAddCommentRector;
@@ -505,6 +506,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->rule(YamlDimensionConfigRector::class);
+    $rectorConfig->rule(YamlRoutePartHandlerRector::class);
 
     /**
      * CLEAN UP / END GLOBAL RULES
