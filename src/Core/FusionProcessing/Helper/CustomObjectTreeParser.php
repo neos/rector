@@ -2,12 +2,13 @@
 
 namespace Neos\Rector\Core\FusionProcessing\Helper;
 
-use Neos\Rector\Core\FusionProcessing\FusionParser\Ast\AbstractPathValue;
-use Neos\Rector\Core\FusionProcessing\FusionParser\Ast\DslExpressionValue;
-use Neos\Rector\Core\FusionProcessing\FusionParser\Ast\EelExpressionValue;
-use Neos\Rector\Core\FusionProcessing\FusionParser\Exception\ParserException;
-use Neos\Rector\Core\FusionProcessing\FusionParser\Lexer;
-use Neos\Rector\Core\FusionProcessing\FusionParser\ObjectTreeParser;
+use Neos\Rector\Core\FusionProcessing\Fusion\FusionSourceCode;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Ast\AbstractPathValue;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Ast\DslExpressionValue;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Ast\EelExpressionValue;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Exception\ParserException;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Lexer;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\ObjectTreeParser;
 
 class CustomObjectTreeParser extends ObjectTreeParser
 {

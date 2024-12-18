@@ -6,7 +6,7 @@ namespace Neos\Rector\Core\FusionProcessing;
 
 use Closure;
 use Neos\Rector\Core\FusionProcessing\AfxParser\AfxParserException;
-use Neos\Rector\Core\FusionProcessing\FusionParser\Exception\ParserException;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Exception\ParserException;
 use Neos\Rector\Core\FusionProcessing\Helper\CustomObjectTreeParser;
 use Neos\Rector\Core\FusionProcessing\Helper\EelExpressionPosition;
 use Neos\Rector\Core\FusionProcessing\Helper\EelExpressionPositions;

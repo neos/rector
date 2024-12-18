@@ -2,17 +2,17 @@
 
 namespace Neos\Rector\Core\FusionProcessing\Helper;
 
-use Neos\Rector\Core\FusionProcessing\FusionParser\Ast\EelExpressionValue;
-use Neos\Rector\Core\FusionProcessing\FusionParser\Ast\ValueAssignment;
-use Neos\Rector\Core\FusionProcessing\FusionParser\MergedArrayTree;
-use Neos\Rector\Core\FusionProcessing\FusionParser\MergedArrayTreeVisitor;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Ast\EelExpressionValue;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Ast\ValueAssignment;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\MergedArrayTree;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\MergedArrayTreeVisitor;
 
 final class EelExpressionPathBuilderVisitor extends MergedArrayTreeVisitor
 {
     public function __construct(private readonly EelExpressionPositions $eelExpressionPositions)
     {
         parent::__construct(
-            new MergedArrayTree(),
+            new MergedArrayTree([]),
             fn() => false,
             fn() => [],
         );
