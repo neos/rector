@@ -14,7 +14,7 @@ class FusionNodeAggregateIdentifierRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.nodeAggregateIdentifier to node.nodeAggregateId', __CLASS__);
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.nodeAggregateIdentifier to node.aggregateId', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string
@@ -22,12 +22,12 @@ class FusionNodeAggregateIdentifierRector implements FusionRectorInterface
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
                 '/(node|documentNode|site)\.nodeAggregateIdentifier/',
-                '$1.nodeAggregateId',
+                '$1.aggregateId',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
                 '/\.nodeAggregateIdentifier/',
-                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.nodeAggregateIdentifier" to VARIABLE.nodeAggregateId. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.nodeAggregateIdentifier" to VARIABLE.aggregateId. We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )->getProcessedContent();
     }
 }
