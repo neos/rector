@@ -16,7 +16,7 @@ class YamlWithComments
     {
         $sortedInput = self::sort($input);
 
-        $yamlAsString = Yaml::dump($sortedInput, 100, 2, );
+        $yamlAsString = Yaml::dump($sortedInput, 100, 2);
 
         // WARNING: we had sneaky bugs in the regex below, only on some systems.
         // the old regex was "|(\s*)'[^']+##': '##([a-zA-Z0-9+=]+)'|m"
