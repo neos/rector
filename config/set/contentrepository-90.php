@@ -63,6 +63,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeTypeGetTypeOfAutoCreatedChildNodeR
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
+use Neos\Rector\ContentRepository90\Rules\YamlRoutePartHandlerRector;
 use Neos\Rector\Generic\Rules\FusionFlowQueryNodePropertyToWarningCommentRector;
 use Neos\Rector\Generic\Rules\FusionNodePropertyPathToWarningCommentRector;
 use Neos\Rector\Generic\Rules\FusionPrototypeNameAddCommentRector;
@@ -121,6 +122,7 @@ return static function (RectorConfig $rectorConfig): void {
         \Neos\ContentRepository\Domain\NodeType\NodeTypeName::class => \Neos\ContentRepository\Core\NodeType\NodeTypeName::class,
         \Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
         \Neos\ContentRepository\Domain\Model\ArrayPropertyCollection::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
+        \Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface::class => \Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface::class,
     ]);
 
     $rectorConfig->ruleWithConfiguration(FusionReplacePrototypeNameRector::class, [
@@ -511,6 +513,7 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->rule(YamlDimensionConfigRector::class);
+    $rectorConfig->rule(YamlRoutePartHandlerRector::class);
 
     /**
      * CLEAN UP / END GLOBAL RULES
