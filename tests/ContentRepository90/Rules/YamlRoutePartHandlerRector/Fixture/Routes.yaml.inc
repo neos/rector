@@ -46,7 +46,7 @@
   uriPattern: '{node}'
   routeParts:
     node:
-      handler: Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface
+      handler: Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface
       options:
         uriPathSuffix: '<defaultUriSuffix>'
   appendExceedingArguments: true

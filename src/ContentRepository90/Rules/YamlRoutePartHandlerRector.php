@@ -32,9 +32,14 @@ class YamlRoutePartHandlerRector implements YamlRectorInterface
                 continue;
             }
 
+            $handlerToReplace = [
+                \Neos\Neos\Routing\FrontendNodeRoutePartHandler::class,
+                \Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface::class,
+            ];
+
             foreach ($routeConfig['routeParts'] as $routePartKey => $routePart) {
-                if (isset($routePart['handler']) && $routePart['handler'] === 'Neos\Neos\Routing\FrontendNodeRoutePartHandler') {
-                    $parsed[$routeConfigKey]['routeParts'][$routePartKey]['handler'] = 'Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface';
+                if (isset($routePart['handler']) && in_array($routePart['handler'], $handlerToReplace)) {
+                    $parsed[$routeConfigKey]['routeParts'][$routePartKey]['handler'] = \Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface::class;
                 }
             }
         }

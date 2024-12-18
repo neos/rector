@@ -121,6 +121,7 @@ return static function (RectorConfig $rectorConfig): void {
         \Neos\ContentRepository\Domain\NodeType\NodeTypeName::class => \Neos\ContentRepository\Core\NodeType\NodeTypeName::class,
         \Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
         \Neos\ContentRepository\Domain\Model\ArrayPropertyCollection::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
+        \Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface::class => \Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface::class,
     ]);
 
     $rectorConfig->ruleWithConfiguration(FusionReplacePrototypeNameRector::class, [
