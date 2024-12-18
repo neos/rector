@@ -516,9 +516,16 @@ return static function (RectorConfig $rectorConfig): void {
     // Remove injections to classes which are gone now
     $rectorConfig->ruleWithConfiguration(RemoveInjectionsRector::class, [
         new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContextFactoryInterface::class),
+        new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContextFactory::class),
+        new RemoveInjection(\Neos\Neos\Domain\Service\ContentContextFactory::class),
+        new RemoveInjection(\Neos\Rector\ContentRepository90\Legacy\LegacyContextStub::class),
         new RemoveInjection(\Neos\ContentRepository\Domain\Service\ContentDimensionCombinator::class),
         new RemoveInjection(\Neos\ContentRepository\Domain\Factory\NodeFactory::class),
-        new RemoveInjection(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class)
+        new RemoveInjection(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class),
+        new RemoveInjection(\Neos\ContentRepository\Core\NodeType\NodeTypeManager::class),
+        new RemoveInjection(\Neos\Neos\Domain\Service\NodeSearchServiceInterface::class),
+        new RemoveInjection(\Neos\Neos\Domain\Service\NodeSearchService::class),
+        new RemoveInjection(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class),
     ]);
 
     // todo these ToStringToMethodCallOrPropertyFetchRector rules are likely mostly obsolete and only to migrate from one Neos 9 beta to another but NOT for upgrading from 8.3
