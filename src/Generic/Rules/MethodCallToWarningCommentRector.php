@@ -61,7 +61,7 @@ final class MethodCallToWarningCommentRector extends AbstractRector implements C
 
             $this->nodesToAddCollector->addNodesBeforeNode(
                 [
-                    self::todoComment($methodCallToWarningComment->warningMessage)
+                    self::todoComment(sprintf($methodCallToWarningComment->warningMessage, $methodCallToWarningComment->objectType, $methodCallToWarningComment->methodName))
                 ],
                 $node
             );
