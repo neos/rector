@@ -40,7 +40,10 @@ final class NodeSearchServiceRector extends AbstractRector
     {
         assert($node instanceof Node\Expr\MethodCall);
 
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\Neos\Domain\Service\NodeSearchService::class))) {
+        if (
+            !$this->isObjectType($node->var, new ObjectType(\Neos\Neos\Domain\Service\NodeSearchService::class))
+             && !$this->isObjectType($node->var, new ObjectType(\Neos\Neos\Domain\Service\NodeSearchServiceInterface::class))
+        ) {
             return null;
         }
         if (!$this->isName($node->name, 'findByProperties')) {
