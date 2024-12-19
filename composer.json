@@ -3,7 +3,8 @@
     "autoload": {
         "psr-4": {
             "Neos\\Rector\\": "src"
-        }
+        },
+        "classmap": ["src/ContentRepository90/Legacy"]
     },
     "autoload-dev": {
         "psr-4": {
