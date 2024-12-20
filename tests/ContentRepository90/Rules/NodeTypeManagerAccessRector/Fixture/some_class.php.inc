@@ -3,7 +3,7 @@
 class SomeClass
 {
     /**
-     * @var \Neos\ContentRepository\Core\NodeType\NodeTypeManager
+     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
      * @Flow\Inject
      */
     protected $nodeTypeManager;
@@ -20,7 +20,7 @@ class SomeClass
 class SomeClass
 {
     /**
-     * @var \Neos\ContentRepository\Core\NodeType\NodeTypeManager
+     * @var \Neos\ContentRepository\Domain\Service\NodeTypeManager
      * @Flow\Inject
      */
     protected $nodeTypeManager;
