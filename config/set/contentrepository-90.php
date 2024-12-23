@@ -454,6 +454,79 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class, 'overrideNodeTypes', '!! NodeTypeManager::createNodeType() was never meant to be used outside of testing and is removed in Neos 9.0.');
 
     /**
+     * NodeData
+     */
+    $nodeDataWarningMessage = '!! NodeData::%2$s is removed in Neos 9.0 - the new CR is not based around the concept of NodeData anymore. You need to rewrite your code here.';
+    // createNodeData(name: string, [nodeType: NodeType|null = null], [identifier: null|string = null], [workspace: Workspace|null = null], [dimensions: array|null = null]): NodeData
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'createNodeData', $nodeDataWarningMessage);
+    // createNodeDataFromTemplate(nodeTemplate: NodeTemplate, [nodeName: null|string = null], [workspace: Workspace|null = null], [dimensions: array|null = null]): NodeData
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'createNodeDataFromTemplate', $nodeDataWarningMessage);
+    // createShadow(path: string): NodeData
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'createShadow', $nodeDataWarningMessage);
+    // createSingleNodeData(name: string, [nodeType: NodeType|null = null], [identifier: null|string = null], [workspace: Workspace|null = null], [dimensions: array|null = null]): NodeData
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'createSingleNodeData', $nodeDataWarningMessage);
+    // getContextPath(): string
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getContextPath', $nodeDataWarningMessage);
+    // getDepth(): int
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getDepth', $nodeDataWarningMessage);
+    // getDimensions(): NodeDimension[]
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getDimensions', $nodeDataWarningMessage);
+    // getDimensionsHash(): string
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getDimensionsHash', $nodeDataWarningMessage);
+    // getDimensionValues(): array
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getDimensionValues', $nodeDataWarningMessage);
+    // getIdentifier(): string
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getIdentifier', $nodeDataWarningMessage);
+    // getIndex(): int
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getIndex', $nodeDataWarningMessage);
+    // getMovedTo(): NodeData
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getMovedTo', $nodeDataWarningMessage);
+    // getName(): string
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getName', $nodeDataWarningMessage);
+    // getNumberOfChildNodes(nodeTypeFilter: string, workspace: Workspace, dimensions: array): int
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getNumberOfChildNodes', $nodeDataWarningMessage);
+    // getParent(): NodeData|null
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getParent', $nodeDataWarningMessage);
+    // getParentPath(): string
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getParentPath', $nodeDataWarningMessage);
+    // getPath(): string
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getPath', $nodeDataWarningMessage);
+    // getWorkspace(): Workspace
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'getWorkspace', $nodeDataWarningMessage);
+    // hasAccessRestrictions(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'hasAccessRestrictions', $nodeDataWarningMessage);
+    // isAccessible(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'isAccessible', $nodeDataWarningMessage);
+    // isInternal(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'isInternal', $nodeDataWarningMessage);
+    // isRemoved(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'isRemoved', $nodeDataWarningMessage);
+    // isVisible(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'isVisible', $nodeDataWarningMessage);
+    // matchesWorkspaceAndDimensions(workspace: Workspace, [dimensions: array|null = null]): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'matchesWorkspaceAndDimensions', $nodeDataWarningMessage);
+    // move(targetPath: string, targetWorkspace: Workspace): NodeData|null
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'targetPath', $nodeDataWarningMessage);
+    // remove(): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'remove', $nodeDataWarningMessage);
+    // setDimensions(dimensionsToBeSet: array): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'setDimensions', $nodeDataWarningMessage);
+    // setIdentifier(identifier: string): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'setIdentifier', $nodeDataWarningMessage);
+    // setIndex(index: int): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'setIndex', $nodeDataWarningMessage);
+    // setMovedTo([nodeData: NodeData|null = null]): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'setMovedTo', $nodeDataWarningMessage);
+    // setPath(path: string, [recursive: bool = true]): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'setPath', $nodeDataWarningMessage);
+    // setRemoved(removed: bool): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'setRemoved', $nodeDataWarningMessage);
+    // setWorkspace([workspace: Workspace|null = null]): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'setWorkspace', $nodeDataWarningMessage);
+    // similarize(sourceNode: AbstractNodeData, [isCopy: bool = false]): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'similarize', $nodeDataWarningMessage);
+
+    /**
      * Signals and Slots
      * https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots
      */
