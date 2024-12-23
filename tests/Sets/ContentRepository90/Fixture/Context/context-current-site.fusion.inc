@@ -6,7 +6,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
   }
 }
 -----
-// TODO 9.0 migration: Line 6: !! node.context.currentSiteNode is removed in Neos 9.0.
+// TODO 9.0 migration: Line 6: !! node.context.currentSiteNode is removed in Neos 9.0. Check if you can't simply use ${site}.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
   renderer = Neos.Fusion:Component {
     attributes = ${Neos.Site.findBySiteNode(site).siteResourcesPackageKey || Neos.Site.findBySiteNode(site).siteResourcesPackageKey || Neos.Site.findBySiteNode(site).siteResourcesPackageKey}
