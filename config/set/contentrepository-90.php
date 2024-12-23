@@ -60,6 +60,7 @@ use Neos\Rector\ContentRepository90\Rules\NodeTypeAllowsGrandchildNodeTypeRector
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetAutoCreatedChildNodesRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetTypeOfAutoCreatedChildNodeRector;
+use Neos\Rector\ContentRepository90\Rules\NodeTypeManagerAccessRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
@@ -434,6 +435,23 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos\ContentRepository\Domain\Model\Workspace
      */
     $rectorConfig->rule(WorkspaceGetNameRector::class);
+
+    /**
+     * Neos\ContentRepository\Domain\Service\NodeTypeManager
+     */
+    $rectorConfig->rule(NodeTypeManagerAccessRector::class);
+    // createNodeType(nodeTypeName: string): NodeType
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class, 'createNodeType', '!! NodeTypeManager::createNodeType() was never implemented and is removed in Neos 9.0.');
+    // getNodeType(nodeTypeName: string): NodeType
+    // --> Compatible with 9.0
+    // getNodeTypes([includeAbstractNodeTypes: bool = true]): NodeType[]
+    // --> Compatible with 9.0
+    // getSubNodeTypes(superTypeName: string, [includeAbstractNodeTypes: bool = true]): NodeType[]
+    // --> Compatible with 9.0
+    // hasNodeType(nodeTypeName: string): bool
+    // --> Compatible with 9.0
+    // overrideNodeTypes(completeNodeTypeConfiguration: array): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class, 'overrideNodeTypes', '!! NodeTypeManager::createNodeType() was never meant to be used outside of testing and is removed in Neos 9.0.');
 
     /**
      * NodeData
