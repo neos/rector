@@ -20,6 +20,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionCacheLifetimeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionCachingNodeInEntryIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentRenderingModeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentSiteRector;
+use Neos\Rector\ContentRepository90\Rules\FusionContextGetWorkspaceNameRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector;
@@ -366,10 +367,10 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(ContextFactoryToLegacyContextStubRector::class);
     // Context::getWorkspaceName()
     // TODO: PHP
-    // TODO: Fusion
+    $rectorConfig->rule(FusionContextGetWorkspaceNameRector::class);
     // Context::getRootNode()
     $rectorConfig->rule(ContextGetRootNodeRector::class);
-    // TODO: Fusion
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.rootNode', 'Line %LINE: !! node.context.rootNode is removed in Neos 9.0.');
     // Context::getNode()
     // TODO: PHP
     // Context::getNodeByIdentifier()
@@ -379,9 +380,43 @@ return static function (RectorConfig $rectorConfig): void {
     // Context::getNodesOnPath()
     // TODO: PHP
     // Context::adoptNode()
+    // TODO: PHP
     // Context::getFirstLevelNodeCache()
     $rectorConfig->rule(ContextGetFirstLevelNodeCacheRector::class);
+    // getCurrentDateTime(): DateTime|DateTimeInterface
+    // TODO: PHP
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.currentDateTime', 'Line %LINE: !! node.context.currentDateTime is removed in Neos 9.0.');
+    // getDimensions(): array
+    // TODO: PHP
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.dimensions', 'Line %LINE: !! node.context.dimensions is removed in Neos 9.0. You can get node DimensionSpacePoints via node.dimensionSpacePoints now.');
+    // getNodeByIdentifier(identifier: string): NodeInterface|null
+    // TODO: PHP
+    // getProperties(): array
+    // TODO: PHP
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.properties', 'Line %LINE: !! node.context.properties is removed in Neos 9.0.');
+    // getTargetDimensions(): array
+    // TODO: PHP
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.targetDimensions', 'Line %LINE: !! node.context.targetDimensions is removed in Neos 9.0.');
+    // getTargetDimensionValues(): array
+    // TODO: PHP
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.targetDimensionValues', 'Line %LINE: !! node.context.targetDimensionValues is removed in Neos 9.0.');
+    // getWorkspace([createWorkspaceIfNecessary: bool = true]): Workspace
+    // TODO: PHP
+    // TODO: Fusion?
+    // isInaccessibleContentShown(): bool
+    // TODO: PHP
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.isInaccessibleContentShown', 'Line %LINE: !! node.context.isInaccessibleContentShown is removed in Neos 9.0.');
+    // isInvisibleContentShown(): bool
+    // TODO: PHP
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.isInvisibleContentShown', 'Line %LINE: !! node.context.isInvisibleContentShown is removed in Neos 9.0.');
+    // isRemovedContentShown(): bool
+    // TODO: PHP
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.isRemovedContentShown', 'Line %LINE: !! node.context.isRemovedContentShown is removed in Neos 9.0.');
+    // validateWorkspace(workspace: Workspace): void
+    // TODO: PHP
 
+    
+    
     /**
      * ContentContext
      */
@@ -403,8 +438,6 @@ return static function (RectorConfig $rectorConfig): void {
     // ContentContext::getCurrentRenderingMode... -> renderingMode...
     $rectorConfig->rule(ContextGetCurrentRenderingModeRector::class);
     $rectorConfig->rule(FusionContextCurrentRenderingModeRector::class);
-    // ContentContext::getProperties(): array
-    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.properties', 'Line %LINE: !! node.context.properties is removed in Neos 9.0.');
 
     /**
      * CreateContentContextTrait
