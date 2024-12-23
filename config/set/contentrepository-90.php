@@ -393,7 +393,7 @@ return static function (RectorConfig $rectorConfig): void {
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.currentDomain', 'Line %LINE: !! node.context.currentDomain is removed in Neos 9.0.');
     // ContentContext::getCurrentSiteNode
     $methodCallToWarningComments[] = new MethodCallToWarningComment(LegacyContextStub::class, 'getCurrentSiteNode', '!! ContentContext::getCurrentSiteNode() is removed in Neos 9.0. Use Subgraph and traverse up to "Neos.Neos:Site" node.');
-    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.currentSiteNode', 'Line %LINE: !! node.context.currentSiteNode is removed in Neos 9.0.');
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.currentSiteNode', 'Line %LINE: !! node.context.currentSiteNode is removed in Neos 9.0. Check if you can\'t simply use ${site}.');
     // ContentContext::isLive -> renderingMode.isLive
     $rectorConfig->rule(ContextIsLiveRector::class);
     $rectorConfig->rule(FusionContextLiveRector::class);
@@ -403,6 +403,8 @@ return static function (RectorConfig $rectorConfig): void {
     // ContentContext::getCurrentRenderingMode... -> renderingMode...
     $rectorConfig->rule(ContextGetCurrentRenderingModeRector::class);
     $rectorConfig->rule(FusionContextCurrentRenderingModeRector::class);
+    // ContentContext::getProperties(): array
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.properties', 'Line %LINE: !! node.context.properties is removed in Neos 9.0.');
 
     /**
      * CreateContentContextTrait
