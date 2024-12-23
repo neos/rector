@@ -451,7 +451,7 @@ return static function (RectorConfig $rectorConfig): void {
     // hasNodeType(nodeTypeName: string): bool
     // --> Compatible with 9.0
     // overrideNodeTypes(completeNodeTypeConfiguration: array): void
-    // --> Compatible with 9.0
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class, 'overrideNodeTypes', '!! NodeTypeManager::createNodeType() was never meant to be used outside of testing and is removed in Neos 9.0.');
 
     /**
      * Signals and Slots
