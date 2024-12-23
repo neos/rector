@@ -84,6 +84,7 @@ use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Neos\Rector\Generic\ValueObject\RemoveParentClass;
 use Neos\Rector\Generic\ValueObject\SignalSlotToWarningComment;
 use Rector\Config\RectorConfig;
+use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
@@ -402,6 +403,12 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FusionContextCurrentRenderingModeRector::class);
 
     /**
+     * CreateContentContextTrait
+     */
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\Neos\Controller\CreateContentContextTrait::class, 'createContentContext', '!! CreateContentContextTrait::createContentContext() is removed in Neos 9.0.');
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\Neos\Controller\CreateContentContextTrait::class, 'createContextMatchingNodeData', '!! CreateContentContextTrait::createContextMatchingNodeData() is removed in Neos 9.0.');
+
+    /**
      * CacheLifetimeOperation
      */
     $rectorConfig->rule(FusionCacheLifetimeRector::class);
@@ -626,6 +633,11 @@ return static function (RectorConfig $rectorConfig): void {
         new RemoveInjection(\Neos\Neos\Domain\Service\NodeSearchServiceInterface::class),
         new RemoveInjection(\Neos\Neos\Domain\Service\NodeSearchService::class),
         new RemoveInjection(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class),
+    ]);
+
+    // Remove traits which are gone
+    $rectorConfig->ruleWithConfiguration(RemoveTraitUseRector::class, [
+        \Neos\Neos\Controller\CreateContentContextTrait::class
     ]);
 
     // todo these ToStringToMethodCallOrPropertyFetchRector rules are likely mostly obsolete and only to migrate from one Neos 9 beta to another but NOT for upgrading from 8.3
