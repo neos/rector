@@ -19,7 +19,7 @@ class FusionContextGetWorkspaceNameRector implements FusionRectorInterface
     {
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
-                '/(node|documentNode|site)\.context\.workspaceName/',
+                '/(node|documentNode|site)\.context\.(workspaceName|workspace\.name)\b/',
                 '$1.workspaceName',
                 $eelExpression
             ))

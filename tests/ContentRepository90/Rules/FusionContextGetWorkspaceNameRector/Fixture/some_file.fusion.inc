@@ -1,6 +1,7 @@
 prototype(Neos.Context:Prototype)  < prototype(Neos.Fusion:Component) {
 
     workspaceName = ${node.context.workspaceName}
+    workspaceNameByWorkspace = ${node.context.workspace.name}
 
     attributes = ${node.context.workspaceName || site.context.workspaceName || documentNode.context.workspaceName}
 
@@ -14,10 +15,11 @@ prototype(Neos.Context:Prototype)  < prototype(Neos.Fusion:Component) {
     `
 }
 -----
-// TODO 9.0 migration: Line 13: You very likely need to rewrite "VARIABLE.context.workspaceName" to "VARIABLE.workspaceName". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 14: You very likely need to rewrite "VARIABLE.context.workspaceName" to "VARIABLE.workspaceName". We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Context:Prototype)  < prototype(Neos.Fusion:Component) {
 
     workspaceName = ${node.workspaceName}
+    workspaceNameByWorkspace = ${node.workspaceName}
 
     attributes = ${node.workspaceName || site.workspaceName || documentNode.workspaceName}
 
