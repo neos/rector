@@ -71,6 +71,7 @@ use Neos\Rector\Generic\Rules\FusionPrototypeNameAddCommentRector;
 use Neos\Rector\Generic\Rules\FusionReplacePrototypeNameRector;
 use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
+use Neos\Rector\Generic\Rules\ObjectInstantiationToWarningCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
 use Neos\Rector\Generic\Rules\SignalSlotToWarningCommentRector;
 use Neos\Rector\Generic\Rules\ToStringToMethodCallOrPropertyFetchRector;
@@ -80,6 +81,7 @@ use Neos\Rector\Generic\ValueObject\FusionNodePropertyPathToWarningComment;
 use Neos\Rector\Generic\ValueObject\FusionPrototypeNameAddComment;
 use Neos\Rector\Generic\ValueObject\FusionPrototypeNameReplacement;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
+use Neos\Rector\Generic\ValueObject\ObjectInstantiationToWarningComment;
 use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Neos\Rector\Generic\ValueObject\RemoveParentClass;
 use Neos\Rector\Generic\ValueObject\SignalSlotToWarningComment;
@@ -442,6 +444,28 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos\ContentRepository\Domain\Model\Workspace
      */
     $rectorConfig->rule(WorkspaceGetNameRector::class);
+
+    /**
+     * NodeTemplate
+     */
+    $nodeTemplateWarningMessage = '!! NodeTemplate::%2$s is removed in Neos 9.0. Use the "CreateNodeAggregateWithNode" command to create new nodes or "CreateNodeVariant" command to create variants of an existing node in other dimensions.';
+    // getIdentifier(): string
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeTemplate::class, 'getIdentifier', $nodeTemplateWarningMessage);
+    // getName(): string
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeTemplate::class, 'getName', $nodeTemplateWarningMessage);
+    // getWorkspace(): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeTemplate::class, 'getWorkspace', $nodeTemplateWarningMessage);
+    // setIdentifier(identifier: string): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeTemplate::class, 'setIdentifier', $nodeTemplateWarningMessage);
+    // setName(newName: string): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeTemplate::class, 'setName', $nodeTemplateWarningMessage);
+
+    /**
+     * ObjectInstantiationToWarningComment
+     */
+    $rectorConfig->ruleWithConfiguration(ObjectInstantiationToWarningCommentRector::class, [
+        new ObjectInstantiationToWarningComment(\Neos\ContentRepository\Domain\Model\NodeTemplate::class, '!! NodeTemplate is removed in Neos 9.0. Use the "CreateNodeAggregateWithNode" command to create new nodes or "CreateNodeVariant" command to create variants of an existing node in other dimensions.')]
+    );
 
     /**
      * Neos\ContentRepository\Domain\Service\NodeTypeManager
