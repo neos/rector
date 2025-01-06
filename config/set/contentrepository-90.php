@@ -388,7 +388,7 @@ return static function (RectorConfig $rectorConfig): void {
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.currentDateTime', 'Line %LINE: !! node.context.currentDateTime is removed in Neos 9.0.');
     // getDimensions(): array
     // TODO: PHP
-    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.dimensions', 'Line %LINE: !! node.context.dimensions is removed in Neos 9.0. You can get node DimensionSpacePoints via node.dimensionSpacePoints now.');
+    $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.dimensions', 'Line %LINE: !! node.context.dimensions is removed in Neos 9.0. You can get node DimensionSpacePoints via node.dimensionSpacePoints now or use the `Neos.Dimension.*` helper.');
     // getNodeByIdentifier(identifier: string): NodeInterface|null
     // TODO: PHP
     // getProperties(): array
