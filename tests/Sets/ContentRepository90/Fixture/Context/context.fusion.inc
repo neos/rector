@@ -21,7 +21,7 @@ prototype(Neos.Context:Prototype)  < prototype(Neos.Fusion:Component) {
 -----
 // TODO 9.0 migration: Line 14: !! node.context.rootNode is removed in Neos 9.0.
 // TODO 9.0 migration: Line 16: !! node.context.currentDateTime is removed in Neos 9.0.
-// TODO 9.0 migration: Line 17: !! node.context.dimensions is removed in Neos 9.0. You can get node DimensionSpacePoints via node.dimensionSpacePoints now.
+// TODO 9.0 migration: Line 17: !! node.context.dimensions is removed in Neos 9.0. You can get node DimensionSpacePoints via node.dimensionSpacePoints now or use the `Neos.Dimension.*` helper.
 // TODO 9.0 migration: Line 18: !! node.context.properties is removed in Neos 9.0.
 // TODO 9.0 migration: Line 20: !! node.context.targetDimensions is removed in Neos 9.0.
 // TODO 9.0 migration: Line 21: !! node.context.targetDimensionValues is removed in Neos 9.0.
