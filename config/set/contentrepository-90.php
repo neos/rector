@@ -21,6 +21,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionCachingNodeInEntryIdentifierRect
 use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentRenderingModeRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextCurrentSiteRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextGetWorkspaceNameRector;
+use Neos\Rector\ContentRepository90\Rules\FusionContextGetWorkspaceRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector;
@@ -402,7 +403,7 @@ return static function (RectorConfig $rectorConfig): void {
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.targetDimensionValues', 'Line %LINE: !! node.context.targetDimensionValues is removed in Neos 9.0.');
     // getWorkspace([createWorkspaceIfNecessary: bool = true]): Workspace
     // TODO: PHP
-    // TODO: Fusion?
+    $rectorConfig->rule(FusionContextGetWorkspaceRector::class);
     // isInaccessibleContentShown(): bool
     // TODO: PHP
     $fusionNodePropertyPathToWarningComments[] = new FusionNodePropertyPathToWarningComment('context.isInaccessibleContentShown', 'Line %LINE: !! node.context.isInaccessibleContentShown is removed in Neos 9.0.');
