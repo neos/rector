@@ -20,6 +20,9 @@ class Package extends BasePackage
 
         $dispatcher->connect(\Neos\ContentRepository\Domain\Service\PublishingService::class, 'nodePublished', function () { return 'foo'; });
         $dispatcher->connect('Neos\ContentRepository\Domain\Service\PublishingService', 'nodeDiscarded', RouterCachingService::class, 'flushCaches');
+
+        $dispatcher->connect(\Neos\Neos\Service\PublishingService::class, 'nodePublished', function () { return 'foo'; });
+        $dispatcher->connect('Neos\Neos\Service\PublishingService', 'nodeDiscarded', RouterCachingService::class, 'flushCaches');
     }
 }
 -----
@@ -49,5 +52,12 @@ class Package extends BasePackage
         // TODO 9.0 migration: The signal "nodeDiscarded" on "PublishingService" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
 
         $dispatcher->connect('Neos\ContentRepository\Domain\Service\PublishingService', 'nodeDiscarded', RouterCachingService::class, 'flushCaches');
+        // TODO 9.0 migration: The signal "nodePublished" on "PublishingService" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
+
+
+        $dispatcher->connect(\Neos\Neos\Service\PublishingService::class, 'nodePublished', function () { return 'foo'; });
+        // TODO 9.0 migration: The signal "nodeDiscarded" on "PublishingService" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
+
+        $dispatcher->connect('Neos\Neos\Service\PublishingService', 'nodeDiscarded', RouterCachingService::class, 'flushCaches');
     }
 }

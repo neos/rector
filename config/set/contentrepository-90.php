@@ -567,6 +567,11 @@ return static function (RectorConfig $rectorConfig): void {
     $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Service\PublishingService::class, 'nodePublished', 'The signal "nodePublished" on "PublishingService" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
     // - nodeDiscarded
     $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Service\PublishingService::class, 'nodeDiscarded', 'The signal "nodeDiscarded" on "PublishingService" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // Neos\Neos\Service\PublishingService
+    // - nodePublished
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\Neos\Service\PublishingService::class, 'nodePublished', 'The signal "nodePublished" on "PublishingService" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
+    // - nodeDiscarded
+    $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\Neos\Service\PublishingService::class, 'nodeDiscarded', 'The signal "nodeDiscarded" on "PublishingService" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
     // Neos\ContentRepository\Domain\Service\Context
     // - beforeAdoptNode
     $signalsAndSlotsToComment[] = new SignalSlotToWarningComment(\Neos\ContentRepository\Domain\Service\Context::class, 'beforeAdoptNode', 'The signal "beforeAdoptNode" on "Context" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.');
