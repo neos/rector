@@ -5,7 +5,6 @@ declare (strict_types=1);
 namespace Neos\Rector\Generic\Rules;
 
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Generic\ValueObject\SignalSlotToWarningComment;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
@@ -15,7 +14,6 @@ use Rector\Core\Rector\AbstractRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
 final class SignalSlotToWarningCommentRector extends AbstractRector implements ConfigurableRectorInterface
 {
