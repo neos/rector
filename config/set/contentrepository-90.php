@@ -464,7 +464,9 @@ return static function (RectorConfig $rectorConfig): void {
      * ObjectInstantiationToWarningComment
      */
     $rectorConfig->ruleWithConfiguration(ObjectInstantiationToWarningCommentRector::class, [
-        new ObjectInstantiationToWarningComment(\Neos\ContentRepository\Domain\Model\NodeTemplate::class, '!! NodeTemplate is removed in Neos 9.0. Use the "CreateNodeAggregateWithNode" command to create new nodes or "CreateNodeVariant" command to create variants of an existing node in other dimensions.')]
+        new ObjectInstantiationToWarningComment(\Neos\ContentRepository\Domain\Model\NodeTemplate::class, '!! NodeTemplate is removed in Neos 9.0. Use the "CreateNodeAggregateWithNode" command to create new nodes or "CreateNodeVariant" command to create variants of an existing node in other dimensions.'),
+        new ObjectInstantiationToWarningComment(\Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints::class, '!! NodeTypeConstraints is removed in Neos 9.0. Please use the proper filter in subgraph finders e.g. "FindChildNodesFilter" for ContentSubgraphInterface::findChildNodes().')
+    ]
     );
 
     /**
@@ -556,6 +558,29 @@ return static function (RectorConfig $rectorConfig): void {
     $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'setWorkspace', $nodeDataWarningMessage);
     // similarize(sourceNode: AbstractNodeData, [isCopy: bool = false]): void
     $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\NodeData::class, 'similarize', $nodeDataWarningMessage);
+
+    /**
+     * \Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory
+     */
+    // parseFilterStrnig(serializedFilters: string): NodeTypeConstraints
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory::class, 'parseFilterString', '!! The "NodeTypeConstraintFactory" has been removed in Neos 9. Please use the proper filter in subgraph finders e.g. "FindChildNodesFilter" for ContentSubgraphInterface::findChildNodes().');
+
+    /**
+     * \Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints
+     */
+    $nodeTypeConstraintsWarning = '!! NodeTypeConstraints has been removed in Neos 9. Please use the proper filter in subgraph finders e.g. "FindChildNodesFilter" for ContentSubgraphInterface::findChildNodes().';
+    // asLegacyNodeTypeFilterString(): string
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints::class, 'asLegacyNodeTypeFilterString', $nodeTypeConstraintsWarning);
+    // getExplicitlyAllowedNodeTypeNames(): NodeTypeName[]
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints::class, 'getExplicitlyAllowedNodeTypeNames', $nodeTypeConstraintsWarning);
+    // getExplicitlyDisallowedNodeTypeNames(): NodeTypeName[]
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints::class, 'getExplicitlyDisallowedNodeTypeNames', $nodeTypeConstraintsWarning);
+    // isWildcardAllowed(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints::class, 'isWildcardAllowed', $nodeTypeConstraintsWarning);
+    // matches(nodeTypeName: NodeTypeName): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints::class, 'nodeTypeName', $nodeTypeConstraintsWarning);
+    // withExplicitlyDisallowedNodeType(nodeTypeName: NodeTypeName): NodeTypeConstraints
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\NodeType\NodeTypeConstraints::class, 'withExplicitlyDisallowedNodeType', $nodeTypeConstraintsWarning);
 
     /**
      * Signals and Slots
@@ -662,6 +687,7 @@ return static function (RectorConfig $rectorConfig): void {
         new RemoveInjection(\Neos\Neos\Domain\Service\NodeSearchServiceInterface::class),
         new RemoveInjection(\Neos\Neos\Domain\Service\NodeSearchService::class),
         new RemoveInjection(\Neos\ContentRepository\Domain\Repository\NodeDataRepository::class),
+        new RemoveInjection(\Neos\ContentRepository\Domain\NodeType\NodeTypeConstraintFactory::class),
     ]);
 
     // Remove traits which are gone
