@@ -24,6 +24,7 @@ use Neos\Rector\ContentRepository90\Rules\FusionContextGetWorkspaceNameRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextGetWorkspaceRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextInBackendRector;
 use Neos\Rector\ContentRepository90\Rules\FusionContextLiveRector;
+use Neos\Rector\ContentRepository90\Rules\FusionFlowQueryContextRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeAggregateIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeAutoCreatedRector;
 use Neos\Rector\ContentRepository90\Rules\FusionNodeContextPathRector;
@@ -688,6 +689,11 @@ return static function (RectorConfig $rectorConfig): void {
     ]);
 
     $rectorConfig->rule(ContentRepositoryUtilityRenderValidNodeNameRector::class);
+
+    /**
+     * FlowQuery Operation context()
+     */
+    $rectorConfig->rule(FusionFlowQueryContextRector::class);
 
     /**
      * SPECIAL rules
