@@ -125,7 +125,7 @@ return static function (RectorConfig $rectorConfig): void {
         \Neos\ContentRepository\Domain\Model\NodeType::class => \Neos\ContentRepository\Core\NodeType\NodeType::class,
         \Neos\ContentRepository\Domain\Service\NodeTypeManager::class => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
 
-        \Neos\ContentRepository\Domain\Model\Workspace::class => \Neos\ContentRepository\Core\Projection\Workspace\Workspace::class,
+        \Neos\ContentRepository\Domain\Model\Workspace::class => \Neos\ContentRepository\Core\SharedModel\Workspace\Workspace::class,
         \Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class,
         \Neos\ContentRepository\Domain\NodeAggregate\NodeName::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
         \Neos\ContentRepository\Domain\NodeType\NodeTypeName::class => \Neos\ContentRepository\Core\NodeType\NodeTypeName::class,
@@ -701,6 +701,42 @@ return static function (RectorConfig $rectorConfig): void {
      * FlowQuery Operation context()
      */
     $rectorConfig->rule(FusionFlowQueryContextRector::class);
+
+    /**
+     * \Neos\ContentRepository\Domain\Model\Workspace
+     */
+    // getBaseWorkspace(): Workspace|null
+    //->baseworkspaceName
+    // getBaseWorkspaces(): Workspace[]
+    // ->
+    // getDescription(): null|string
+    // workspaceService->getWorkspaceMetadata->description->value
+    // getName(): string
+    // ->name
+    // getNodeCount(): int
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'getNodeCount', '!! Workspace::getNodeCount() has been removed in Neos 9.0 without a replacement.');
+    // getOwner(): UserInterface|null
+    // getRootNodeData(): NodeData
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'getRootNodeData', '!! Workspace::getRootNodeData() has been removed in Neos 9.0 without a replacement.');
+    // getTitle(): string
+    // meta->setWorkspaceTitle
+    // isInternalWorkspace(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'isInternalWorkspace', '!! Workspace::isInternalWorkspace() has been removed in Neos 9.0. Please use the new Workspace permission api instead. See ContentRepositoryAuthorizationService::getWorkspacePermissions()');
+    // isPersonalWorkspace(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'isPersonalWorkspace', '!! Workspace::isPersonalWorkspace() has been removed in Neos 9.0. Please use the new Workspace permission api instead. See ContentRepositoryAuthorizationService::getWorkspacePermissions()');
+    // isPrivateWorkspace(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'isPrivateWorkspace', '!! Workspace::isPrivateWorkspace() has been removed in Neos 9.0. Please use the new Workspace permission api instead. See ContentRepositoryAuthorizationService::getWorkspacePermissions()');
+    // isPublicWorkspace(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'isPublicWorkspace', '!! Workspace::isPublicWorkspace() has been removed in Neos 9.0. Please use the new Workspace permission api instead. See ContentRepositoryAuthorizationService::getWorkspacePermissions()');
+    // publish(targetWorkspace: Workspace): void
+    // publishNode(nodeToPublish: NodeInterface, targetWorkspace: Workspace): void
+    // publishNodes(nodes: NodeInterface[], targetWorkspace: Workspace): void
+    // setBaseWorkspace(baseWorkspace: Workspace): void
+    // setDescription(description: string): void
+    // workspaceService->setWorkspaceDescription
+    // setOwner(user: UserInterface|null|string): void
+    // setTitle(title: string): void
+    // workspaceService->setWorkspaceTitle
 
     /**
      * SPECIAL rules
