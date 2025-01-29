@@ -29,22 +29,11 @@ trait ContentRepositoryTrait
         );
     }
 
-    private function contentRepository_getWorkspaceFinder_findOneByCurrentContentStreamId(Expr $contentStreamId): Expr
+    private function contentRepository_findWorkspaceByName(Expr $workspaceName)
     {
         return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getWorkspaceFinder(),
-            'findOneByCurrentContentStreamId',
-            [
-                $contentStreamId
-            ]
-        );
-    }
-
-    private function contentRepository_getWorkspaceFinder_findOneByName(Expr $workspaceName)
-    {
-        return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getWorkspaceFinder(),
-            'findOneByName',
+            new Variable('contentRepository'),
+            'findWorkspaceByName',
             [
                 $workspaceName
             ]
@@ -60,37 +49,35 @@ trait ContentRepositoryTrait
         );
     }
 
-    private function contentRepository_getContentGraph_findRootNodeAggregateByType(Expr $contentStreamIdentifier, Expr $nodeTypeName)
+    private function contentRepository_getContentGraph_findRootNodeAggregateByType(Expr $workspaceName, Expr $nodeTypeName)
     {
         return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getContentGraph(),
+            $this->contentRepository_getContentGraph($workspaceName),
             'findRootNodeAggregateByType',
             [
-                $contentStreamIdentifier,
                 $nodeTypeName
             ]
         );
     }
 
-    private function contentRepository_getContentGraph_getSubgraph(Expr $contentStreamId, Expr $dimensionSpacePoint, Expr $visibilityConstraints)
+    private function contentRepository_getContentGraph_getSubgraph(Expr $workspaceName, Expr $dimensionSpacePoint, Expr $visibilityConstraints)
     {
         return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getContentGraph(),
+            $this->contentRepository_getContentGraph($workspaceName),
             'getSubgraph',
             [
-                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             ]
         );
     }
 
-    private function contentRepository_getContentGraph(): Expr
+    private function contentRepository_getContentGraph(Expr $workspaceName): Expr
     {
         return $this->nodeFactory->createMethodCall(
             new Variable('contentRepository'),
             'getContentGraph',
-            []
+            [$workspaceName]
         );
     }
 

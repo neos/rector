@@ -55,21 +55,7 @@ final class NodeGetContextGetWorkspaceNameRector extends AbstractRector
         }
 
         $nodeVar = $node->var->var;
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::assign(
-                    'contentRepository',
-                    $this->this_contentRepositoryRegistry_get(
-                        $this->node_subgraphIdentity_contentRepositoryId($nodeVar)
-                    )
-                )
-            ],
-            $node
-        );
 
-        $workspace = $this->contentRepository_getWorkspaceFinder_findOneByCurrentContentStreamId(
-            $this->node_subgraphIdentity_contentStreamId($nodeVar)
-        );
-        return $this->nodeFactory->createPropertyFetch($workspace, 'workspaceName');
+        return $this->nodeFactory->createPropertyFetch($nodeVar, 'workspaceName');
     }
 }
