@@ -78,11 +78,6 @@ final class ContextGetRootNodeRector extends AbstractRector
     }
 
 
-    private function workspace_currentContentStreamId(): Expr
-    {
-        return $this->nodeFactory->createPropertyFetch('workspace', 'currentContentStreamId');
-    }
-
     private function context_dimensions_fallbackToEmpty(Expr $legacyContextStub)
     {
         return new Node\Expr\BinaryOp\Coalesce(
