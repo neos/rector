@@ -20,8 +20,7 @@ class SomeClass
 {
     public function run(NodeLegacyStub $node)
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        return $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($node->subgraphIdentity->contentStreamId)->workspaceName;
+        return $node->workspaceName;
     }
 }
 

@@ -60,7 +60,7 @@ final class WorkspaceRepositoryCountByNameRector extends AbstractRector
 
         return new Node\Expr\Ternary(
             new Node\Expr\BinaryOp\NotIdentical(
-                $this->contentRepository_getWorkspaceFinder_findOneByName($this->workspaceName_fromString($node->args[0]->value)),
+                $this->contentRepository_findWorkspaceByName($this->workspaceName_fromString($node->args[0]->value)),
                 new Expr\ConstFetch(new Node\Name('null'))
             ),
             new Node\Scalar\LNumber(1),
