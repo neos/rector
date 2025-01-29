@@ -15,20 +15,6 @@ trait ContentRepositoryTrait
      */
     protected $nodeFactory;
 
-    private function contentRepository_projectionState(string $projectionStateClassName): Expr
-    {
-        return $this->nodeFactory->createMethodCall(
-            new Variable('contentRepository'),
-            'projectionState',
-            [
-                new Expr\ClassConstFetch(
-                    new FullyQualified($projectionStateClassName),
-                    new Identifier('class')
-                )
-            ]
-        );
-    }
-
     private function contentRepository_findWorkspaceByName(Expr $workspaceName)
     {
         return $this->nodeFactory->createMethodCall(
@@ -37,15 +23,6 @@ trait ContentRepositoryTrait
             [
                 $workspaceName
             ]
-        );
-    }
-
-    private function contentRepository_getWorkspaceFinder(): Expr
-    {
-        return $this->nodeFactory->createMethodCall(
-            new Variable('contentRepository'),
-            'getWorkspaceFinder',
-            []
         );
     }
 
