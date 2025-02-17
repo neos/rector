@@ -66,6 +66,8 @@ use Neos\Rector\ContentRepository90\Rules\NodeTypeGetTypeOfAutoCreatedChildNodeR
 use Neos\Rector\ContentRepository90\Rules\NodeTypeManagerAccessRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryFindByBaseWorkspaceRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryFindByIdentifierRector;
 use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
 use Neos\Rector\ContentRepository90\Rules\YamlRoutePartHandlerRector;
 use Neos\Rector\Generic\Rules\FusionFlowQueryNodePropertyToWarningCommentRector;
@@ -475,7 +477,12 @@ return static function (RectorConfig $rectorConfig): void {
     /**
      * Neos\ContentRepository\Domain\Repository\WorkspaceRepository
      */
+    // countByName(workspace): int
     $rectorConfig->rule(WorkspaceRepositoryCountByNameRector::class);
+    // findByBaseWorkspace(baseWorkspace): QueryResultInterface
+    $rectorConfig->rule(WorkspaceRepositoryFindByBaseWorkspaceRector::class);
+    // findByIdentifier(baseWorkspace): Workspace
+    $rectorConfig->rule(WorkspaceRepositoryFindByIdentifierRector::class);
 
     /**
      * Neos\ContentRepository\Domain\Model\Workspace

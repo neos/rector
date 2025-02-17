@@ -25,8 +25,11 @@ use Neos\Flow\Annotations as Flow;
 
 class SomeClass
 {
-    #[\Neos\Flow\Annotations\Inject]
-    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
+    /**
+     * @var WorkspaceRepository
+     * @Flow\Inject
+     */
+    protected $workspaceRepository;
     public function run(string $workspace)
     {
         $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
