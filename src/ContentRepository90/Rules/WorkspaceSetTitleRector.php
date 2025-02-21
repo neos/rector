@@ -6,13 +6,14 @@ namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;
 use Rector\Core\Rector\AbstractRector;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 
-final class WorkspaceGetNameRector extends AbstractRector
+final class WorkspaceSetTitleRector extends AbstractRector
 {
     use AllTraits;
 
@@ -24,7 +25,7 @@ final class WorkspaceGetNameRector extends AbstractRector
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('"Workspace::getName()" will be rewritten', __CLASS__);
+        return CodeSampleLoader::fromFile('"Workspace::setTitle()" will be rewritten', __CLASS__);
     }
 
     /**
@@ -45,18 +46,24 @@ final class WorkspaceGetNameRector extends AbstractRector
         if (!$this->isObjectType($node->var, new ObjectType(Workspace::class))) {
             return null;
         }
-        if (!$this->isName($node->name, 'getName')) {
+        if (!$this->isName($node->name, 'setTitle')) {
             return null;
         }
-
         $this->nodesToAddCollector->addNodesBeforeNode(
             [
-                self::todoComment('Check if you could change your code to work with the WorkspaceName value object instead.')
+                self::todoComment('Make this code aware of multiple Content Repositories.')
             ],
             $node
         );
 
-        $propertyFetchAggregateId = $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName');
-        return $this->nodeFactory->createPropertyFetch($propertyFetchAggregateId, 'value');
+        return
+            $this->nodeFactory->createMethodCall(
+                $this->this_workspaceService(),
+                'setWorkspaceTitle',
+                [$this->contentRepositoryId_fromString('default'),
+                    $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName'),
+                    $this->nodeFactory->createStaticCall(\Neos\Neos\Domain\Model\WorkspaceTitle::class, 'fromString', [$node->args[0]])
+                ]
+            );
     }
 }

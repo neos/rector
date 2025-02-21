@@ -33,6 +33,23 @@ trait ThisTrait
         );
     }
 
+    private function this_workspaceService_getWorkspaceMetadata(Expr $contentRepositoryIdentifier, Expr $workspaceName): Expr
+    {
+        return $this->nodeFactory->createMethodCall(
+            $this->this_workspaceService(),
+            'getWorkspaceMetadata',
+            [
+                $contentRepositoryIdentifier,
+                $workspaceName
+            ]
+        );
+    }
+
+    private function this_workspaceService()
+    {
+        return $this->nodeFactory->createPropertyFetch('this', 'workspaceService');
+    }
+
     private function this_contentRepositoryRegistry(): Expr
     {
         return $this->nodeFactory->createPropertyFetch('this', 'contentRepositoryRegistry');

@@ -50,33 +50,41 @@ class SomeClass extends AnotherClass
     }
 }
 -----
-
+<?php
 
 namespace Neos\Rector\Test;
 
 use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\Neos\Domain\Model\WorkspaceDescription;
+use Neos\Neos\Domain\Model\WorkspaceTitle;
 
 class SomeClass extends AnotherClass
 {
-    #[Flow\Inject]
-    protected \Neos\Neos\Domain\Service\WorkspaceService $workspaceService;
-    #[Flow\Inject]
-    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
-    #[Flow\Inject]
-    protected \Neos\Neos\Domain\Service\WorkspacePublishingService $workspacePublishingService;
 
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\Neos\Domain\Service\WorkspacePublishingService $workspacePublishingService;
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\Neos\Domain\Service\WorkspaceService $workspaceService;
     public function test(\Neos\ContentRepository\Core\SharedModel\Workspace\Workspace $workspace)
     {
-
+        // TODO 9.0 migration: Check if you could change your code to work with the WorkspaceName value object instead and make this code aware of multiple Content Repositories.
         $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
         $baseWorkspace = $contentRepository->findWorkspaceByName($workspace->baseWorkspaceName);
-
+        // TODO 9.0 migration: Check if you could change your code to work with the WorkspaceName value object instead and make this code aware of multiple Content Repositories.
         $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
-        $baseWorkspaces = $contentRepository->findWorkspaces()->getBaseWorkspaces($workspace->baseWorkspaceName);
 
-        $title = $this->workspaceService->getWorkspaceMetadata(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName)->title;
+        $baseWorkspaces = $contentRepository->findWorkspaces()->getBaseWorkspaces($workspace->workspaceName);
+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
 
-        $description = $this->workspaceService->getWorkspaceMetadata(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName)->description;
+
+        $title = $this->workspaceService->getWorkspaceMetadata(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName)->title->value;
+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
+
+
+        $description = $this->workspaceService->getWorkspaceMetadata(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName)->description->value;
         // TODO 9.0 migration: Check if you could change your code to work with the WorkspaceName value object instead.
 
 
@@ -108,6 +116,7 @@ class SomeClass extends AnotherClass
 
         $workspace->isPublicWorkspace();
 
+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
         $this->workspacePublishingService->publishWorkspace(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName);
 
         // TODO: Check if this matches your requirements as this is not a 100% replacement
@@ -119,9 +128,13 @@ class SomeClass extends AnotherClass
 
         $workspace->setBaseWorkspace($baseWorkspace);
         $workspace->setOwner($user);
+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
 
-        $this->workspaceService->setWorkspaceDescription(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName, 'description');
 
-        $this->workspaceService->setWorkspaceTitle(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName, 'title');
+        $this->workspaceService->setWorkspaceDescription(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName, \Neos\Neos\Domain\Model\WorkspaceDescription::fromString("description"));
+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
+
+
+        $this->workspaceService->setWorkspaceTitle(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName, \Neos\Neos\Domain\Model\WorkspaceTitle::fromString("title"));
     }
 }
