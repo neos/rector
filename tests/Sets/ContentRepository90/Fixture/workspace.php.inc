@@ -56,8 +56,6 @@ namespace Neos\Rector\Test;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\Neos\Domain\Model\WorkspaceDescription;
-use Neos\Neos\Domain\Model\WorkspaceTitle;
 
 class SomeClass extends AnotherClass
 {
@@ -115,18 +113,23 @@ class SomeClass extends AnotherClass
 
 
         $workspace->isPublicWorkspace();
-
         // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
+
+
         $this->workspacePublishingService->publishWorkspace(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName);
+        // TODO 9.0 migration: Check if this matches your requirements as this is not a 100% replacement. Make this code aware of multiple Content Repositories.
 
-        // TODO: Check if this matches your requirements as this is not a 100% replacement
+
         $this->workspacePublishingService->publishChangesInDocument(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName, $node);
+        // TODO 9.0 migration: !! Workspace::publishNodes() has been removed in Neos 9.0. Use the \Neos\Neos\Domain\Service\WorkspacePublishingService to publish a workspace or changes in a document.
 
-        // TODO: Use the \Neos\Neos\Domain\Service\WorkspacePublishingService to publish a workspace or changesin a document.
+
         $workspace->publishNodes([$node], $targetWorkspace);
+        // TODO 9.0 migration: !! Workspace::setBaseWorkspace() is not supported by the new CR. Use the "ChangeBaseWorkspace" command to change the baseWorkspace of a workspace.
 
 
         $workspace->setBaseWorkspace($baseWorkspace);
+
         $workspace->setOwner($user);
         // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
 

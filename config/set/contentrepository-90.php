@@ -71,6 +71,8 @@ use Neos\Rector\ContentRepository90\Rules\WorkspaceGetBaseWorkspacesRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetDescriptionRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetTitleRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspacePublishNodeRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspacePublishRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryFindByBaseWorkspaceRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryFindByIdentifierRector;
@@ -738,16 +740,18 @@ return static function (RectorConfig $rectorConfig): void {
     // isPublicWorkspace(): bool
     $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'isPublicWorkspace', '!! Workspace::isPublicWorkspace() has been removed in Neos 9.0. Please use the new Workspace permission api instead. See ContentRepositoryAuthorizationService::getWorkspacePermissions()');
     // publish(targetWorkspace: Workspace): void
+    $rectorConfig->rule(WorkspacePublishRector::class);
     // publishNode(nodeToPublish: NodeInterface, targetWorkspace: Workspace): void
+    $rectorConfig->rule(WorkspacePublishNodeRector::class);
     // publishNodes(nodes: NodeInterface[], targetWorkspace: Workspace): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'publishNodes', '!! Workspace::publishNodes() has been removed in Neos 9.0. Use the \Neos\Neos\Domain\Service\WorkspacePublishingService to publish a workspace or changes in a document.');
     // setBaseWorkspace(baseWorkspace: Workspace): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'setBaseWorkspace', '!! Workspace::setBaseWorkspace() is not supported by the new CR. Use the "ChangeBaseWorkspace" command to change the baseWorkspace of a workspace.');
     // setDescription(description: string): void
     $rectorConfig->rule(WorkspaceSetDescriptionRector::class);
-    // workspaceService->setWorkspaceDescription
     // setOwner(user: UserInterface|null|string): void
     // setTitle(title: string): void
     $rectorConfig->rule(WorkspaceSetTitleRector::class);
-    // workspaceService->setWorkspaceTitle
 
     /**
      * SPECIAL rules

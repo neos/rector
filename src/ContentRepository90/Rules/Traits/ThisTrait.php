@@ -50,6 +50,12 @@ trait ThisTrait
         return $this->nodeFactory->createPropertyFetch('this', 'workspaceService');
     }
 
+    private function this_workspacePublishingService()
+    {
+        return $this->nodeFactory->createPropertyFetch('this', 'workspacePublishingService');
+    }
+
+
     private function this_contentRepositoryRegistry(): Expr
     {
         return $this->nodeFactory->createPropertyFetch('this', 'contentRepositoryRegistry');
