@@ -726,6 +726,7 @@ return static function (RectorConfig $rectorConfig): void {
     // getNodeCount(): int
     $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'getNodeCount', '!! Workspace::getNodeCount() has been removed in Neos 9.0 without a replacement.');
     // getOwner(): UserInterface|null
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'getOwner', '!! Workspace::getOwner() has been removed in Neos 9.0. Use WorkspaceService::getWorkspaceMetadata()->ownerUserId to get the userId of the owner.');
     // getRootNodeData(): NodeData
     $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'getRootNodeData', '!! Workspace::getRootNodeData() has been removed in Neos 9.0 without a replacement.');
     // getTitle(): string
@@ -750,6 +751,7 @@ return static function (RectorConfig $rectorConfig): void {
     // setDescription(description: string): void
     $rectorConfig->rule(WorkspaceSetDescriptionRector::class);
     // setOwner(user: UserInterface|null|string): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'setOwner', '!! Workspace::setOwner() has been removed in Neos 9.0. You can set the owner of a workspace during creation WorkspaceService::createPersonalWorkspace().');
     // setTitle(title: string): void
     $rectorConfig->rule(WorkspaceSetTitleRector::class);
 

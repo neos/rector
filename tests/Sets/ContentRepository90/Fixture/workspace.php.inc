@@ -91,6 +91,8 @@ class SomeClass extends AnotherClass
 
 
         $workspace->getNodeCount();
+        // TODO 9.0 migration: !! Workspace::getOwner() has been removed in Neos 9.0. Use WorkspaceService::getWorkspaceMetadata()->ownerUserId to get the userId of the owner.
+
 
         $workspace->getOwner();
         // TODO 9.0 migration: !! Workspace::getRootNodeData() has been removed in Neos 9.0 without a replacement.
@@ -129,6 +131,8 @@ class SomeClass extends AnotherClass
 
 
         $workspace->setBaseWorkspace($baseWorkspace);
+        // TODO 9.0 migration: !! Workspace::setOwner() has been removed in Neos 9.0. You can set the owner of a workspace during creation WorkspaceService::createPersonalWorkspace().
+
 
         $workspace->setOwner($user);
         // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
