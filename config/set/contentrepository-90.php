@@ -692,7 +692,7 @@ return static function (RectorConfig $rectorConfig): void {
      * Neos.Fusion:Attributes
      */
     $rectorConfig->ruleWithConfiguration(FusionPrototypeNameAddCommentRector::class, [
-        new FusionPrototypeNameAddComment('Neos.Fusion:Attributes', 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in Neos.Fusion:Tag')
+        new FusionPrototypeNameAddComment('Neos.Fusion:Attributes', 'TODO 9.0 migration: Neos.Fusion:Attributes has been removed without a replacement. You need to replace it by the property attributes in "Neos.Fusion:Tag" or apply the Eel helper "Neos.Array.toHtmlAttributesString(attributes)".')
     ]);
 
     $rectorConfig->rule(ContentRepositoryUtilityRenderValidNodeNameRector::class);
