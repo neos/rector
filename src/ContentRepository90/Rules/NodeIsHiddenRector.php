@@ -52,7 +52,7 @@ final class NodeIsHiddenRector extends AbstractRector
                 'tags'
             ),
             'contain',
-            [$this->nodeFactory->createStaticCall(\Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag::class, 'disabled')]
+            [$this->nodeFactory->createStaticCall(\Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag::class, 'disabled')]
         );
     }
 }

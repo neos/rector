@@ -1758,7 +1758,7 @@ return static function (RectorConfig $rectorConfig): void {
      public function run(NodeLegacyStub $node)
      {
 -        return $node->isHidden();
-+        return $node->tags->contain(\Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag::disabled());
++        return $node->tags->contain(\Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag::disabled());
      }
  }
 

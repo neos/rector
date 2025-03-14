@@ -20,7 +20,7 @@ class SomeClass
 {
     public function run(NodeLegacyStub $node)
     {
-        return $node->tags->contain(\Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag::disabled());
+        return $node->tags->contain(\Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag::disabled());
     }
 }
 
