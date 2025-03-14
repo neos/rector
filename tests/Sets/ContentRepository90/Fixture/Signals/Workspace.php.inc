@@ -46,12 +46,12 @@ class Package extends BasePackage
         // TODO 9.0 migration: The signal "baseWorkspaceChanged" on "Workspace" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
 
 
-        $dispatcher->connect(\Neos\ContentRepository\Core\Projection\Workspace\Workspace::class, 'baseWorkspaceChanged', function () { return 'foo'; });
+        $dispatcher->connect(\Neos\ContentRepository\Core\SharedModel\Workspace\Workspace::class, 'baseWorkspaceChanged', function () { return 'foo'; });
         // TODO 9.0 migration: The signal "beforeNodePublishing" on "Workspace" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
 
         $dispatcher->connect('Neos\ContentRepository\Domain\Model\Workspace', 'beforeNodePublishing', RouterCachingService::class, 'flushCaches');
         // TODO 9.0 migration: The signal "afterNodePublishing" on "Workspace" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
 
-        $dispatcher->connect(\Neos\ContentRepository\Core\Projection\Workspace\Workspace::class, 'afterNodePublishing', function () { return 'foo'; });
+        $dispatcher->connect(\Neos\ContentRepository\Core\SharedModel\Workspace\Workspace::class, 'afterNodePublishing', function () { return 'foo'; });
     }
 }
