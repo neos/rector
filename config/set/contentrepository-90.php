@@ -310,7 +310,7 @@ return static function (RectorConfig $rectorConfig): void {
     // isTethered()
     // getContentStreamIdentifier() -> threw exception in <= Neos 8.0 - so nobody could have used this
     // getNodeAggregateIdentifier()
-    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeAggregateIdentifier', 'nodeAggregateId');
+    $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeAggregateIdentifier', 'aggregateId');
     $rectorConfig->rule(rectorClass: FusionNodeAggregateIdentifierRector::class);
     // getNodeTypeName()
     $methodCallToPropertyFetches[] = new MethodCallToPropertyFetch(NodeLegacyStub::class, 'getNodeTypeName', 'nodeTypeName');
