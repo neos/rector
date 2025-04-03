@@ -6,7 +6,7 @@ class SomeClass
 {
     public function run(Workspace $workspace)
     {
-        $workspaceName = $workspace->getName();
+        $workspace->publish();
     }
 }
 
@@ -20,9 +20,9 @@ class SomeClass
 {
     public function run(Workspace $workspace)
     {
-        // TODO 9.0 migration: Check if you could change your code to work with the WorkspaceName value object instead.
+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
 
-        $workspaceName = $workspace->workspaceName->value;
+        $this->workspacePublishingService->publishWorkspace(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName);
     }
 }
 

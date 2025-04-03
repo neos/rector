@@ -6,6 +6,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Domain\Service\RenderingModeService;
+use Neos\Neos\Domain\Service\WorkspacePublishingService;
+use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 use Neos\Rector\ContentRepository90\Rules\ContentDimensionCombinatorGetAllAllowedCombinationsRector;
@@ -64,10 +66,18 @@ use Neos\Rector\ContentRepository90\Rules\NodeTypeGetAutoCreatedChildNodesRector
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeGetTypeOfAutoCreatedChildNodeRector;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeManagerAccessRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceGetBaseWorkspaceRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceGetBaseWorkspacesRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceGetDescriptionRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceGetNameRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceGetTitleRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspacePublishNodeRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspacePublishRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryCountByNameRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryFindByBaseWorkspaceRector;
 use Neos\Rector\ContentRepository90\Rules\WorkspaceRepositoryFindByIdentifierRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceSetDescriptionRector;
+use Neos\Rector\ContentRepository90\Rules\WorkspaceSetTitleRector;
 use Neos\Rector\ContentRepository90\Rules\YamlDimensionConfigRector;
 use Neos\Rector\ContentRepository90\Rules\YamlRoutePartHandlerRector;
 use Neos\Rector\Generic\Rules\FusionFlowQueryNodePropertyToWarningCommentRector;
@@ -125,7 +135,7 @@ return static function (RectorConfig $rectorConfig): void {
         \Neos\ContentRepository\Domain\Model\NodeType::class => \Neos\ContentRepository\Core\NodeType\NodeType::class,
         \Neos\ContentRepository\Domain\Service\NodeTypeManager::class => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
 
-        \Neos\ContentRepository\Domain\Model\Workspace::class => \Neos\ContentRepository\Core\Projection\Workspace\Workspace::class,
+        \Neos\ContentRepository\Domain\Model\Workspace::class => \Neos\ContentRepository\Core\SharedModel\Workspace\Workspace::class,
         \Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class,
         \Neos\ContentRepository\Domain\NodeAggregate\NodeName::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
         \Neos\ContentRepository\Domain\NodeType\NodeTypeName::class => \Neos\ContentRepository\Core\NodeType\NodeTypeName::class,
@@ -703,6 +713,49 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rule(FusionFlowQueryContextRector::class);
 
     /**
+     * \Neos\ContentRepository\Domain\Model\Workspace
+     */
+    // getBaseWorkspace(): Workspace|null
+    $rectorConfig->rule(WorkspaceGetBaseWorkspaceRector::class);
+    // getBaseWorkspaces(): Workspace[]
+    $rectorConfig->rule(WorkspaceGetBaseWorkspacesRector::class);
+    // getDescription(): null|string
+    $rectorConfig->rule(WorkspaceGetDescriptionRector::class);
+    // getName(): string
+    // ->name
+    // getNodeCount(): int
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'getNodeCount', '!! Workspace::getNodeCount() has been removed in Neos 9.0 without a replacement.');
+    // getOwner(): UserInterface|null
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'getOwner', '!! Workspace::getOwner() has been removed in Neos 9.0. Use WorkspaceService::getWorkspaceMetadata()->ownerUserId to get the userId of the owner.');
+    // getRootNodeData(): NodeData
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'getRootNodeData', '!! Workspace::getRootNodeData() has been removed in Neos 9.0 without a replacement.');
+    // getTitle(): string
+    $rectorConfig->rule(WorkspaceGetTitleRector::class);
+    // meta->setWorkspaceTitle
+    // isInternalWorkspace(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'isInternalWorkspace', '!! Workspace::isInternalWorkspace() has been removed in Neos 9.0. Please use the new Workspace permission api instead. See ContentRepositoryAuthorizationService::getWorkspacePermissions()');
+    // isPersonalWorkspace(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'isPersonalWorkspace', '!! Workspace::isPersonalWorkspace() has been removed in Neos 9.0. Please use the new Workspace permission api instead. See ContentRepositoryAuthorizationService::getWorkspacePermissions()');
+    // isPrivateWorkspace(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'isPrivateWorkspace', '!! Workspace::isPrivateWorkspace() has been removed in Neos 9.0. Please use the new Workspace permission api instead. See ContentRepositoryAuthorizationService::getWorkspacePermissions()');
+    // isPublicWorkspace(): bool
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'isPublicWorkspace', '!! Workspace::isPublicWorkspace() has been removed in Neos 9.0. Please use the new Workspace permission api instead. See ContentRepositoryAuthorizationService::getWorkspacePermissions()');
+    // publish(targetWorkspace: Workspace): void
+    $rectorConfig->rule(WorkspacePublishRector::class);
+    // publishNode(nodeToPublish: NodeInterface, targetWorkspace: Workspace): void
+    $rectorConfig->rule(WorkspacePublishNodeRector::class);
+    // publishNodes(nodes: NodeInterface[], targetWorkspace: Workspace): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'publishNodes', '!! Workspace::publishNodes() has been removed in Neos 9.0. Use the \Neos\Neos\Domain\Service\WorkspacePublishingService to publish a workspace or changes in a document.');
+    // setBaseWorkspace(baseWorkspace: Workspace): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'setBaseWorkspace', '!! Workspace::setBaseWorkspace() is not supported by the new CR. Use the "ChangeBaseWorkspace" command to change the baseWorkspace of a workspace.');
+    // setDescription(description: string): void
+    $rectorConfig->rule(WorkspaceSetDescriptionRector::class);
+    // setOwner(user: UserInterface|null|string): void
+    $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRepository\Domain\Model\Workspace::class, 'setOwner', '!! Workspace::setOwner() has been removed in Neos 9.0. You can set the owner of a workspace during creation WorkspaceService::createPersonalWorkspace().');
+    // setTitle(title: string): void
+    $rectorConfig->rule(WorkspaceSetTitleRector::class);
+
+    /**
      * SPECIAL rules
      */
     $rectorConfig->rule(FusionCachingNodeInEntryIdentifierRector::class);
@@ -788,6 +841,8 @@ return static function (RectorConfig $rectorConfig): void {
         new AddInjection('contentRepositoryRegistry', ContentRepositoryRegistry::class),
         new AddInjection('renderingModeService', RenderingModeService::class),
         new AddInjection('nodeLabelGenerator', NodeLabelGeneratorInterface::class),
+        new AddInjection('workspacePublishingService', WorkspacePublishingService::class),
+        new AddInjection('workspaceService', WorkspaceService::class),
     ]);
     // TODO: does not fully seem to work.$rectorConfig->rule(RemoveDuplicateCommentRector::class);
 };
