@@ -1,15 +1,15 @@
 # Neos.Rector
 
-This package contains a Rector ruleset which is used for migrating from Neos 8.x to 9.0 (and possibly also further up).
+This package contains a Rector ruleset which is used for migrating from Neos 8.x to 9.0 (and lateron also further up).
 
-It will eventually replace Core/Code Migrations (./flow flow:core:migrate), but right now it is still in Development.
+It will eventually replace Core/Code Migrations (./flow flow:core:migrate) (which are not used anymore for migrating to Neos 9 and further).
 
 Right now we focus especially on rules to migrate from the old Content Repository API (< Neos 9.0) to the
 Event Sourced Content Repository (>= 9.0).
 
 ## Installation
 As Rector has strict dependency requirements, which might not match your own project, we strongly recommend to install 
-neos/rector in a dedicated directory and not to add it to your project.
+neos/rector in a dedicated directory and **not to add it to your project**.
 
 ```bash
 # inside your Distribution folder
@@ -25,7 +25,6 @@ migrated). By default, all of `./DistributionPackages` will be migrated.
 Right now, we ship the following sets of Rector rules:
 
 - `\Neos\Rector\NeosRectorSets::CONTENTREPOSITORY_9_0`: all rules needed to migrate to the Event-Sourced Content Repository
-  (currently still in progress)
 
 Also you need to add the autoload paths, to allow rector to parse your code properly. By default we added `./Packages` and `./DistributionPackages` to the template.
 
@@ -68,13 +67,13 @@ Run the following command at the root of your distribution (i.e. where `rector.p
 
 Make sure to run Rector with the `--clear-cache` flag while developing rules, when you run them on a full codebase.
 
-Otherwise, ...
+Otherwise, Rector might not re-run for unmodified source files.
 
 ## Running Tests
 
 We develop **all** Rector Rules completely test-driven.
 
-The test setup runs completely local; does not need *any* Distribution set up.
+The test setup runs completely self contained; does not need *any* Distribution set up.
 
 ```bash
 # if inside a Neos Distribution, change to the Package's folder
@@ -95,7 +94,6 @@ which you can implement if you want to build Fusion transformations.
 The Fusion Rectors will usually use one of the following tooling classes:
 
 - `EelExpressionTransformer`: for finding all Eel expressions inside Fusion and AFX; and transforming them in some way.
-- (more tooling classes to come here as we need them).
 
 The Fusion and AFX Parsing functionality is based on the official Fusion and AFX parsers. However, the classes are
 vendored/copied into this package by the `./embed-fusion-and-afx-parsers.sh` script, because of the following reasons:
