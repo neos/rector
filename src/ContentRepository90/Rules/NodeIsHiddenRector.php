@@ -4,10 +4,8 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules;
 
-use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
-use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -47,24 +45,13 @@ final class NodeIsHiddenRector extends AbstractRector
             return null;
         }
 
-        $getContentRepository = $this->this_contentRepositoryRegistry_get(
-            $this->node_subgraphIdentity_contentRepositoryId($node->var)
-        );
-        $getNodeHiddenStateFinder = $this->contentRepository_projectionState(NodeHiddenStateFinder::class);
-        $getHiddenState = $this->nodeHiddenStateFinder_findHiddenState($node->var);
-
-//        $this->nodesToAddCollector->addNodesBeforeNode(
-//            [
-//                self::assign('contentRepository', $getContentRepository),
-//                self::assign('nodeHiddenStateFinder', $getNodeHiddenStateFinder),
-//                self::assign('hiddenState', $getHiddenState),
-//            ],
-//            $node
-//        );
-
         return $this->nodeFactory->createMethodCall(
-            new Variable('hiddenState'),
-            'isHidden'
+            $this->nodeFactory->createPropertyFetch(
+                $node->var,
+                'tags'
+            ),
+            'contain',
+            [$this->nodeFactory->createStaticCall(\Neos\Neos\Domain\SubtreeTagging\NeosSubtreeTag::class, 'disabled')]
         );
     }
 }

@@ -13,40 +13,11 @@ trait NodeTrait
      */
     protected $nodeFactory;
 
-    private function node_subgraphIdentity(Expr $nodeVariable): Expr
-    {
-        return $this->nodeFactory->createPropertyFetch($nodeVariable, 'subgraphIdentity');
-    }
-
-    private function node_subgraphIdentity_contentRepositoryId(Expr $nodeVariable)
-    {
-        return $this->nodeFactory->createPropertyFetch(
-            $this->node_subgraphIdentity($nodeVariable),
-            'contentRepositoryId'
-        );
-    }
-
-    private function node_subgraphIdentity_contentStreamId(Expr $nodeVariable): Expr
-    {
-        return $this->nodeFactory->createPropertyFetch(
-            $this->node_subgraphIdentity($nodeVariable),
-            'contentStreamId'
-        );
-    }
-
-    private function node_subgraphIdentity_dimensionSpacePoint(Expr $nodeVariable): Expr
-    {
-        return $this->nodeFactory->createPropertyFetch(
-            $this->node_subgraphIdentity($nodeVariable),
-            'dimensionSpacePoint'
-        );
-    }
-
     private function node_nodeAggregateId(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createPropertyFetch(
             $nodeVariable,
-            'nodeAggregateId'
+            'aggregateId'
         );
     }
 

@@ -3,12 +3,8 @@
 declare (strict_types=1);
 namespace Neos\Rector\ContentRepository90\Rules;
 
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 
@@ -43,7 +39,7 @@ final class NodeTypeManagerAccessRector extends AbstractRector
     {
         assert($node instanceof Node\Expr\PropertyFetch);
 
-        if (!$this->isObjectType($node, new ObjectType(NodeTypeManager::class))) {
+        if (!$this->isObjectType($node, new ObjectType(\Neos\ContentRepository\Domain\Service\NodeTypeManager::class))) {
             return null;
         }
 
@@ -58,37 +54,5 @@ final class NodeTypeManagerAccessRector extends AbstractRector
 //        );
 
         return $this->contentRepository_getNodeTypeManager();
-    }
-
-
-    private function context_workspaceName_fallbackToLive(Node\Expr $legacyContextStub)
-    {
-        return new Node\Expr\BinaryOp\Coalesce(
-            $this->nodeFactory->createPropertyFetch($legacyContextStub, 'workspaceName'),
-            new Node\Scalar\String_('live')
-        );
-    }
-
-
-    private function workspace_currentContentStreamId(): Expr
-    {
-        return $this->nodeFactory->createPropertyFetch('workspace', 'currentContentStreamId');
-    }
-
-    private function context_dimensions_fallbackToEmpty(Expr $legacyContextStub)
-    {
-        return new Node\Expr\BinaryOp\Coalesce(
-            $this->nodeFactory->createPropertyFetch($legacyContextStub, 'dimensions'),
-            new Expr\Array_()
-        );
-    }
-
-    private function visibilityConstraints(Expr $legacyContextStub)
-    {
-        return new Node\Expr\Ternary(
-            $this->nodeFactory->createPropertyFetch($legacyContextStub, 'invisibleContentShown'),
-            $this->nodeFactory->createStaticCall(VisibilityConstraints::class, 'withoutRestrictions'),
-            $this->nodeFactory->createStaticCall(VisibilityConstraints::class, 'frontend'),
-        );
     }
 }

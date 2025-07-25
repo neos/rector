@@ -21,7 +21,7 @@ class SomeClass
     public function run(NodeLegacyStub $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        return $subgraph->findParentNode($node->nodeAggregateId);
+        return $subgraph->findParentNode($node->aggregateId);
     }
 }
 

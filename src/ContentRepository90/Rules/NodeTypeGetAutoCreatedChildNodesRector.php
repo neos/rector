@@ -50,18 +50,16 @@ final class NodeTypeGetAutoCreatedChildNodesRector extends AbstractRector
 
 //        $this->nodesToAddCollector->addNodesBeforeNode(
 //            [
-//                self::withTodoComment(
-//                    'Make this code aware of multiple Content Repositories.',
-//                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
+//                self::todoComment(
+//                    'NodeType::tetheredNodeTypeDefinitions() is not a 1:1 replacement of NodeType::getAutoCreatedChildNodes(). You need to change your code to work with new TetheredNodeTypeDefinition object.',
 //                )
 //            ],
 //            $node
 //        );
 
-        return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getNodeTypeManager(),
-            'getTetheredNodesConfigurationForNodeType',
-                [$node->var]
+        return $this->nodeFactory->createPropertyFetch(
+                $node->var,
+            'tetheredNodeTypeDefinitions'
         );
     }
 }

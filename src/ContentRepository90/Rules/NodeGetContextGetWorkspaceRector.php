@@ -61,15 +61,15 @@ final class NodeGetContextGetWorkspaceRector extends AbstractRector
 //                self::assign(
 //                    'contentRepository',
 //                    $this->this_contentRepositoryRegistry_get(
-//                        $this->node_subgraphIdentity_contentRepositoryId($nodeVar)
+//                        $this->nodeFactory->createPropertyFetch($nodeVar, 'contentRepositoryId')
 //                    )
 //                )
 //            ],
 //            $node
 //        );
 
-        return $this->contentRepository_getWorkspaceFinder_findOneByCurrentContentStreamId(
-            $this->node_subgraphIdentity_contentStreamId($nodeVar)
+        return $this->contentRepository_findWorkspaceByName(
+            $this->nodeFactory->createPropertyFetch($nodeVar, 'workspaceName')
         );
     }
 }

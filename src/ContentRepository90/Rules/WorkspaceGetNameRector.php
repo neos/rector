@@ -10,14 +10,15 @@ use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 
 final class WorkspaceGetNameRector extends AbstractRector
 {
     use AllTraits;
 
     public function __construct(
-    ) {
+    )
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition

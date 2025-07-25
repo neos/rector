@@ -8,6 +8,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
         {...node.context.currentSite.siteResourcesPackageKey}
       />
     `
+    somethingDifferent = ${node.context.currentSiteNode}
   }
 }
 -----
@@ -21,5 +22,6 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
         {...Neos.Site.findBySiteNode(site).siteResourcesPackageKey}
       />
     `
+    somethingDifferent = ${node.context.currentSiteNode}
   }
 }

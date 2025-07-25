@@ -20,14 +20,15 @@ class FusionPrototypeNameAddCommentRector implements FusionRectorInterface, Conf
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Add comment to file if prototype name matches at least once.', __CLASS__);
+        return CodeSampleLoader::fromFile('Fusion: Add comment to file if prototype name matches at least once.', __CLASS__, ['Neos.Neos:Raw', 'Neos.Neos:Raw: Add this comment to top of file.']);
     }
 
     public function refactorFileContent(string $fileContent): string
     {
+        $comments = [];
         foreach ($this->fusionPrototypeNameAddComments as $fusionPrototypeNameAddComment) {
             $matches = [];
-            $pattern = '/(^|[=\s\(<\/])(' .$fusionPrototypeNameAddComment->name. ')([\s\{\)\/>]|$)/';
+            $pattern = '/(^|[=\s\(<\/])(' . $fusionPrototypeNameAddComment->name . ')([\s\{\)\/>]|$)/';
             preg_match($pattern, $fileContent, $matches);
 
             if (count($matches) > 0) {
@@ -35,7 +36,7 @@ class FusionPrototypeNameAddCommentRector implements FusionRectorInterface, Conf
             }
         }
 
-        if (count($comments) > 0){
+        if (count($comments) > 0) {
             $fileContent = implode("\n", $comments) . "\n" . $fileContent;
         }
 

@@ -53,7 +53,7 @@ final class NodeGetIdentifierRector extends AbstractRector
 //            $node
 //        );
 
-        $propertyFetchAggregateId = $this->nodeFactory->createPropertyFetch($node->var, 'nodeAggregateId');
+        $propertyFetchAggregateId = $this->nodeFactory->createPropertyFetch($node->var, 'aggregateId');
         return $this->nodeFactory->createPropertyFetch($propertyFetchAggregateId, 'value');
     }
 }

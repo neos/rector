@@ -15,82 +15,46 @@ trait ContentRepositoryTrait
      */
     protected $nodeFactory;
 
-    private function contentRepository_projectionState(string $projectionStateClassName): Expr
+    private function contentRepository_findWorkspaceByName(Expr $workspaceName)
     {
         return $this->nodeFactory->createMethodCall(
             new Variable('contentRepository'),
-            'projectionState',
-            [
-                new Expr\ClassConstFetch(
-                    new FullyQualified($projectionStateClassName),
-                    new Identifier('class')
-                )
-            ]
-        );
-    }
-
-    private function contentRepository_getWorkspaceFinder_findOneByCurrentContentStreamId(Expr $contentStreamId): Expr
-    {
-        return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getWorkspaceFinder(),
-            'findOneByCurrentContentStreamId',
-            [
-                $contentStreamId
-            ]
-        );
-    }
-
-    private function contentRepository_getWorkspaceFinder_findOneByName(Expr $workspaceName)
-    {
-        return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getWorkspaceFinder(),
-            'findOneByName',
+            'findWorkspaceByName',
             [
                 $workspaceName
             ]
         );
     }
 
-    private function contentRepository_getWorkspaceFinder(): Expr
+    private function contentRepository_getContentGraph_findRootNodeAggregateByType(Expr $workspaceName, Expr $nodeTypeName)
     {
         return $this->nodeFactory->createMethodCall(
-            new Variable('contentRepository'),
-            'getWorkspaceFinder',
-            []
-        );
-    }
-
-    private function contentRepository_getContentGraph_findRootNodeAggregateByType(Expr $contentStreamIdentifier, Expr $nodeTypeName)
-    {
-        return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getContentGraph(),
+            $this->contentRepository_getContentGraph($workspaceName),
             'findRootNodeAggregateByType',
             [
-                $contentStreamIdentifier,
                 $nodeTypeName
             ]
         );
     }
 
-    private function contentRepository_getContentGraph_getSubgraph(Expr $contentStreamId, Expr $dimensionSpacePoint, Expr $visibilityConstraints)
+    private function contentRepository_getContentGraph_getSubgraph(Expr $workspaceName, Expr $dimensionSpacePoint, Expr $visibilityConstraints)
     {
         return $this->nodeFactory->createMethodCall(
-            $this->contentRepository_getContentGraph(),
+            $this->contentRepository_getContentGraph($workspaceName),
             'getSubgraph',
             [
-                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints
             ]
         );
     }
 
-    private function contentRepository_getContentGraph(): Expr
+    private function contentRepository_getContentGraph(Expr $workspaceName): Expr
     {
         return $this->nodeFactory->createMethodCall(
             new Variable('contentRepository'),
             'getContentGraph',
-            []
+            [$workspaceName]
         );
     }
 

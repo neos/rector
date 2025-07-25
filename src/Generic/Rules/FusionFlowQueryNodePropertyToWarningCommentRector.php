@@ -6,7 +6,7 @@ namespace Neos\Rector\Generic\Rules;
 
 use Neos\Rector\Core\FusionProcessing\AfxParser\AfxParserException;
 use Neos\Rector\Core\FusionProcessing\EelExpressionTransformer;
-use Neos\Rector\Core\FusionProcessing\FusionParser\Exception\ParserException;
+use Neos\Rector\Core\FusionProcessing\Fusion\ObjectTreeParser\Exception\ParserException;
 use Neos\Rector\Core\FusionProcessing\FusionRectorInterface;
 use Neos\Rector\Core\FusionProcessing\Helper\RegexCommentTemplatePair;
 use Neos\Rector\Utility\CodeSampleLoader;

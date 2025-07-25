@@ -55,9 +55,9 @@ final class ContextGetRootNodeRector extends AbstractRector
 //                    '!! MEGA DIRTY CODE! Ensure to rewrite this; by getting rid of LegacyContextStub.',
 //                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default')))
 //                ),
-//                self::assign('workspace', $this->contentRepository_getWorkspaceFinder_findOneByName($this->workspaceName_fromString($this->context_workspaceName_fallbackToLive($node->var)))),
-//                self::assign('rootNodeAggregate', $this->contentRepository_getContentGraph_findRootNodeAggregateByType($this->workspace_currentContentStreamId(), $this->nodeTypeName_fromString('Neos.Neos:Sites'))),
-//                self::assign('subgraph', $this->contentRepository_getContentGraph_getSubgraph($this->workspace_currentContentStreamId(), $this->dimensionSpacePoint_fromLegacyDimensionArray($this->context_dimensions_fallbackToEmpty($node->var)), $this->visibilityConstraints($node->var))),
+//                self::assign('workspace', $this->contentRepository_findWorkspaceByName($this->workspaceName_fromString($this->context_workspaceName_fallbackToLive($node->var)))),
+//                self::assign('rootNodeAggregate', $this->contentRepository_getContentGraph_findRootNodeAggregateByType($this->nodeFactory->createPropertyFetch('workspace', 'workspaceName') , $this->nodeTypeName_fromString('Neos.Neos:Sites'))),
+//                self::assign('subgraph', $this->contentRepository_getContentGraph_getSubgraph($this->nodeFactory->createPropertyFetch('workspace', 'workspaceName'), $this->dimensionSpacePoint_fromLegacyDimensionArray($this->context_dimensions_fallbackToEmpty($node->var)), $this->visibilityConstraints($node->var))),
 //
 //            ],
 //            $node
@@ -78,11 +78,6 @@ final class ContextGetRootNodeRector extends AbstractRector
     }
 
 
-    private function workspace_currentContentStreamId(): Expr
-    {
-        return $this->nodeFactory->createPropertyFetch('workspace', 'currentContentStreamId');
-    }
-
     private function context_dimensions_fallbackToEmpty(Expr $legacyContextStub)
     {
         return new Node\Expr\BinaryOp\Coalesce(
@@ -96,7 +91,7 @@ final class ContextGetRootNodeRector extends AbstractRector
         return new Node\Expr\Ternary(
             $this->nodeFactory->createPropertyFetch($legacyContextStub, 'invisibleContentShown'),
             $this->nodeFactory->createStaticCall(VisibilityConstraints::class, 'withoutRestrictions'),
-            $this->nodeFactory->createStaticCall(VisibilityConstraints::class, 'frontend'),
+            $this->nodeFactory->createStaticCall(VisibilityConstraints::class, 'default'),
         );
     }
 }

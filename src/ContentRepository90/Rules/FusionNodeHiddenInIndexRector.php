@@ -14,29 +14,26 @@ class FusionNodeHiddenInIndexRector implements FusionRectorInterface
 
     public function getRuleDefinition(): RuleDefinition
     {
-        return CodeSampleLoader::fromFile('Fusion: Rewrite node.hiddenInIndex to node.property(\'hiddenInIndex\')', __CLASS__);
+        return CodeSampleLoader::fromFile('Fusion: Rewrite node.hiddenInIndex and q(node).property("_hiddenInIndex") to node.property(\'hiddenInIndex\')', __CLASS__);
     }
 
     public function refactorFileContent(string $fileContent): string
     {
         return EelExpressionTransformer::parse($fileContent)
             ->process(fn(string $eelExpression) => preg_replace(
-                '/(node|documentNode|site)\.hiddenInIndex/',
-                '$1.property(\'hiddenInIndex\')',
+                '/(node|documentNode|site)\.hiddenInIndex\b(?!\.|\()/',
+                '$1.property(\'hiddenInMenu\')',
                 $eelExpression
             ))
             ->addCommentsIfRegexMatches(
-                '/\.hiddenInIndex/',
-                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.property(\'hiddenInIndex\'). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+                '/\.hiddenInIndex\b(?!\.|\()/',
+                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.property(\'hiddenInMenu\'). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
             )
             ->process(fn(string $eelExpression) => preg_replace(
-                '/([a-zA-Z.]+(node|documentNode))\.property\\(\'_hiddenInIndex\'\\)/',
-                '$1.property(\'hiddenInIndex\')',
+                '/\.property\([\'"]_hiddenInIndex[\'"]\)/',
+                '.property(\'hiddenInMenu\')',
                 $eelExpression
-            ))
-            ->addCommentsIfRegexMatches(
-                '/\.property\\(\'_hiddenInIndex\'\\)/',
-                '// TODO 9.0 migration: Line %LINE: You may need to rewrite "VARIABLE.property(\'_hiddenInIndex\')" to VARIABLE.property(\'hiddenInIndex\'). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.'
+            )
             )->getProcessedContent();
     }
 }

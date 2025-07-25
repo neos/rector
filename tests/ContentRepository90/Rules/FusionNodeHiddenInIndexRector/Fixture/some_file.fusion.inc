@@ -5,7 +5,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.hiddenInIndex || documentNode.hiddenInIndex || site.hiddenInIndex}
+    attributes = ${node.hiddenInIndex || documentNode.hiddenInIndex || site.hiddenInIndex || q(node).property('_hiddenInIndex') || q(documentNode).property("_hiddenInIndex")}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -30,7 +30,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
   }
 }
 -----
-// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.property('hiddenInIndex'). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
+// TODO 9.0 migration: Line 26: You may need to rewrite "VARIABLE.hiddenInIndex" to VARIABLE.property('hiddenInMenu'). We did not auto-apply this migration because we cannot be sure whether the variable is a Node.
 prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Field) {
 
   renderer = Neos.Fusion:Component {
@@ -38,7 +38,7 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     #
     # pass down props
     #
-    attributes = ${node.property('hiddenInIndex') || documentNode.property('hiddenInIndex') || site.property('hiddenInIndex')}
+    attributes = ${node.property('hiddenInMenu') || documentNode.property('hiddenInMenu') || site.property('hiddenInMenu') || q(node).property('hiddenInMenu') || q(documentNode).property('hiddenInMenu')}
 
     #
     # the `checked` state is calculated outside the renderer to allow` overriding via `attributes`
@@ -54,10 +54,10 @@ prototype(Neos.Fusion.Form:Checkbox)  < prototype(Neos.Fusion.Form:Component.Fie
     renderer = afx`
       <input
         type="checkbox"
-        name={node.property('hiddenInIndex')}
+        name={node.property('hiddenInMenu')}
         value={someOtherVariable.hiddenInIndex}
         checked={props.checked}
-        {...node.property('hiddenInIndex')}
+        {...node.property('hiddenInMenu')}
       />
     `
   }
