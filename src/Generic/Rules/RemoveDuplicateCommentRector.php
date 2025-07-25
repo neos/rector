@@ -7,6 +7,7 @@ namespace Neos\Rector\Generic\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -58,7 +59,7 @@ final class RemoveDuplicateCommentRector extends AbstractRector
 
                     if ($node instanceof Node\Stmt\Nop) {
                         $node->setAttribute('comments', []);
-                        return NodeTraverser::REMOVE_NODE;
+                        return NodeVisitor::REMOVE_NODE;
                     }
                 } else {
                     $newComments[] = $comment;

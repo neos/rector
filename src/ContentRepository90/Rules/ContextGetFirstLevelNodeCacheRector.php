@@ -8,6 +8,7 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -42,7 +43,7 @@ final class ContextGetFirstLevelNodeCacheRector extends AbstractRector
         assert($node instanceof Node\Stmt\Expression);
 
         if ($this->containsContextGetFirstLevelNodeCache($node->expr)) {
-            return NodeTraverser::REMOVE_NODE;
+            return NodeVisitor::REMOVE_NODE;
         }
         return $node;
     }
