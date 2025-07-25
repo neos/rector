@@ -8,10 +8,10 @@ use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\ValueObject\AddInjection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
-return static function (RectorConfig $rectorConfig) : void {
-    $rectorConfig->rule(NodeTypeGetAutoCreatedChildNodesRector::class);
+    $rectorConfig = RectorConfig::configure();
+    $rectorConfig->withRules([NodeTypeGetAutoCreatedChildNodesRector::class]);
 
-    $rectorConfig->ruleWithConfiguration(InjectServiceIfNeededRector::class, [
+    $rectorConfig->withConfiguredRule(InjectServiceIfNeededRector::class, [
         new AddInjection('contentRepositoryRegistry', ContentRepositoryRegistry::class),
     ]);
-};
+return $rectorConfig;

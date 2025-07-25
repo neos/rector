@@ -6,6 +6,6 @@ use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeGetNameRector;
 use Neos\Rector\ContentRepository90\Rules\NodeGetNodeTypeRector;
 use Rector\Config\RectorConfig;
 
-return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->rule(NodeGetNodeTypeRector::class);
-};
+    $rectorConfig = RectorConfig::configure();
+    $rectorConfig->withRules([NodeGetNodeTypeRector::class]);
+return $rectorConfig;

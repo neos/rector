@@ -8,16 +8,13 @@ use Neos\Rector\Generic\Rules\Traits\FunctionsTrait;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Param;
+use Rector\PhpParser\Node\NodeFactory;
 
 trait DimensionSpacePointsTrait
 {
     use FunctionsTrait;
 
-    /**
-     * @var \Rector\Core\PhpParser\Node\NodeFactory
-     */
-    protected $nodeFactory;
-
+    protected NodeFactory $nodeFactory;
 
     private function dimensionSpacePoints_toLegacyDimensionArray(
     ): Expr

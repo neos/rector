@@ -21,7 +21,7 @@ final class WorkspacePublishNodeRectorTest extends AbstractRectorTestCase
      */
     public function provideData(): \Iterator
     {
-        return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
+        return static::yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
     public function provideConfigFilePath(): string

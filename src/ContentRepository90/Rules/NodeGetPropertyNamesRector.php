@@ -9,8 +9,8 @@ use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use PhpParser\NodeDumper;
@@ -20,7 +20,6 @@ final class NodeGetPropertyNamesRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
     ) {
     }
 

@@ -7,8 +7,8 @@ namespace Neos\Rector\ContentRepository90\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class NodeGetNodeTypeRector extends AbstractRector
@@ -16,7 +16,6 @@ final class NodeGetNodeTypeRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
     ) {
     }
 
@@ -48,17 +47,17 @@ final class NodeGetNodeTypeRector extends AbstractRector
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::assign(
-                    'contentRepository',
-                    $this->this_contentRepositoryRegistry_get(
-                        $this->nodeFactory->createPropertyFetch($node->var, 'contentRepositoryId')
-                    )
-                ),
-            ],
-            $node
-        );
+//        $this->nodesToAddCollector->addNodesBeforeNode(
+//            [
+//                self::assign(
+//                    'contentRepository',
+//                    $this->this_contentRepositoryRegistry_get(
+//                        $this->nodeFactory->createPropertyFetch($node->var, 'contentRepositoryId')
+//                    )
+//                ),
+//            ],
+//            $node
+//        );
 
         return
             $this->nodeFactory->createMethodCall(

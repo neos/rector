@@ -5,6 +5,6 @@ declare (strict_types=1);
 use Neos\Rector\ContentRepository90\Rules\NodeGetHiddenBeforeAfterDateTimeRector;
 use Rector\Config\RectorConfig;
 
-return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->rule(NodeGetHiddenBeforeAfterDateTimeRector::class);
-};
+    $rectorConfig = RectorConfig::configure();
+    $rectorConfig->withRules([NodeGetHiddenBeforeAfterDateTimeRector::class]);
+return $rectorConfig;

@@ -7,8 +7,8 @@ namespace Neos\Rector\ContentRepository90\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class NodeSearchServiceRector extends AbstractRector
@@ -16,7 +16,6 @@ final class NodeSearchServiceRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
     ) {
     }
 
@@ -54,62 +53,62 @@ final class NodeSearchServiceRector extends AbstractRector
             $nodeExpr = self::assign('node', new \PhpParser\Node\Scalar\String_('we-need-a-node-here'));
             $nodeNode = $nodeExpr->expr->var;
 
-            $this->nodesToAddCollector->addNodesBeforeNode(
-                [
-                    self::withTodoComment('The replacement needs a node as starting point for the search. Please provide a node, to make this replacement working.', $nodeExpr),
-                    $subgraphNode = self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($nodeNode)),
-                ],
-                $node
-            );
+//            $this->nodesToAddCollector->addNodesBeforeNode(
+//                [
+//                    self::withTodoComment('The replacement needs a node as starting point for the search. Please provide a node, to make this replacement working.', $nodeExpr),
+//                    $subgraphNode = self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($nodeNode)),
+//                ],
+//                $node
+//            );
 
         } else {
-            $this->nodesToAddCollector->addNodesBeforeNode(
-                [
-                    self::withTodoComment('This could be a suitable replacement. Please check if all your requirements are still fulfilled.',
-                        $subgraphNode = self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($node->args[3]->value))
-                    )
-                ],
-                $node
-
-            );
+//            $this->nodesToAddCollector->addNodesBeforeNode(
+//                [
+//                    self::withTodoComment('This could be a suitable replacement. Please check if all your requirements are still fulfilled.',
+//                        $subgraphNode = self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($node->args[3]->value))
+//                    )
+//                ],
+//                $node
+//
+//            );
             $nodeNode = $node->args[3]->value;
 
         }
-
-        return $this->nodeFactory->createMethodCall(
-            $subgraphNode->expr->var,
-            'findDescendantNodes',
-            [
-                $this->nodeFactory->createPropertyFetch(
-                    $nodeNode,
-                    'aggregateId'
-                ),
-                $this->nodeFactory->createStaticCall(
-                    \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::class,
-                    'create',
-                    [
-                        'nodeTypes' => $this->nodeFactory->createStaticCall(
-                            \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::class,
-                            'create',
-                            [
-                                $this->nodeFactory->createStaticCall(
-                                    \Neos\ContentRepository\Core\NodeType\NodeTypeNames::class,
-                                    'fromStringArray',
-                                    [
-                                        $node->args[1]->value,
-                                    ]
-                                ),
-                                $this->nodeFactory->createStaticCall(
-                                    \Neos\ContentRepository\Core\NodeType\NodeTypeNames::class,
-                                    'createEmpty',
-                                ),
-                            ]
-                        ),
-                        'searchTerm' => $node->args[0]->value,
-                    ]
-                )
-            ]
-        );
+        return $node;
+//        return $this->nodeFactory->createMethodCall(
+//            $subgraphNode->expr->var,
+//            'findDescendantNodes',
+//            [
+//                $this->nodeFactory->createPropertyFetch(
+//                    $nodeNode,
+//                    'aggregateId'
+//                ),
+//                $this->nodeFactory->createStaticCall(
+//                    \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::class,
+//                    'create',
+//                    [
+//                        'nodeTypes' => $this->nodeFactory->createStaticCall(
+//                            \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::class,
+//                            'create',
+//                            [
+//                                $this->nodeFactory->createStaticCall(
+//                                    \Neos\ContentRepository\Core\NodeType\NodeTypeNames::class,
+//                                    'fromStringArray',
+//                                    [
+//                                        $node->args[1]->value,
+//                                    ]
+//                                ),
+//                                $this->nodeFactory->createStaticCall(
+//                                    \Neos\ContentRepository\Core\NodeType\NodeTypeNames::class,
+//                                    'createEmpty',
+//                                ),
+//                            ]
+//                        ),
+//                        'searchTerm' => $node->args[0]->value,
+//                    ]
+//                )
+//            ]
+//        );
     }
 }
 

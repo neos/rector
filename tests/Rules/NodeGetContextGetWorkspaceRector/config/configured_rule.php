@@ -5,6 +5,6 @@ declare (strict_types=1);
 
 use Neos\Rector\ContentRepository90\Rules\NodeGetContextGetWorkspaceRector;
 use Rector\Config\RectorConfig;
-return static function (RectorConfig $rectorConfig) : void {
-    $rectorConfig->rule(NodeGetContextGetWorkspaceRector::class);
-};
+    $rectorConfig = RectorConfig::configure();
+    $rectorConfig->withRules([NodeGetContextGetWorkspaceRector::class]);
+return $rectorConfig;

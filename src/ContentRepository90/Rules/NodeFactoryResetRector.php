@@ -1,25 +1,30 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
-use PhpParser\NodeTraverser;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
+use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeFactoryResetRector extends AbstractRector
+final class NodeFactoryResetRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
     public function __construct(
-    )
-    {
+        private BetterNodeFinder $betterNodeFinder,
+    ) {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"NodeFactory::reset()" will be removed.', __CLASS__);
     }
@@ -27,26 +32,25 @@ final class NodeFactoryResetRector extends AbstractRector
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Expression::class];
     }
+
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Expression $node
      */
     public function refactor(Node $node)
     {
-        assert($node instanceof Node\Expr\MethodCall);
+        $methodCall = $this->betterNodeFinder->findFirst($node, function (Node $subNode) {
+            return $subNode instanceof MethodCall
+                && $this->isObjectType($subNode->var, new ObjectType(\Neos\ContentRepository\Domain\Factory\NodeFactory::class))
+                && $this->isName($subNode->name, 'reset');
+        });
 
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Factory\NodeFactory::class))) {
-            return null;
+        if ($methodCall) {
+            return NodeVisitor::REMOVE_NODE;
         }
-        if (!$this->isName($node->name, 'reset')) {
-            return null;
-        }
-
-        // return NodeTraverser::REMOVE_NODE;
-        $this->removeNode($node);
 
         return $node;
     }

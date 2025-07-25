@@ -9,9 +9,8 @@ use Neos\Rector\Generic\ValueObject\SignalSlotToWarningComment;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -25,7 +24,6 @@ final class SignalSlotToWarningCommentRector extends AbstractRector implements C
     private array $signalSlotToWarningComments = [];
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
     )
     {
     }
@@ -81,12 +79,12 @@ final class SignalSlotToWarningCommentRector extends AbstractRector implements C
                 continue;
             }
 
-            $this->nodesToAddCollector->addNodesBeforeNode(
-                [
-                    self::todoComment($signalSlotToWarningComment->warningMessage)
-                ],
-                $node
-            );
+//            $this->nodesToAddCollector->addNodesBeforeNode(
+//                [
+//                    self::todoComment($signalSlotToWarningComment->warningMessage)
+//                ],
+//                $node
+//            );
 
             return $node;
         }

@@ -12,13 +12,13 @@ class SomeClass
   protected $foo = null;
 
   /**
-   * @var Baz;
+   * @var Baz
    */
   protected $foo2 = null;
 
   /**
    * @Flow\Inject
-   * @var Baz;
+   * @var Baz
    */
   protected $foo3 = null;
 
@@ -41,7 +41,7 @@ use Neos\Flow\Annotations as Flow;
 class SomeClass
 {
   /**
-   * @var Baz;
+   * @var Baz
    */
   protected $foo2 = null;
 

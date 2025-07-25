@@ -7,13 +7,11 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
+use Rector\PhpParser\Node\NodeFactory;
 
 trait ContentRepositoryTrait
 {
-    /**
-     * @var \Rector\Core\PhpParser\Node\NodeFactory
-     */
-    protected $nodeFactory;
+    protected NodeFactory $nodeFactory;
 
     private function contentRepository_findWorkspaceByName(Expr $workspaceName)
     {

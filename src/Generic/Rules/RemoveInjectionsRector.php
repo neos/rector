@@ -8,7 +8,9 @@ use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -23,7 +25,9 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
      */
     private array $injectionsToRemove = [];
 
-    public function __construct()
+    public function __construct(
+        protected PhpDocInfoFactory $phpDocInfoFactory
+    )
     {
     }
 
@@ -43,7 +47,7 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt\Property $node
      */
     public function refactor(Node $node)
     {
@@ -51,9 +55,7 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
         foreach ($this->injectionsToRemove as $removeInjection) {
             if ($this->isObjectType($node, new ObjectType($removeInjection->objectType))) {
                 if (self::hasFlowInjectAttribute($node->attrGroups) || $this->hasFlowInjectDocComment($node)) {
-                    // return NodeTraverser::REMOVE_NODE;
-                    $this->removeNode($node);
-                    return $node;
+                    return NodeVisitor::REMOVE_NODE;
                 }
             }
         }

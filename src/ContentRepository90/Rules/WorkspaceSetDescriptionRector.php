@@ -4,24 +4,26 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
-use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Expression;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 
-final class WorkspaceSetDescriptionRector extends AbstractRector
+final class WorkspaceSetDescriptionRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
-
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector,
-    )
-    {
-    }
 
     public function getRuleDefinition(): RuleDefinition
     {
@@ -33,37 +35,58 @@ final class WorkspaceSetDescriptionRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Expression::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param \PhpParser\Node\Stmt\Expression $node
      */
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor($visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+            public function __construct(
+                private readonly NodeTypeResolver $nodeTypeResolver,
+                private readonly NodeFactory $nodeFactory,
+                public bool $changed = false,
+            ) {
+            }
 
-        if (!$this->isObjectType($node->var, new ObjectType(Workspace::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'setDescription')) {
-            return null;
-        }
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::todoComment('Make this code aware of multiple Content Repositories.')
-            ],
-            $node
-        );
+            public function leaveNode(Node $node)
+            {
+                if (
+                    $node instanceof MethodCall &&
+                    $node->name instanceof Identifier &&
+                    $node->name->toString() === 'setDescription'
+                ) {
+                    $type = $this->nodeTypeResolver->getType($node->var);
+                    if ($type instanceof ObjectType && $type->getClassName() === Workspace::class) {
+                        $this->changed = true;
 
-        return
-            $this->nodeFactory->createMethodCall(
-                $this->this_workspaceService(),
-                'setWorkspaceDescription',
-                [$this->contentRepositoryId_fromString('default'),
-                    $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName'),
-                    $this->nodeFactory->createStaticCall(\Neos\Neos\Domain\Model\WorkspaceDescription::class, 'fromString', [$node->args[0]])
-                ]
-            );
+                        $serviceCall = $this->nodeFactory->createMethodCall(
+                            $this->nodeFactory->createPropertyFetch('this', 'workspaceService'),
+                            'setWorkspaceDescription',
+                            [
+                                $this->nodeFactory->createStaticCall(ContentRepositoryId::class, 'fromString', [new String_('default')]),
+                                $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName'),
+                                $this->nodeFactory->createStaticCall(\Neos\Neos\Domain\Model\WorkspaceDescription::class, 'fromString', [$node->args[0]])
+                            ]
+                        );
+                        return $serviceCall;
+                    }
+                }
+                return null;
+            }
+        });
+
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if ($visitor->changed) {
+            $node->expr = $newExpr;
+            self::withTodoComment('Make this code aware of multiple Content Repositories.', $node);
+            return $node;
+        }
+
+        return null;
     }
 }
