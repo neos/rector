@@ -9,14 +9,12 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar\String_;
+use Rector\PhpParser\Node\NodeFactory;
 
 trait ValueObjectTrait
 {
 
-    /**
-     * @var \Rector\Core\PhpParser\Node\NodeFactory
-     */
-    protected $nodeFactory;
+    protected NodeFactory $nodeFactory;
 
     private function contentRepositoryId_fromString(string $contentRepositoryName)
     {

@@ -7,10 +7,10 @@ use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\ValueObject\AddInjection;
 use Neos\Neos\Domain\Service\RenderingModeService;
 
-return static function (RectorConfig $rectorConfig) : void {
-    $rectorConfig->rule(\Neos\Rector\ContentRepository90\Rules\ContextIsInBackendRector::class);
+    $rectorConfig = RectorConfig::configure();
+    $rectorConfig->withRules([\Neos\Rector\ContentRepository90\Rules\ContextIsInBackendRector::class]);
 
-    $rectorConfig->ruleWithConfiguration(InjectServiceIfNeededRector::class, [
+    $rectorConfig->withConfiguredRule(InjectServiceIfNeededRector::class, [
         new AddInjection('renderingModeService', RenderingModeService::class)
     ]);
-};
+return $rectorConfig;

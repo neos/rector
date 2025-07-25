@@ -9,13 +9,11 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Nop;
+use Rector\PhpParser\Node\NodeFactory;
 
 trait FunctionsTrait
 {
-    /**
-     * @var \Rector\Core\PhpParser\Node\NodeFactory
-     */
-    protected $nodeFactory;
+    protected NodeFactory $nodeFactory;
 
     private function iteratorToArray(Expr $inner): Expr
     {
@@ -39,16 +37,12 @@ trait FunctionsTrait
         );
     }
 
-    private static function todoComment(string $commentText): Nop
+    private static function todoComment(string $commentText): Comment
     {
-        return new Nop([
-            'comments' => [
-                new Comment('// TODO 9.0 migration: ' . $commentText)
-            ]
-        ]);
+        return new Comment('// TODO 9.0 migration: ' . $commentText);
     }
 
-    private static function withTodoComment(string $commentText, \PhpParser\NodeAbstract $attachmentNode): \PhpParser\Node
+    private static function withTodoComment(string $commentText, \PhpParser\Node $attachmentNode): \PhpParser\Node
     {
         $attachmentNode->setAttribute('comments', [
             new Comment('// TODO 9.0 migration: ' . $commentText)

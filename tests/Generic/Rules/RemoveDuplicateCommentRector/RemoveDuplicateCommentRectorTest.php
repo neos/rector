@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Generic\Rules\FusionReplacePrototypeNameRector;
+namespace Neos\Rector\Tests\Rules\RemoveDuplicateCommentRector;
 
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
-final class FusionPrototypeNameCommentTest extends AbstractRectorTestCase
+final class RemoveDuplicateCommentRectorTest extends AbstractRectorTestCase
 {
     /**
      * @dataProvider provideData()
@@ -21,7 +21,7 @@ final class FusionPrototypeNameCommentTest extends AbstractRectorTestCase
      */
     public function provideData(): \Iterator
     {
-        return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture', '*.fusion.inc');
+        return static::yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
     public function provideConfigFilePath(): string

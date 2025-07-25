@@ -9,9 +9,9 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 
-return static function (RectorConfig $rectorConfig) : void {
-    $rectorConfig->ruleWithConfiguration(InjectServiceIfNeededRector::class, [
+    $rectorConfig = RectorConfig::configure();
+    $rectorConfig->withConfiguredRule(InjectServiceIfNeededRector::class, [
         new AddInjection('contentRepositoryRegistry', ContentRepositoryRegistry::class),
         new AddInjection('renderingModeService', RenderingModeService::class),
     ]);
-};
+return $rectorConfig;

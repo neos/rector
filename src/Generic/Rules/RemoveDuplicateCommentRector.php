@@ -4,15 +4,13 @@ declare (strict_types=1);
 
 namespace Neos\Rector\Generic\Rules;
 
-use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Webmozart\Assert\Assert;
 
 final class RemoveDuplicateCommentRector extends AbstractRector
 {
@@ -47,7 +45,7 @@ final class RemoveDuplicateCommentRector extends AbstractRector
     /**
      * @param Node $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node)
     {
         if (self::commentContains90Comment($node)) {
             $filePath = $this->file->getFilePath();
@@ -61,8 +59,7 @@ final class RemoveDuplicateCommentRector extends AbstractRector
 
                     if ($node instanceof Node\Stmt\Nop) {
                         $node->setAttribute('comments', []);
-                        $this->removeNode($node);
-                        return $node;
+                        return NodeVisitor::REMOVE_NODE;
                     }
                 } else {
                     $newComments[] = $comment;

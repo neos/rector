@@ -9,8 +9,8 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -26,7 +26,6 @@ final class ObjectInstantiationToWarningCommentRector extends AbstractRector imp
     private array $objectInstantiationToWarningComments = [];
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector,
     ) {
     }
 
@@ -52,21 +51,22 @@ final class ObjectInstantiationToWarningCommentRector extends AbstractRector imp
     {
         assert($node instanceof Name);
 
-        if ($node->getAttribute(AttributeKey::PARENT_NODE) instanceof Node\Stmt\UseUse) {
-            return null;
-        }
+//        if ($node->getAttribute(AttributeKey::PARENT_NODE) instanceof Node\Stmt\UseUse) {
+//            return null;
+//        }
+
 
         foreach ($this->objectInstantiationToWarningComments as $objectInstantiationToWarningComment) {
             if (!$this->isObjectType($node, new ObjectType($objectInstantiationToWarningComment->className))) {
                 continue;
             }
 
-            $this->nodesToAddCollector->addNodesBeforeNode(
-                [
-                    self::todoComment(sprintf($objectInstantiationToWarningComment->warningMessage, $objectInstantiationToWarningComment->className))
-                ],
-                $node
-            );
+//            $this->nodesToAddCollector->addNodesBeforeNode(
+//                [
+//                    self::todoComment(sprintf($objectInstantiationToWarningComment->warningMessage, $objectInstantiationToWarningComment->className))
+//                ],
+//                $node
+//            );
         }
         return $node;
     }

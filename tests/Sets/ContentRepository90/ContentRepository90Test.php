@@ -22,8 +22,7 @@ final class ContentRepository90Test extends AbstractRectorTestCase
     public function provideData(): \Iterator
     {
         $append = new \AppendIterator();
-        $append->append($this->yieldFilesFromDirectory(__DIR__ . '/Fixture'));
-        $append->append($this->yieldFilesFromDirectory(__DIR__ . '/Fixture', '*.fusion.inc'));
+        $append->append(self::yieldFilesFromDirectory(__DIR__ . '/Fixture'));
         return $append;
     }
 

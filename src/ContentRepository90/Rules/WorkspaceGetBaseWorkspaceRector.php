@@ -8,8 +8,8 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 final class WorkspaceGetBaseWorkspaceRector extends AbstractRector
@@ -17,7 +17,6 @@ final class WorkspaceGetBaseWorkspaceRector extends AbstractRector
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector,
     )
     {
     }
@@ -49,14 +48,14 @@ final class WorkspaceGetBaseWorkspaceRector extends AbstractRector
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::withTodoComment('Check if you could change your code to work with the WorkspaceName value object instead and make this code aware of multiple Content Repositories.',
-                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
-                )
-            ],
-            $node
-        );
+//        $this->nodesToAddCollector->addNodesBeforeNode(
+//            [
+//                self::withTodoComment('Check if you could change your code to work with the WorkspaceName value object instead and make this code aware of multiple Content Repositories.',
+//                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
+//                )
+//            ],
+//            $node
+//        );
 
 
         return

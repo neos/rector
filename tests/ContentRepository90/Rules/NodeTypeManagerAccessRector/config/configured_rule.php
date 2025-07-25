@@ -4,6 +4,6 @@ declare (strict_types=1);
 
 use Rector\Config\RectorConfig;
 
-return static function (RectorConfig $rectorConfig) : void {
-    $rectorConfig->rule(\Neos\Rector\ContentRepository90\Rules\NodeTypeManagerAccessRector::class);
-};
+    $rectorConfig = RectorConfig::configure();
+    $rectorConfig->withRules([\Neos\Rector\ContentRepository90\Rules\NodeTypeManagerAccessRector::class]);
+return $rectorConfig;

@@ -5,7 +5,6 @@ namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\ContentRepository90\Rules\Traits\ContentRepositoryTrait;
 use Neos\Rector\ContentRepository90\Rules\Traits\DimensionSpacePointsTrait;
-use Neos\Rector\ContentRepository90\Rules\Traits\NodeHiddenStateFinderTrait;
 use Neos\Rector\ContentRepository90\Rules\Traits\NodeTrait;
 use Neos\Rector\ContentRepository90\Rules\Traits\SubgraphTrait;
 use Neos\Rector\ContentRepository90\Rules\Traits\ThisTrait;
