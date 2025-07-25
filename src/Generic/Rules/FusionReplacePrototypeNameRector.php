@@ -5,7 +5,7 @@ namespace Neos\Rector\Generic\Rules;
 use Neos\Rector\Core\FusionProcessing\FusionRectorInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Neos\Rector\Utility\CodeSampleLoader;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Neos\Rector\Generic\ValueObject\FusionNodePropertyPathToWarningComment;
 use Webmozart\Assert\Assert;
 use Neos\Rector\Generic\ValueObject\FusionPrototypeNameReplacement;
