@@ -86,49 +86,6 @@ composer install
 composer test
 ```
 
-## Fusion Rector
-
-We extended Rector specifically for migrating Fusion files, by providing a `FusionFileProcessor` and a `FusionRectorInterface`
-which you can implement if you want to build Fusion transformations.
-
-The Fusion Rectors will usually use one of the following tooling classes:
-
-- `EelExpressionTransformer`: for finding all Eel expressions inside Fusion and AFX; and transforming them in some way.
-
-The Fusion and AFX Parsing functionality is based on the official Fusion and AFX parsers. However, the classes are
-vendored/copied into this package by the `./embed-fusion-and-afx-parsers.sh` script, because of the following reasons:
-
-- Rector needs to run even when Flow cannot compile the classes; so we cannot depend on a Flow package.
-- We slightly need to patch the AFX parser, because we need position information for Eel Expressions.
-
-The Fusion parser was subclassed by `Neos\Rector\Core\FusionProcessing\CustomObjectTreeParser` for retaining position
-information of AFX and Eel Expressions.
-
-
-**Updating Fusion and AFX Parser**
-
-To update the vendored Fusion and AFX parsers, run the `./embed-fusion-and-afx-parsers.sh` script.
-
-
-**Updating the AFX Parser Patch**
-
-The AFX parser needs a custom patch (see `./scripts/afx-eel-positions.patch`) to retain positions.
-
-To create/update this patch, do the following:
-
-```bash
-cd Packages/Neos
-
-# apply the current patch
-patch -p1 < ../../rector/scripts/afx-eel-positions.patch
-
-# Now, do your modifications as needed.
-
-# when you are finished, create the new patch 
-git diff -- Neos.Fusion.Afx/ > ../../rector/scripts/afx-eel-positions.patch
-
-# ... and reset the code changes inside Neos.Fusion.Afx.
-git restore -- Neos.Fusion.Afx/
 ```
 
 ## Generating docs

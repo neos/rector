@@ -6,13 +6,13 @@ namespace Neos\Rector\Generic\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
-use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class RemoveDuplicateCommentRector extends AbstractRector
+final class RemoveDuplicateCommentRector extends AbstractRector implements DocumentedRuleInterface
 {
     /**
      * 1st level: file name

@@ -7,13 +7,13 @@ namespace Neos\Rector\ContentRepository90\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\NodeFinder;
-use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class ContextGetFirstLevelNodeCacheRector extends AbstractRector
+final class ContextGetFirstLevelNodeCacheRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
