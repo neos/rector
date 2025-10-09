@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\Rector\Tests\Sets\ContentRepository90;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 final class ContentRepository90Test extends AbstractRectorTestCase
 {
-    /**
-     * @dataProvider provideData()
-     */
+    #[DataProvider('provideData')]
     public function test(string $fileInfo): void
     {
         $this->doTestFile($fileInfo);
@@ -19,7 +18,7 @@ final class ContentRepository90Test extends AbstractRectorTestCase
     /**
      * @return \Iterator<string>
      */
-    public function provideData(): \Iterator
+    public static function provideData(): \Iterator
     {
         $append = new \AppendIterator();
         $append->append(self::yieldFilesFromDirectory(__DIR__ . '/Fixture'));
