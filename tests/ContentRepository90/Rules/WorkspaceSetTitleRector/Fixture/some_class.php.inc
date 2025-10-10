@@ -12,6 +12,11 @@ class SomeClass
         $foo = $this->getWorkspace()->setTitle("title");
     }
 
+    public function get(Workspace $workspace)
+    {
+        return $workspace->setTitle("title");
+    }
+
     public function getWorkspace(): Workspace {
         return Workspace::create('default');
     }
@@ -34,6 +39,12 @@ class SomeClass
 
         // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
         $foo = $this->workspaceService->setWorkspaceTitle(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $this->getWorkspace()->workspaceName, \Neos\Neos\Domain\Model\WorkspaceTitle::fromString("title"));
+    }
+
+    public function get(Workspace $workspace)
+    {
+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
+        return $this->workspaceService->setWorkspaceTitle(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'), $workspace->workspaceName, \Neos\Neos\Domain\Model\WorkspaceTitle::fromString("title"));
     }
 
     public function getWorkspace(): Workspace {

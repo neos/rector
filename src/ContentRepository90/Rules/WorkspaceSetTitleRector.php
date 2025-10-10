@@ -32,7 +32,7 @@ final class WorkspaceSetTitleRector extends AbstractRector implements Documented
 
     public function getNodeTypes(): array
     {
-        return [Expression::class];
+        return [Expression::class, Node\Stmt\Return_::class];
     }
 
     /**

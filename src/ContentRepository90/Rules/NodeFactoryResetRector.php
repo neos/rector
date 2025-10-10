@@ -34,7 +34,7 @@ final class NodeFactoryResetRector extends AbstractRector implements DocumentedR
      */
     public function getNodeTypes(): array
     {
-        return [Expression::class];
+        return [Expression::class, Node\Stmt\Return_::class];
     }
 
     /**
@@ -49,6 +49,9 @@ final class NodeFactoryResetRector extends AbstractRector implements DocumentedR
         });
 
         if ($methodCall) {
+            if ($node instanceof Node\Stmt\Return_) {
+                return new Node\Stmt\Return_();
+            }
             return NodeVisitor::REMOVE_NODE;
         }
 

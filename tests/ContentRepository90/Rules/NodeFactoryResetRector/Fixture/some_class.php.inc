@@ -12,6 +12,7 @@ class SomeClass
     public function run()
     {
         $this->nodeFactory->reset();
+        return $this->nodeFactory->reset();
     }
 }
 
@@ -30,6 +31,7 @@ class SomeClass
     protected $nodeFactory;
     public function run()
     {
+        return;
     }
 }
 
