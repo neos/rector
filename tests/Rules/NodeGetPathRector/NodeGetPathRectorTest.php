@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Rules\NodeGetPathRector;
+namespace Neos\Rector\Tests\ContentRepository90\Rules\NodeGetPathRector;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
