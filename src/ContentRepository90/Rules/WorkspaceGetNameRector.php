@@ -6,7 +6,13 @@ namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
 
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -31,31 +37,62 @@ final class WorkspaceGetNameRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(Workspace::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'getName')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-//        $this->nodesToAddCollector->addNodesBeforeNode(
-//            [
-//                self::todoComment('Check if you could change your code to work with the WorkspaceName value object instead.')
-//            ],
-//            $node
-//        );
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
 
-        $propertyFetchAggregateId = $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName');
-        return $this->nodeFactory->createPropertyFetch($propertyFetchAggregateId, 'value');
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
+
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'getName'
+                    ) {
+                        $type = $this->nodeTypeResolver->getType($node->var);
+                        if ($type instanceof ObjectType && $type->getClassName() === Workspace::class) {
+                            $this->changed = true;
+
+                            $propertyFetchAggregateId = $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName');
+                            return $this->nodeFactory->createPropertyFetch($propertyFetchAggregateId, 'value');
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
+            return null;
+        }
+
+        $node->expr = $newExpr;
+
+        return self::withTodoComment(
+            'Check if you could change your code to work with the WorkspaceName value object instead.',
+            $node
+        );
     }
 }
