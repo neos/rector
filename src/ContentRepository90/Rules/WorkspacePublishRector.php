@@ -70,8 +70,7 @@ final class WorkspacePublishRector extends AbstractRector implements DocumentedR
                         $node->name instanceof Identifier &&
                         $node->name->toString() === 'publish'
                     ) {
-                        $type = $this->nodeTypeResolver->getType($node->var);
-                        if ($type instanceof ObjectType && $type->getClassName() === Workspace::class) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(Workspace::class))) {
                             $this->changed = true;
 
                             return $this->nodeFactory->createMethodCall(

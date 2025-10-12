@@ -23,8 +23,7 @@ final class WorkspaceGetNameRector extends AbstractRector implements DocumentedR
 {
     use AllTraits;
 
-    public function __construct(
-    )
+    public function __construct()
     {
     }
 
@@ -70,8 +69,7 @@ final class WorkspaceGetNameRector extends AbstractRector implements DocumentedR
                         $node->name instanceof Identifier &&
                         $node->name->toString() === 'getName'
                     ) {
-                        $type = $this->nodeTypeResolver->getType($node->var);
-                        if ($type instanceof ObjectType && $type->getClassName() === Workspace::class) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(Workspace::class))) {
                             $this->changed = true;
 
                             $propertyFetchAggregateId = $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName');

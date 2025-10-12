@@ -62,8 +62,7 @@ final class WorkspaceSetDescriptionRector extends AbstractRector implements Docu
                     $node->name instanceof Identifier &&
                     $node->name->toString() === 'setDescription'
                 ) {
-                    $type = $this->nodeTypeResolver->getType($node->var);
-                    if ($type instanceof ObjectType && $type->getClassName() === Workspace::class) {
+                    if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(Workspace::class))) {
                         $this->changed = true;
 
                         $serviceCall = $this->nodeFactory->createMethodCall(

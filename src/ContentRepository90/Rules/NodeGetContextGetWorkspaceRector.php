@@ -71,8 +71,7 @@ final class NodeGetContextGetWorkspaceRector extends AbstractRector implements D
                     $node->var->name->toString() === 'getContext'
                 ) {
                     $this->nodeVar = $node->var->var;
-                    $type = $this->nodeTypeResolver->getType($this->nodeVar);
-                    if ($type instanceof ObjectType && $type->getClassName() === NodeLegacyStub::class) {
+                    if ($this->nodeTypeResolver->isObjectType($this->nodeVar, new ObjectType(NodeLegacyStub::class))) {
                         $this->changed = true;
 
                         return $this->contentRepository_findWorkspaceByName(

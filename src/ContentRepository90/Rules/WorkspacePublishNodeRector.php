@@ -5,6 +5,7 @@ declare (strict_types=1);
 namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
@@ -68,8 +69,7 @@ final class WorkspacePublishNodeRector extends AbstractRector implements Documen
                         $node->name instanceof Identifier &&
                         $node->name->toString() === 'publishNode'
                     ) {
-                        $type = $this->nodeTypeResolver->getType($node->var);
-                        if ($type instanceof ObjectType && $type->getClassName() === Workspace::class) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(Workspace::class))) {
                             $this->changed = true;
 
                             return $this->nodeFactory->createMethodCall(

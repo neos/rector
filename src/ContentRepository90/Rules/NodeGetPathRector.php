@@ -4,6 +4,7 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
@@ -70,8 +71,7 @@ final class NodeGetPathRector extends AbstractRector implements DocumentedRuleIn
                         $node->name instanceof Identifier &&
                         $node->name->toString() === 'getPath'
                     ) {
-                        $type = $this->nodeTypeResolver->getType($node->var);
-                        if ($type instanceof ObjectType && $type->getClassName() === \Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(NodeLegacyStub::class))) {
                             $this->changed = true;
                             $this->nodeVar = $node->var;
 

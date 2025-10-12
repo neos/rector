@@ -59,8 +59,7 @@ final class WorkspaceSetTitleRector extends AbstractRector implements Documented
                     $node->name instanceof Identifier &&
                     $node->name->toString() === 'setTitle'
                 ) {
-                    $type = $this->nodeTypeResolver->getType($node->var);
-                    if ($type instanceof ObjectType && $type->getClassName() === Workspace::class) {
+                    if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(Workspace::class))) {
                         $this->changed = true;
 
                         $serviceCall = $this->nodeFactory->createMethodCall(

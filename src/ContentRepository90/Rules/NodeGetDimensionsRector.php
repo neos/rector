@@ -68,8 +68,7 @@ final class NodeGetDimensionsRector extends AbstractRector implements Documented
                     $node->name instanceof Identifier &&
                     $node->name->toString() === 'getDimensions'
                 ) {
-                    $type = $this->nodeTypeResolver->getType($node->var);
-                    if ($type instanceof ObjectType && $type->getClassName() === NodeLegacyStub::class) {
+                    if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(NodeLegacyStub::class))) {
                         $this->changed = true;
 
                         return $this->node_originDimensionSpacePoint_toLegacyDimensionArray($node->var);
