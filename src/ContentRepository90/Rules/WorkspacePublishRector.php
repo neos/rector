@@ -6,8 +6,14 @@ namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
 
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -32,38 +38,68 @@ final class WorkspacePublishRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(Workspace::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'publish')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-//        $this->nodesToAddCollector->addNodesBeforeNode(
-//            [
-//                self::todoComment('Make this code aware of multiple Content Repositories.')
-//            ],
-//            $node
-//        );
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
 
-        return
-            $this->nodeFactory->createMethodCall(
-                $this->this_workspacePublishingService(),
-                'publishWorkspace',
-                [
-                    $this->contentRepositoryId_fromString('default'),
-                    $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName')
-                ]
-            );
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
+
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'publish'
+                    ) {
+                        $type = $this->nodeTypeResolver->getType($node->var);
+                        if ($type instanceof ObjectType && $type->getClassName() === Workspace::class) {
+                            $this->changed = true;
+
+                            return $this->nodeFactory->createMethodCall(
+                                $this->this_workspacePublishingService(),
+                                'publishWorkspace',
+                                [
+                                    $this->contentRepositoryId_fromString('default'),
+                                    $this->nodeFactory->createPropertyFetch($node->var, 'workspaceName')
+                                ]
+                            );
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
+            return null;
+        }
+
+        $node->expr = $newExpr;
+
+        return self::withTodoComment(
+            'Make this code aware of multiple Content Repositories.',
+            $node
+        );
     }
 }
