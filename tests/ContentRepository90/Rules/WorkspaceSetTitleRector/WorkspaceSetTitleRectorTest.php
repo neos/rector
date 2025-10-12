@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\ContentRepository90\Rules\WorkspaceGetNameRector;
+namespace Neos\Rector\Tests\ContentRepository90\Rules\WorkspaceSetTitleRector;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
