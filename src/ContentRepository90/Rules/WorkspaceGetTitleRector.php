@@ -10,10 +10,11 @@ use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 
-final class WorkspaceGetTitleRector extends AbstractRector
+final class WorkspaceGetTitleRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 

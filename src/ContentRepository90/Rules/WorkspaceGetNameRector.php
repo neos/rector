@@ -15,10 +15,11 @@ use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
 
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 
-final class WorkspaceGetNameRector extends AbstractRector
+final class WorkspaceGetNameRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
