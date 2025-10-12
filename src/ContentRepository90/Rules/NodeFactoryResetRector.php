@@ -7,7 +7,6 @@ namespace Neos\Rector\ContentRepository90\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\PhpParser\Node\BetterNodeFinder;
@@ -34,14 +33,18 @@ final class NodeFactoryResetRector extends AbstractRector implements DocumentedR
      */
     public function getNodeTypes(): array
     {
-        return [Expression::class, Node\Stmt\Return_::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param Expression $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node)
     {
+        if (!in_array('expr',$node->getSubNodeNames())) {
+            return null;
+        }
+
         $methodCall = $this->betterNodeFinder->findFirst($node, function (Node $subNode) {
             return $subNode instanceof MethodCall
                 && $this->isObjectType($subNode->var, new ObjectType(\Neos\ContentRepository\Domain\Factory\NodeFactory::class))

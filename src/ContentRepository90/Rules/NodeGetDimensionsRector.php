@@ -38,14 +38,18 @@ final class NodeGetDimensionsRector extends AbstractRector implements Documented
      */
     public function getNodeTypes(): array
     {
-        return [Node\Stmt\Expression::class, Node\Stmt\Return_::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param Node<Node\Stmt\Expression, Node\Stmt\Return_> $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node): ?Node
     {
+        if (!in_array('expr',$node->getSubNodeNames())) {
+            return null;
+        }
+
         $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
             use AllTraits;

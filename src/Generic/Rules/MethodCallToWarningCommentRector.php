@@ -9,7 +9,6 @@ use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Stmt\Expression;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\PhpParser\Node\BetterNodeFinder;
@@ -44,14 +43,18 @@ final class MethodCallToWarningCommentRector extends AbstractRector implements C
      */
     public function getNodeTypes(): array
     {
-        return [Expression::class, Node\Stmt\Return_::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node): ?Node
     {
+        if (!in_array('expr',$node->getSubNodeNames())) {
+            return null;
+        }
+
         foreach ($this->methodCallsToWarningComments as $methodCallToWarningComment) {
             $methodCall = $this->betterNodeFinder->findFirst($node, function (Node $subNode) use ($methodCallToWarningComment) {
                 return $subNode instanceof MethodCall

@@ -8,8 +8,6 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
-use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
@@ -40,14 +38,18 @@ final class NodeGetPathRector extends AbstractRector implements DocumentedRuleIn
      */
     public function getNodeTypes(): array
     {
-        return [Expression::class, Return_::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param Node<Expression|Return_> $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node)
     {
+        if (!in_array('expr',$node->getSubNodeNames())) {
+            return null;
+        }
+
         $traverser = new NodeTraverser();
         $traverser->addVisitor(
             $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {

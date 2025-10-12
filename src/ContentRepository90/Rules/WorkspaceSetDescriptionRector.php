@@ -11,7 +11,6 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
-use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
@@ -35,14 +34,18 @@ final class WorkspaceSetDescriptionRector extends AbstractRector implements Docu
      */
     public function getNodeTypes(): array
     {
-        return [Expression::class, Node\Stmt\Return_::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Stmt\Expression $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node): ?Node
     {
+        if (!in_array('expr',$node->getSubNodeNames())) {
+            return null;
+        }
+
         $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
             public function __construct(
