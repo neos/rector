@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\ContentRepository90\Rules\NodeGetChildNodesRector;
+namespace Neos\Rector\Tests\ContentRepository90\Rules\NodeGetNodeTypeRector;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
