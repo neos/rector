@@ -70,6 +70,7 @@ class Storage
 
         if ($node === null) {
             // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
+
             $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
             $node = $this->node()->createNode($vendor, $contentRepository->getNodeTypeManager()->getNodeType('Neos.MarketPlace:Vendor'));
             $node->setProperty('uriPathSegment', $vendor);
@@ -78,7 +79,6 @@ class Storage
 
         $nodeTypeManager = $this->getNodeTypeManager();
         // TODO 9.0 migration: !! NodeTypeManager::createNodeType() was never implemented and is removed in Neos 9.0.
-
         $nodeTypeManager->createNodeType('Neos.MarketPlace:New');
         return $node;
     }
@@ -86,6 +86,7 @@ class Storage
     public function getNodeTypeManager(): \Neos\ContentRepository\Core\NodeType\NodeTypeManager
     {
         // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
+
         $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
         return $contentRepository->getNodeTypeManager();
     }
