@@ -23,7 +23,6 @@ class Package extends BasePackage
     public function boot()
     {
         // TODO 9.0 migration: This is a comment
-
         $author = (new Comment(['author']))->getAutor();
     }
 }

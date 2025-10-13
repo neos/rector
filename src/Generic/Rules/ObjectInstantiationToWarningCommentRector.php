@@ -4,15 +4,19 @@ declare (strict_types=1);
 
 namespace Neos\Rector\Generic\Rules;
 
+use Neos\Rector\ContentRepository90\Rules\AllTraits;
 use Neos\Rector\Generic\ValueObject\ObjectInstantiationToWarningComment;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Name;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Rector\AbstractRector;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -25,8 +29,8 @@ final class ObjectInstantiationToWarningCommentRector extends AbstractRector imp
      */
     private array $objectInstantiationToWarningComments = [];
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -41,36 +45,56 @@ final class ObjectInstantiationToWarningCommentRector extends AbstractRector imp
      */
     public function getNodeTypes(): array
     {
-        return [Name::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Name $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Name);
+        if (!in_array('expr', $node->getSubNodeNames())) {
+            return null;
+        }
 
-//        if ($node->getAttribute(AttributeKey::PARENT_NODE) instanceof Node\Stmt\UseUse) {
-//            return null;
-//        }
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor($visitor = new class($this->nodeTypeResolver, $this->nodeFactory, $this->objectInstantiationToWarningComments) extends NodeVisitorAbstract {
+            use AllTraits;
 
-
-        foreach ($this->objectInstantiationToWarningComments as $objectInstantiationToWarningComment) {
-            if (!$this->isObjectType($node, new ObjectType($objectInstantiationToWarningComment->className))) {
-                continue;
+            public function __construct(
+                private readonly NodeTypeResolver $nodeTypeResolver,
+                protected NodeFactory $nodeFactory,
+                private readonly array $objectInstantiationToWarningComments,
+                public bool $changed = false,
+                public ?string $commentToAdd = null,
+            ) {
             }
 
-//            $this->nodesToAddCollector->addNodesBeforeNode(
-//                [
-//                    self::todoComment(sprintf($objectInstantiationToWarningComment->warningMessage, $objectInstantiationToWarningComment->className))
-//                ],
-//                $node
-//            );
-        }
-        return $node;
-    }
+            public function leaveNode(Node $node)
+            {
+                if ($node instanceof Name) {
+                    foreach ($this->objectInstantiationToWarningComments as $objectInstantiationToWarningComment) {
+                        if ($node && $this->nodeTypeResolver->isObjectType($node, new ObjectType($objectInstantiationToWarningComment->className))) {
+                            $this->changed = true;
+                            $this->commentToAdd = sprintf($objectInstantiationToWarningComment->warningMessage, $objectInstantiationToWarningComment->className);
+                            return null;
+                        }
+                    }
+                }
 
+                return null;
+            }
+        });
+
+        if ($visitor->changed) {
+            return
+                self::withTodoComment(
+                    $visitor->commentToAdd,
+                    $node
+                );
+        }
+        return null;
+    }
 
     /**
      * @param mixed[] $configuration
