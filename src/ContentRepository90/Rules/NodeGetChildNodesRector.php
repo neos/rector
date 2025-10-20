@@ -67,7 +67,7 @@ final class NodeGetChildNodesRector extends AbstractRector implements Documented
                         $node->name instanceof Identifier &&
                         $node->name->toString() === 'getChildNodes'
                     ) {
-                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class))) {
                             $this->changed = true;
                             $this->nodeVar = $node->var;
 

@@ -1,16 +1,16 @@
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
-    public NodeLegacyStub $node;
+    public Node $node;
 
-    public function getNode(): NodeLegacyStub {
+    public function getNode(): Node {
         return $this->node;
     }
 
-    public function run(NodeLegacyStub $node)
+    public function run(Node $node)
     {
         $workspace = $this->getNode()->getContext()->getWorkspace();
 
@@ -24,17 +24,17 @@ class SomeClass
 -----
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
-    public NodeLegacyStub $node;
+    public Node $node;
 
-    public function getNode(): NodeLegacyStub {
+    public function getNode(): Node {
         return $this->node;
     }
 
-    public function run(NodeLegacyStub $node)
+    public function run(Node $node)
     {
         $contentRepository = $this->contentRepositoryRegistry->get($this->getNode()->contentRepositoryId);
         $workspace = $contentRepository->findWorkspaceByName($this->getNode()->workspaceName);

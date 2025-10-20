@@ -1,12 +1,12 @@
 
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 class SomeClass
 {
-    public function run(NodeLegacyStub $node)
+    public function run(Node $node)
     {
         $nodeName = NodeName::fromString('name');
         $nodeType = $node->getNodeType();
@@ -18,14 +18,14 @@ class SomeClass
 -----
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 class SomeClass
 {
     #[\Neos\Flow\Annotations\Inject]
     protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
-    public function run(NodeLegacyStub $node)
+    public function run(Node $node)
     {
         $nodeName = NodeName::fromString('name');
         $nodeType = $node->getNodeType();

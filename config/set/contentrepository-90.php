@@ -9,7 +9,7 @@ use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\Domain\Service\WorkspacePublishingService;
 use Neos\Neos\Domain\Service\WorkspaceService;
 use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node as NodeLegacyStub;
 use Neos\Rector\ContentRepository90\Rules\ContentDimensionCombinatorGetAllAllowedCombinationsRector;
 use Neos\Rector\ContentRepository90\Rules\ContentRepositoryUtilityRenderValidNodeNameRector;
 use Neos\Rector\ContentRepository90\Rules\ContextFactoryToLegacyContextStubRector;
@@ -81,29 +81,6 @@ $rectorConfig = RectorConfig::configure()
     ->withAutoloadPaths(
         [__DIR__ . '/../../src/ContentRepository90/Legacy']
     );
-
-$rectorConfig->withConfiguredRule(RenameClassRector::class, [
-    \Neos\ContentRepository\Domain\Model\Node::class => NodeLegacyStub::class,
-    \Neos\ContentRepository\Domain\Model\NodeInterface::class => NodeLegacyStub::class,
-    \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class => NodeLegacyStub::class,
-    \Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface::class => NodeLegacyStub::class,
-
-    \Neos\ContentRepository\Domain\Projection\Content\TraversableNodes::class => \Neos\ContentRepository\Core\Projection\ContentGraph\Nodes::class,
-
-    \Neos\ContentRepository\Domain\Service\Context::class => LegacyContextStub::class,
-    \Neos\Neos\Domain\Service\ContentContext::class => LegacyContextStub::class,
-
-    \Neos\ContentRepository\Domain\Model\NodeType::class => \Neos\ContentRepository\Core\NodeType\NodeType::class,
-    \Neos\ContentRepository\Domain\Service\NodeTypeManager::class => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
-
-    \Neos\ContentRepository\Domain\Model\Workspace::class => \Neos\ContentRepository\Core\SharedModel\Workspace\Workspace::class,
-    \Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class,
-    \Neos\ContentRepository\Domain\NodeAggregate\NodeName::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
-    \Neos\ContentRepository\Domain\NodeType\NodeTypeName::class => \Neos\ContentRepository\Core\NodeType\NodeTypeName::class,
-    \Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
-    \Neos\ContentRepository\Domain\Model\ArrayPropertyCollection::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
-    \Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface::class => \Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface::class,
-]);
 
 
 /** @var MethodCallToPropertyFetch[] $methodCallToPropertyFetches */
@@ -637,6 +614,29 @@ $methodCallToWarningComments[] = new MethodCallToWarningComment(\Neos\ContentRep
 // setTitle(title: string): void
 $rectorConfig->withRules([WorkspaceSetTitleRector::class]);
 
+$rectorConfig->withConfiguredRule(RenameClassRector::class, [
+    \Neos\ContentRepository\Domain\Model\Node::class => Node::class,
+    \Neos\ContentRepository\Domain\Model\NodeInterface::class => Node::class,
+    \Neos\ContentRepository\Domain\Projection\Content\NodeInterface::class => Node::class,
+    \Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface::class => Node::class,
+
+    \Neos\ContentRepository\Domain\Projection\Content\TraversableNodes::class => \Neos\ContentRepository\Core\Projection\ContentGraph\Nodes::class,
+
+    \Neos\ContentRepository\Domain\Service\Context::class => LegacyContextStub::class,
+    \Neos\Neos\Domain\Service\ContentContext::class => LegacyContextStub::class,
+
+    \Neos\ContentRepository\Domain\Model\NodeType::class => \Neos\ContentRepository\Core\NodeType\NodeType::class,
+    \Neos\ContentRepository\Domain\Service\NodeTypeManager::class => \Neos\ContentRepository\Core\NodeType\NodeTypeManager::class,
+
+    \Neos\ContentRepository\Domain\Model\Workspace::class => \Neos\ContentRepository\Core\SharedModel\Workspace\Workspace::class,
+    \Neos\ContentRepository\Domain\NodeAggregate\NodeAggregateIdentifier::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId::class,
+    \Neos\ContentRepository\Domain\NodeAggregate\NodeName::class => \Neos\ContentRepository\Core\SharedModel\Node\NodeName::class,
+    \Neos\ContentRepository\Domain\NodeType\NodeTypeName::class => \Neos\ContentRepository\Core\NodeType\NodeTypeName::class,
+    \Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
+    \Neos\ContentRepository\Domain\Model\ArrayPropertyCollection::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
+    \Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface::class => \Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface::class,
+]);
+
 /**
  * SPECIAL rules
  */
@@ -702,15 +702,6 @@ $rectorConfig->withConfiguredRule(ToStringToMethodCallOrPropertyFetchRector::cla
     \Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin::class => 'toJson()',
     \Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage::class => 'toJson()',
     \Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds::class => 'toJson()',
-]);
-
-// We can only add one rule per class name. As workaround, we need to alias the RenameClassRector, so we are able to
-// add this rule twice.
-if (!class_exists(\Alias\RenameClassRectorLegacy::class)) {
-    class_alias(RenameClassRector::class, \Alias\RenameClassRectorLegacy::class);
-}
-$rectorConfig->withConfiguredRule(\Alias\RenameClassRectorLegacy::class, [
-    NodeLegacyStub::class => Node::class,
 ]);
 
 // Should run LAST - as other rules above might create $this->contentRepositoryRegistry calls.

@@ -1,10 +1,10 @@
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
-    public function run(NodeLegacyStub $node)
+    public function run(Node $node)
     {
         foreach ($node->getChildNodes(offset: 100, limit: 10) as $node) {
         }
@@ -15,11 +15,11 @@ class SomeClass
 -----
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
-    public function run(NodeLegacyStub $node)
+    public function run(Node $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         // TODO 9.0 migration: Try to remove the iterator_to_array($nodes) call.

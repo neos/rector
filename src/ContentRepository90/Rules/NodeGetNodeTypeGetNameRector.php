@@ -52,7 +52,7 @@ final class NodeGetNodeTypeGetNameRector extends AbstractRector
 
         $nodeTypeVar = $node->var;
 
-        if (!$this->isObjectType($nodeTypeVar->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
+        if (!$this->isObjectType($nodeTypeVar->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class))) {
             return null;
         }
 

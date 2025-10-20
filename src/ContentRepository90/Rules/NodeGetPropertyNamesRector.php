@@ -5,7 +5,7 @@ declare (strict_types=1);
 namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node as NodeLegacyStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;

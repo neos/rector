@@ -1,17 +1,17 @@
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
-    public function nodeHiddenBeforeDateTime(NodeLegacyStub $node)
+    public function nodeHiddenBeforeDateTime(Node $node)
     {
         $dateTime = $node->getHiddenBeforeDateTime();
 
         $node->setHiddenBeforeDateTime($dateTime);
     }
 
-    public function nodeHiddenAfterDateTime(NodeLegacyStub $node)
+    public function nodeHiddenAfterDateTime(Node $node)
     {
         $dateTime = $node->getHiddenAfterDateTime();
 
@@ -23,11 +23,11 @@ class SomeClass
 -----
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
-    public function nodeHiddenBeforeDateTime(NodeLegacyStub $node)
+    public function nodeHiddenBeforeDateTime(Node $node)
     {
         // TODO 9.0 migration: Timed publishing has been conceptually changed and has been extracted into a dedicated package. Please check https://github.com/neos/timeable-node-visibility for further details.
 
@@ -39,7 +39,7 @@ class SomeClass
         $node->setHiddenBeforeDateTime($dateTime);
     }
 
-    public function nodeHiddenAfterDateTime(NodeLegacyStub $node)
+    public function nodeHiddenAfterDateTime(Node $node)
     {
         // TODO 9.0 migration: Timed publishing has been conceptually changed and has been extracted into a dedicated package. Please check https://github.com/neos/timeable-node-visibility for further details.
 

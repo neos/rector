@@ -85,6 +85,7 @@ final class ObjectInstantiationToWarningCommentRector extends AbstractRector imp
                 return null;
             }
         });
+        $traverser->traverse([$node->expr])[0];
 
         if ($visitor->changed) {
             return

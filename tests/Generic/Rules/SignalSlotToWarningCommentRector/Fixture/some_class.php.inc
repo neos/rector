@@ -3,7 +3,7 @@
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class Package extends BasePackage
 {
@@ -13,21 +13,21 @@ class Package extends BasePackage
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
         $dispatcher->connect(
-            NodeLegacyStub::class,
+            Node::class,
             'beforeMove',
             SomeOtherClass::class,
             'someMethod'
         );
 
         $dispatcher->connect(
-            'Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub',
+            'Neos\ContentRepository\Domain\Model\Node',
             'afterMove',
             SomeOtherClass::class,
             'someMethod'
         );
 
         $dispatcher->connect(
-            NodeLegacyStub::class,
+            Node::class,
             'otherMethod',
             SomeOtherClass::class,
             'someMethod'
@@ -49,7 +49,7 @@ class Package extends BasePackage
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\SignalSlot\Dispatcher;
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class Package extends BasePackage
 {
@@ -61,7 +61,7 @@ class Package extends BasePackage
 
 
         $dispatcher->connect(
-            NodeLegacyStub::class,
+            Node::class,
             'beforeMove',
             SomeOtherClass::class,
             'someMethod'
@@ -70,14 +70,14 @@ class Package extends BasePackage
 
 
         $dispatcher->connect(
-            'Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub',
+            'Neos\ContentRepository\Domain\Model\Node',
             'afterMove',
             SomeOtherClass::class,
             'someMethod'
         );
 
         $dispatcher->connect(
-            NodeLegacyStub::class,
+            Node::class,
             'otherMethod',
             SomeOtherClass::class,
             'someMethod'

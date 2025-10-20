@@ -49,7 +49,7 @@ final class NodeGetContextGetWorkspaceNameRector extends AbstractRector
             return null;
         }
 
-        if (!$this->isObjectType($node->var->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
+        if (!$this->isObjectType($node->var->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class))) {
             return null;
         }
 

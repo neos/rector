@@ -2,8 +2,6 @@
 
 namespace Neos\ContentRepository\Domain\Projection\Content;
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 use Traversable;
 
 /**

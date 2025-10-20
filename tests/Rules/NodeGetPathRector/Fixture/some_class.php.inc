@@ -1,14 +1,14 @@
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
-    public function getNode():NodeLegacyStub {
-        return new NodeLegacyStub();
+    public function getNode():Node {
+        return new Node();
     }
 
-    public function getPathByNode(NodeLegacyStub $node)
+    public function getPathByNode(Node $node)
     {
         $path = $node->getPath();
     }
@@ -18,12 +18,12 @@ class SomeClass
         $path = $this->getNode()->getPath();
     }
 
-    public function getPath(NodeLegacyStub $node)
+    public function getPath(Node $node)
     {
         return $node->getPath();
     }
 
-    public function getPathAsParameter(NodeLegacyStub $node)
+    public function getPathAsParameter(Node $node)
     {
         $path = MyFoo::do($node->getPath());
     }
@@ -33,15 +33,15 @@ class SomeClass
 -----
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
-    public function getNode():NodeLegacyStub {
-        return new NodeLegacyStub();
+    public function getNode():Node {
+        return new Node();
     }
 
-    public function getPathByNode(NodeLegacyStub $node)
+    public function getPathByNode(Node $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
@@ -55,14 +55,14 @@ class SomeClass
         $path = (string) $subgraph->findNodePath($this->getNode()->aggregateId);
     }
 
-    public function getPath(NodeLegacyStub $node)
+    public function getPath(Node $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
         return (string) $subgraph->findNodePath($node->aggregateId);
     }
 
-    public function getPathAsParameter(NodeLegacyStub $node)
+    public function getPathAsParameter(Node $node)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
