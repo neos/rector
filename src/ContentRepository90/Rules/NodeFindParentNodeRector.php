@@ -6,9 +6,14 @@ namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
-
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -16,9 +21,7 @@ final class NodeFindParentNodeRector extends AbstractRector implements Documente
 {
     use AllTraits;
 
-    public function __construct(
-
-    )
+    public function __construct()
     {
     }
 
@@ -32,30 +35,61 @@ final class NodeFindParentNodeRector extends AbstractRector implements Documente
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): ?array
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'findParentNode')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-//        $this->nodesToAddCollector->addNodesBeforeNode(
-//            [
-//                self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($node->var)),
-//            ],
-//            $node
-//        );
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
 
-        return $this->subgraph_findParentNode($node->var);
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
+
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'findParentNode'
+                    ) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class))) {
+                            $this->changed = true;
+                            $this->nodeVar = $node->var;
+
+                            return $this->subgraph_findParentNode($node->var);
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
+            return null;
+        }
+
+        $node->expr = $newExpr;
+
+        return [
+            self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($visitor->nodeVar)),
+            $node
+        ];
     }
 }
