@@ -58,7 +58,6 @@ use Neos\Rector\ContentRepository90\Rules\WorkspaceSetTitleRector;
 use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\ObjectInstantiationToWarningCommentRector;
-use Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
 use Neos\Rector\Generic\Rules\SignalSlotToWarningCommentRector;
 use Neos\Rector\Generic\Rules\ToStringToMethodCallOrPropertyFetchRector;
