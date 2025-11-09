@@ -58,6 +58,7 @@ use Neos\Rector\ContentRepository90\Rules\WorkspaceSetTitleRector;
 use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\Rules\MethodCallToWarningCommentRector;
 use Neos\Rector\Generic\Rules\ObjectInstantiationToWarningCommentRector;
+use Neos\Rector\Generic\Rules\RemoveDuplicateCommentRector;
 use Neos\Rector\Generic\Rules\RemoveInjectionsRector;
 use Neos\Rector\Generic\Rules\SignalSlotToWarningCommentRector;
 use Neos\Rector\Generic\Rules\ToStringToMethodCallOrPropertyFetchRector;
@@ -712,7 +713,6 @@ $rectorConfig->withConfiguredRule(InjectServiceIfNeededRector::class, [
     new AddInjection('workspacePublishingService', WorkspacePublishingService::class),
     new AddInjection('workspaceService', WorkspaceService::class),
 ]);
-// TODO: does not fully seem to work.$rectorConfig->withRules([RemoveDuplicateCommentRector::class]);
 
 
 return $rectorConfig;
