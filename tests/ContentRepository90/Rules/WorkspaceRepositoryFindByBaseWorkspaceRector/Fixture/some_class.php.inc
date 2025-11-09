@@ -14,7 +14,7 @@ class SomeClass extends AnotherClass
 
     public function findWorkspace($workspaceIdentifier)
     {
-        $workspace = $this->workspaceRepository->findByIdentifier($workspaceIdentifier);
+        $dependentWorkspaces = $this->workspaceRepository->findByBaseWorkspace($workspaceIdentifier);
     }
 }
 
@@ -35,9 +35,10 @@ class SomeClass extends AnotherClass
 
     public function findWorkspace($workspaceIdentifier)
     {
+
         // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
         $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
-        $workspace = $contentRepository->findWorkspaceByName(\Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName::fromString($workspaceIdentifier));
+        $dependentWorkspaces = $contentRepository->findWorkspaces()->getDependantWorkspaces(\Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName::fromString($workspaceIdentifier));
     }
 }
 

@@ -7,7 +7,15 @@ namespace Neos\Rector\ContentRepository90\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Stmt\Nop;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
 
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
@@ -32,34 +40,66 @@ final class WorkspaceRepositoryFindByIdentifierRector extends AbstractRector imp
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): ?array
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'findByIdentifier')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
 
-//        $this->nodesToAddCollector->addNodesBeforeNode(
-//            [
-//                self::withTodoComment(
-//                    'Make this code aware of multiple Content Repositories.',
-//                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default')))),
-//            ],
-//            $node
-//        );
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
 
-        return
-            $this->contentRepository_findWorkspaceByName($this->workspaceName_fromString($node->args[0]->value));
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'findByIdentifier'
+                    ) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Repository\WorkspaceRepository::class))) {
+                            $this->changed = true;
+
+                            return $this->contentRepository_findWorkspaceByName(
+                                $this->workspaceName_fromString($node->args[0]->value)
+                            );
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
+            return null;
+        }
+
+        $node->expr = $newExpr;
+
+        return [
+            new Nop(), // Needed, to render the comment below
+            self::withTodoComment(
+                'Make this code aware of multiple Content Repositories.',
+                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
+            ),
+            $node,
+        ];
     }
 }
