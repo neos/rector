@@ -13,9 +13,10 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeTypeManagerAccessRector extends AbstractRector
+final class NodeTypeManagerAccessRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 

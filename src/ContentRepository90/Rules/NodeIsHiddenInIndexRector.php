@@ -9,9 +9,10 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeIsHiddenInIndexRector extends AbstractRector
+final class NodeIsHiddenInIndexRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 

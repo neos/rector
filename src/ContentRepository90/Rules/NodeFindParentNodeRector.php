@@ -9,9 +9,10 @@ use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeFindParentNodeRector extends AbstractRector
+final class NodeFindParentNodeRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 

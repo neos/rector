@@ -11,11 +11,12 @@ use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use PhpParser\NodeDumper;
 
-final class NodeGetPropertyNamesRector extends AbstractRector
+final class NodeGetPropertyNamesRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 

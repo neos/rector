@@ -11,9 +11,10 @@ use PhpParser\Node\Expr;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
 
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class ContextGetRootNodeRector extends AbstractRector
+final class ContextGetRootNodeRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 

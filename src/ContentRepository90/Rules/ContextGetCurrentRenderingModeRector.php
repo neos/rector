@@ -8,10 +8,11 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use PhpParser\Node\Expr\Assign;
 
-final class ContextGetCurrentRenderingModeRector extends AbstractRector
+final class ContextGetCurrentRenderingModeRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
     use ContextRectorTrait;
