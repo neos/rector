@@ -1,27 +1,32 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
-
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Neos\ContentRepository\Core\NodeType\NodeType;
 
-final class NodeTypeGetAutoCreatedChildNodesRector extends AbstractRector
+final class NodeTypeGetAutoCreatedChildNodesRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-
-    )
+    public function __construct()
     {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"$nodeType->getAutoCreatedChildNodes()" will be rewritten.', __CLASS__);
     }
@@ -29,37 +34,66 @@ final class NodeTypeGetAutoCreatedChildNodesRector extends AbstractRector
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
-        return [Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
+
     /**
-     * @param Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(NodeType::class))) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-        if (!$this->isName($node->name, 'getAutoCreatedChildNodes')) {
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
+
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
+
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'getAutoCreatedChildNodes'
+                    ) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(NodeType::class))) {
+                            $this->changed = true;
+
+                            return $this->nodeFactory->createPropertyFetch(
+                                $node->var,
+                                'tetheredNodeTypeDefinitions'
+                            );
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
             return null;
         }
 
-//        $this->nodesToAddCollector->addNodesBeforeNode(
-//            [
-//                self::todoComment(
-//                    'NodeType::tetheredNodeTypeDefinitions() is not a 1:1 replacement of NodeType::getAutoCreatedChildNodes(). You need to change your code to work with new TetheredNodeTypeDefinition object.',
-//                )
-//            ],
-//            $node
-//        );
+        $node->expr = $newExpr;
 
-        return $this->nodeFactory->createPropertyFetch(
-                $node->var,
-            'tetheredNodeTypeDefinitions'
-        );
+        return
+            self::withTodoComment(
+                'NodeType::tetheredNodeTypeDefinitions() is not a 1:1 replacement of NodeType::getAutoCreatedChildNodes(). You need to change your code to work with new TetheredNodeTypeDefinition object.',
+                $node
+            );
     }
 }
