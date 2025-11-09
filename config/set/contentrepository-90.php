@@ -72,8 +72,8 @@ use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
-use Rector\Transform\Rector\MethodCall\MethodCallToPropertyFetchRector;
-use Rector\Transform\ValueObject\MethodCallToPropertyFetch;
+use Neos\Rector\Generic\Rules\MethodCallToPropertyFetchRector;
+use Neos\Rector\Generic\ValueObject\MethodCallToPropertyFetch;
 
 
 $rectorConfig = RectorConfig::configure()
