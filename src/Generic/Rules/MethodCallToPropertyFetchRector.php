@@ -10,7 +10,7 @@ use Rector\Rector\AbstractRector;
 use Neos\Rector\Generic\ValueObject\MethodCallToPropertyFetch;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use RectorPrefix202510\Webmozart\Assert\Assert;
+use Webmozart\Assert\Assert;
 
 /**
  * Copied from phprector/rector version 2.2.2 as it became deprecated and removed afterward.
