@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\ContentRepository90\Rules\ContextGetFirstLevelNodeCacheRector;
+namespace Neos\Rector\Tests\ContentRepository90\Rules\ContextIsInBackendRector;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;

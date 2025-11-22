@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Generic\Rules\InjectContentRepositoryRegistryIfNeededRector;
+namespace Neos\Rector\Tests\Generic\Rules\InjectServiceIfNeededRector;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
