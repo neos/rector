@@ -6,8 +6,9 @@ Right now we focus especially on rules to migrate from the old Content Repositor
 Event Sourced Content Repository (>= 9.0).
 
 ## Installation
-As Rector has strict dependency requirements, which might not match your own project, we strongly recommend to install 
-neos/rector in a dedicated directory and **not to add it to your project**.
+
+Please install the neos/rector package in your Distribution as a dev dependency with composer.
+<br>(This has changed to previous versions of this package)
 
 ```bash
 # inside your Distribution folder
@@ -22,9 +23,11 @@ migrated). By default, all of `./DistributionPackages` will be migrated.
 
 Right now, we ship the following sets of Rector rules:
 
-- `\Neos\Rector\NeosRectorSets::CONTENTREPOSITORY_9_0`: all rules needed to migrate to the Event-Sourced Content Repository
+- `\Neos\Rector\NeosRectorSets::CONTENTREPOSITORY_9_0`: all rules needed to migrate to the Event-Sourced Content
+  Repository
 
-Also you need to add the autoload paths, to allow rector to parse your code properly. By default we added `./Packages` and `./DistributionPackages` to the template.
+Also you need to add the autoload paths, to allow rector to parse your code properly. By default we added `./Packages`
+and `./DistributionPackages` to the template.
 
 ```php
 $rectorConfig->sets([
@@ -50,11 +53,12 @@ Run the following command at the root of your distribution (i.e. where `rector.p
 
 ```bash
 # for trying out what would be done
-./rector/vendor/bin/rector --dry-run
+./bin/rector --dry-run
 
 # for running the migrations
-./rector/vendor/bin/rector
+./bin/rector
 ```
+
 ---
 
 # Developing Rector Rules for Neos
@@ -75,15 +79,13 @@ The test setup runs completely self contained; does not need *any* Distribution 
 
 ```bash
 # if inside a Neos Distribution, change to the Package's folder
-cd rector
+cd Packages/Libraries/neos/rector
 
 # install PHPunit 
 composer install
 
 # run PHPUnit
-composer test
-```
-
+composer tests
 ```
 
 ## Generating docs
