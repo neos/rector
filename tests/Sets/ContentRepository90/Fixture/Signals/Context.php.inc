@@ -42,12 +42,10 @@ class Package extends BasePackage
          * @var Dispatcher
          */
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
+
         // TODO 9.0 migration: The signal "beforeAdoptNode" on "Context" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
-
-
         $dispatcher->connect(\Neos\Rector\ContentRepository90\Legacy\LegacyContextStub::class, 'beforeAdoptNode', function () { return 'foo'; });
         // TODO 9.0 migration: The signal "afterAdoptNode" on "Context" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
-
         $dispatcher->connect('Neos\ContentRepository\Domain\Service\Context', 'afterAdoptNode', RouterCachingService::class, 'flushCaches');
     }
 }

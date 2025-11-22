@@ -57,18 +57,16 @@ class Package extends BasePackage
     {
         /** @var Dispatcher $dispatcher */
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
+
         // TODO 9.0 migration: Signal "beforeMove" doesn't exist anymore
-
-
         $dispatcher->connect(
             Node::class,
             'beforeMove',
             SomeOtherClass::class,
             'someMethod'
         );
+
         // TODO 9.0 migration: Signal "afterMove" doesn't exist anymore
-
-
         $dispatcher->connect(
             'Neos\ContentRepository\Domain\Model\Node',
             'afterMove',

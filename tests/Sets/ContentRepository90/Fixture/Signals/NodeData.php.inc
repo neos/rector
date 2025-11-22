@@ -42,12 +42,10 @@ class Package extends BasePackage
          * @var Dispatcher
          */
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
+
         // TODO 9.0 migration: The signal "nodePathChanged" on "NodeData" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
-
-
         $dispatcher->connect(\Neos\ContentRepository\Domain\Model\NodeData::class, 'nodePathChanged', function () { return 'foo'; });
         // TODO 9.0 migration: The signal "nodePathChanged" on "NodeData" has been removed. Please check https://docs.neos.io/api/upgrade-instructions/9/signals-and-slots for further information, how to replace a signal.
-
         $dispatcher->connect('Neos\ContentRepository\Domain\Model\NodeData', 'nodePathChanged', RouterCachingService::class, 'flushCaches');
     }
 }

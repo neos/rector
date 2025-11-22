@@ -8,8 +8,10 @@ use Neos\Flow\SignalSlot\Dispatcher;
 use Neos\Rector\Generic\ValueObject\SignalSlotToWarningComment;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\PhpParser\Node\BetterNodeFinder;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -25,8 +27,8 @@ final class SignalSlotToWarningCommentRector extends AbstractRector implements C
     private array $signalSlotToWarningComments = [];
 
     public function __construct(
-    )
-    {
+        private BetterNodeFinder $betterNodeFinder,
+    ) {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -41,53 +43,53 @@ final class SignalSlotToWarningCommentRector extends AbstractRector implements C
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isName($node->name, 'connect')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-        if (!$this->isObjectType($node->var, new ObjectType(Dispatcher::class))) {
+        $methodCall = $this->betterNodeFinder->findFirst($node, function (Node $subNode) {
+            return $subNode instanceof MethodCall
+                && $this->isObjectType($subNode->var, new ObjectType(Dispatcher::class))
+                && $this->isName($subNode->name, 'connect');
+        });
+
+        if (!$methodCall instanceof MethodCall) {
             return null;
         }
 
         foreach ($this->signalSlotToWarningComments as $signalSlotToWarningComment) {
             $className = null;
-            if ($node->args[0]->value instanceof Node\Expr\ClassConstFetch) {
-                $className = (string) $node->args[0]->value->class;
-            } elseif ($node->args[0]->value instanceof Node\Scalar) {
-                $className = (string)$node->args[0]->value->value;
+            if ($methodCall->args[0]->value instanceof Node\Expr\ClassConstFetch) {
+                $className = (string)$methodCall->args[0]->value->class;
+            } elseif ($methodCall->args[0]->value instanceof Node\Scalar) {
+                $className = (string)$methodCall->args[0]->value->value;
             }
 
-            if ($className !== $signalSlotToWarningComment->className){
+            if ($className !== $signalSlotToWarningComment->className) {
                 continue;
             }
 
             $methodName = null;
-            if ($node->args[1]->value instanceof Node\Scalar\String_) {
-                $methodName = (string)$node->args[1]->value->value;
+            if ($methodCall->args[1]->value instanceof Node\Scalar\String_) {
+                $methodName = (string)$methodCall->args[1]->value->value;
             }
 
             if ($methodName !== $signalSlotToWarningComment->signalName) {
                 continue;
             }
 
-//            $this->nodesToAddCollector->addNodesBeforeNode(
-//                [
-//                    self::todoComment($signalSlotToWarningComment->warningMessage)
-//                ],
-//                $node
-//            );
-
-            return $node;
+            return self::withTodoComment(
+                $signalSlotToWarningComment->warningMessage,
+                $node
+            );
         }
         return null;
     }
@@ -96,7 +98,7 @@ final class SignalSlotToWarningCommentRector extends AbstractRector implements C
     /**
      * @param mixed[] $configuration
      */
-    public function configure(array $configuration) : void
+    public function configure(array $configuration): void
     {
         Assert::allIsAOf($configuration, SignalSlotToWarningComment::class);
         $this->signalSlotToWarningComments = $configuration;

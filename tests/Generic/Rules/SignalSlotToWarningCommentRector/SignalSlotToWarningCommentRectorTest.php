@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Generic\Rules\ToStringToPropertyFetchRector;
+namespace Neos\Rector\Tests\Generic\Rules\SignalSlotToWarningCommentRector;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
