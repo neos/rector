@@ -6,7 +6,13 @@ namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
 
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
@@ -30,43 +36,66 @@ final class NodeGetNodeTypeGetNameRector extends AbstractRector implements Docum
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Core\NodeType\NodeType::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'getName')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-        if (!$node->var instanceof Node\Expr\MethodCall) {
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
+
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                ) {
+                }
+
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'getName'
+                    ) {
+                        // ensure `$something->getNodeType()->getName()` where something is a legacy Node
+                        if ($node->var instanceof MethodCall && $node->var->name instanceof Identifier && $node->var->name->toString() === 'getNodeType') {
+                            // optional: check that $node->var is NodeType and inner var is Node
+                            $isNodeType = $this->nodeTypeResolver->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Core\NodeType\NodeType::class));
+                            $isLegacyNode = $this->nodeTypeResolver->isObjectType($node->var->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class));
+                            if ($isNodeType && $isLegacyNode) {
+                                $this->changed = true;
+                                return $this->nodeFactory->createPropertyFetch(
+                                    $this->nodeFactory->createPropertyFetch(
+                                        $node->var->var,
+                                        'nodeTypeName'
+                                    ), 'value'
+                                );
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }
+        );
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
             return null;
         }
 
-        $nodeTypeVar = $node->var;
-
-        if (!$this->isObjectType($nodeTypeVar->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class))) {
-            return null;
-        }
-
-        if (!$this->isName($nodeTypeVar->name, 'getNodeType')) {
-            return null;
-        }
-
-        return
-            $this->nodeFactory->createPropertyFetch(
-                $this->nodeFactory->createPropertyFetch(
-                    $node->var->var,
-                    'nodeTypeName'
-                ), 'value'
-            );
+        $node->expr = $newExpr;
+        return $node;
     }
 }

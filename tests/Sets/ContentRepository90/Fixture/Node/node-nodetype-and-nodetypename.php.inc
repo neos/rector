@@ -67,6 +67,7 @@ class SomeClass extends AnotherClass
 
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
         $nodeType->name->value;
+        /** @var NodeType $nodeType */
         $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         /** @var NodeType $nodeType */
@@ -82,6 +83,7 @@ class SomeClass extends AnotherClass
 
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
         $nodeType->name->value;
+        /** @var NodeType $nodeType */
         $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         /** @var NodeType $nodeType */
@@ -97,6 +99,7 @@ class SomeClass extends AnotherClass
 
         $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName);
         $nodeType->name->value;
+        /** @var NodeType $nodeType */
         $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         /** @var NodeType $nodeType */
