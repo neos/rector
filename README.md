@@ -32,7 +32,6 @@ and `./DistributionPackages` to the template.
 ```php
 $rectorConfig->sets([
     NeosRectorSets::CONTENTREPOSITORY_9_0,
-    //NeosRectorSets::NEOS_8_4,
 ]);
 
 $rectorConfig->autoloadPaths([
