@@ -11,10 +11,11 @@ use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
-final class SignalSlotToWarningCommentRector extends AbstractRector implements ConfigurableRectorInterface
+final class SignalSlotToWarningCommentRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     use AllTraits;
 

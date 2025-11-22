@@ -11,6 +11,7 @@ use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
@@ -18,7 +19,7 @@ use Webmozart\Assert\Assert;
  * This is a re-write of {@see RemoveParentRector}, but working with non existing parent classes as well (and
  * supports adding comments)
  */
-final class RemoveParentClassRector extends AbstractRector implements ConfigurableRectorInterface
+final class RemoveParentClassRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
 
     /**

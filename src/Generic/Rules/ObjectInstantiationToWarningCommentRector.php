@@ -17,10 +17,11 @@ use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpParser\Node\NodeFactory;
 use Rector\PostRector\Collector\NodesToAddCollector;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
-final class ObjectInstantiationToWarningCommentRector extends AbstractRector implements ConfigurableRectorInterface
+final class ObjectInstantiationToWarningCommentRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     use AllTraits;
 

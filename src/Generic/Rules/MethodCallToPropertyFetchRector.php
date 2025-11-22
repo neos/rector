@@ -8,6 +8,7 @@ use PhpParser\Node\Expr\MethodCall;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
 use Neos\Rector\Generic\ValueObject\MethodCallToPropertyFetch;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
@@ -15,7 +16,7 @@ use Webmozart\Assert\Assert;
 /**
  * Copied from phprector/rector version 2.2.2 as it became deprecated and removed afterward.
  */
-final class MethodCallToPropertyFetchRector extends AbstractRector implements ConfigurableRectorInterface
+final class MethodCallToPropertyFetchRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     /**
      * @var MethodCallToPropertyFetch[]
