@@ -2,8 +2,6 @@
 
 This package contains a Rector ruleset which is used for migrating from Neos 8.x to 9.0 (and lateron also further up).
 
-It will eventually replace Core/Code Migrations (./flow flow:core:migrate) (which are not used anymore for migrating to Neos 9 and further).
-
 Right now we focus especially on rules to migrate from the old Content Repository API (< Neos 9.0) to the
 Event Sourced Content Repository (>= 9.0).
 
@@ -13,8 +11,8 @@ neos/rector in a dedicated directory and **not to add it to your project**.
 
 ```bash
 # inside your Distribution folder
-composer create-project neos/rector:dev-main --stability=dev rector
-cp rector/rector.template.php rector.php
+composer require --dev neos/rector:dev-main
+cp Packages/Libraries/neos/rector/rector.template.php rector.php
 ```
 
 ## Configuration
