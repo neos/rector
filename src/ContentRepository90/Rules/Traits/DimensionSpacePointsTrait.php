@@ -8,6 +8,7 @@ use Neos\Rector\Generic\Rules\Traits\FunctionsTrait;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Param;
+use PhpParser\Node\Name\FullyQualified;
 use Rector\PhpParser\Node\NodeFactory;
 
 trait DimensionSpacePointsTrait
@@ -16,8 +17,7 @@ trait DimensionSpacePointsTrait
 
     protected NodeFactory $nodeFactory;
 
-    private function dimensionSpacePoints_toLegacyDimensionArray(
-    ): Expr
+    private function dimensionSpacePoints_toLegacyDimensionArray(): Expr
     {
         return $this->nodeFactory->createFuncCall(
             'array_map',
@@ -27,7 +27,7 @@ trait DimensionSpacePointsTrait
                         new Param(
                             new Variable('dimensionSpacePoint'),
                             null,
-                            '\\' . DimensionSpacePoint::class
+                            new FullyQualified(DimensionSpacePoint::class)
                         )
                     ],
                     'expr' => $this->nodeFactory->createMethodCall('dimensionSpacePoint', 'toLegacyDimensionArray')

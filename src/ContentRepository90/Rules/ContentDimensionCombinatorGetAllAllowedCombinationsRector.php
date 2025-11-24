@@ -1,16 +1,20 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
-
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -18,13 +22,11 @@ final class ContentDimensionCombinatorGetAllAllowedCombinationsRector extends Ab
 {
     use AllTraits;
 
-    public function __construct(
-
-    )
+    public function __construct()
     {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"ContentDimensionCombinator::getAllAllowedCombinations()" will be rewritten.', __CLASS__);
     }
@@ -32,33 +34,67 @@ final class ContentDimensionCombinatorGetAllAllowedCombinationsRector extends Ab
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
+
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?array
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Service\ContentDimensionCombinator::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'getAllAllowedCombinations')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-//        $this->nodesToAddCollector->addNodesBeforeNode(
-//            [
-//                self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
-//                self::assign('dimensionSpacePoints', $this->contentRepository_getVariationGraph_getDimensionSpacePoints()),
-//                self::todoComment('try to directly work with $dimensionSpacePoints, instead of converting them to the legacy dimension format')
-//            ],
-//            $node
-//        );
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
 
-        return $this->dimensionSpacePoints_toLegacyDimensionArray();
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
+
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'getAllAllowedCombinations'
+                    ) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Service\ContentDimensionCombinator::class))) {
+                            $this->changed = true;
+                            $this->nodeVar = $node->var;
+
+                            return $this->dimensionSpacePoints_toLegacyDimensionArray();
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
+            return null;
+        }
+
+        $node->expr = $newExpr;
+
+        return [
+            self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default'))),
+            self::assign('dimensionSpacePoints', $this->contentRepository_getVariationGraph_getDimensionSpacePoints()),
+            self::withTodoComment(
+                'try to directly work with $dimensionSpacePoints, instead of converting them to the legacy dimension format',
+                $node
+            ),
+        ];
     }
 }
