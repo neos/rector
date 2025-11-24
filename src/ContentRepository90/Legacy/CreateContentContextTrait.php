@@ -1,9 +1,10 @@
 <?php
+
 namespace Neos\Neos\Controller;
 
+use Neos\ContentRepository\Domain\Model\NodeData;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\ContentContext;
-use Neos\ContentRepository\Domain\Model\NodeData;
 
 /**
  * @deprecated

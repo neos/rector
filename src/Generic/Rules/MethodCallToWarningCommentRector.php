@@ -51,7 +51,7 @@ final class MethodCallToWarningCommentRector extends AbstractRector implements C
      */
     public function refactor(Node $node): ?Node
     {
-        if (!in_array('expr',$node->getSubNodeNames())) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 

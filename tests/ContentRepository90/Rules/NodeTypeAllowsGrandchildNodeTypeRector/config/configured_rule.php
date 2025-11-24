@@ -2,16 +2,16 @@
 
 declare (strict_types=1);
 
-use Rector\Config\RectorConfig;
-use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
-use Neos\Rector\Generic\ValueObject\AddInjection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Rector\ContentRepository90\Rules\NodeTypeAllowsGrandchildNodeTypeRector;
+use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
+use Neos\Rector\Generic\ValueObject\AddInjection;
+use Rector\Config\RectorConfig;
 
-    $rectorConfig = RectorConfig::configure();
-    $rectorConfig->withRules([NodeTypeAllowsGrandchildNodeTypeRector::class]);
+$rectorConfig = RectorConfig::configure();
+$rectorConfig->withRules([NodeTypeAllowsGrandchildNodeTypeRector::class]);
 
-    $rectorConfig->withConfiguredRule(InjectServiceIfNeededRector::class, [
-        new AddInjection('contentRepositoryRegistry', ContentRepositoryRegistry::class),
-    ]);
+$rectorConfig->withConfiguredRule(InjectServiceIfNeededRector::class, [
+    new AddInjection('contentRepositoryRegistry', ContentRepositoryRegistry::class),
+]);
 return $rectorConfig;

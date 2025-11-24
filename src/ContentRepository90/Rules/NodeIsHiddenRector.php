@@ -15,8 +15,8 @@ final class NodeIsHiddenRector extends AbstractRector implements DocumentedRuleI
 {
     use AllTraits;
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition

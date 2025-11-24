@@ -16,12 +16,11 @@ final class NodeIsHiddenInIndexRector extends AbstractRector implements Document
 {
     use AllTraits;
 
-    public function __construct(
-    )
+    public function __construct()
     {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"NodeInterface::isHiddenInIndex()" will be rewritten', __CLASS__);
     }
@@ -29,14 +28,15 @@ final class NodeIsHiddenInIndexRector extends AbstractRector implements Document
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
         return [MethodCall::class];
     }
+
     /**
      * @param MethodCall $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof MethodCall);
 

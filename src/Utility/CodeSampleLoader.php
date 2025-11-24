@@ -27,7 +27,7 @@ class CodeSampleLoader
         }
         $files = glob($folderName . '*.inc');
         $file = reset($files);
-        list($beforeCode, $afterCode) = explode('-----', file_get_contents($file));
+        [$beforeCode, $afterCode] = explode('-----', file_get_contents($file));
         if (!empty($codeSampleConfiguration)) {
             $codeSample = new ConfiguredCodeSample(trim($beforeCode), trim($afterCode), $codeSampleConfiguration);
         } else {

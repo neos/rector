@@ -1,13 +1,14 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\Generic\Rules;
 
+use Neos\Rector\Generic\ValueObject\MethodCallToPropertyFetch;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\Rector\AbstractRector;
-use Neos\Rector\Generic\ValueObject\MethodCallToPropertyFetch;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -22,6 +23,7 @@ final class MethodCallToPropertyFetchRector extends AbstractRector implements Co
      * @var MethodCallToPropertyFetch[]
      */
     private array $methodCallsToPropertyFetches = [];
+
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Turn method call `$this->getFirstname()` to property fetch `$this->firstname`', [new ConfiguredCodeSample(<<<'CODE_SAMPLE'
@@ -33,7 +35,7 @@ class SomeClass
     }
 }
 CODE_SAMPLE
-, <<<'CODE_SAMPLE'
+            , <<<'CODE_SAMPLE'
 class SomeClass
 {
     public function run()
@@ -42,8 +44,9 @@ class SomeClass
     }
 }
 CODE_SAMPLE
-, [new MethodCallToPropertyFetch('ExamplePersonClass', 'getFirstname', 'firstname')])]);
+            , [new MethodCallToPropertyFetch('ExamplePersonClass', 'getFirstname', 'firstname')])]);
     }
+
     /**
      * @return array<class-string<Node>>
      */
@@ -51,6 +54,7 @@ CODE_SAMPLE
     {
         return [MethodCall::class];
     }
+
     /**
      * @param MethodCall $node
      */
@@ -67,6 +71,7 @@ CODE_SAMPLE
         }
         return null;
     }
+
     /**
      * @param mixed[] $configuration
      */

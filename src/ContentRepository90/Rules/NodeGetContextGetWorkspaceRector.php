@@ -44,7 +44,7 @@ final class NodeGetContextGetWorkspaceRector extends AbstractRector implements D
      */
     public function refactor(Node $node): ?array
     {
-        if (!in_array('expr',$node->getSubNodeNames())) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 

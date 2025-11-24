@@ -1,6 +1,7 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
@@ -15,12 +16,11 @@ final class ContextFactoryToLegacyContextStubRector extends AbstractRector imple
 {
     use AllTraits;
 
-    public function __construct(
-    )
+    public function __construct()
     {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"ContextFactory::create()" will be rewritten.', __CLASS__);
     }
@@ -28,14 +28,15 @@ final class ContextFactoryToLegacyContextStubRector extends AbstractRector imple
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Expr\MethodCall::class];
     }
+
     /**
      * @param \PhpParser\Node\Expr\MethodCall $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\MethodCall);
 
@@ -50,7 +51,7 @@ final class ContextFactoryToLegacyContextStubRector extends AbstractRector imple
         }
 
         return new Node\Expr\New_(
-            // TODO clean up
+        // TODO clean up
             new Node\Name('\\' . LegacyContextStub::class),
             $node->args
         );

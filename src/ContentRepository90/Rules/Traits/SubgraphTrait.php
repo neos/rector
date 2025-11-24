@@ -5,7 +5,6 @@ namespace Neos\Rector\ContentRepository90\Rules\Traits;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Variable;
 use Rector\PhpParser\Node\NodeFactory;
 
 trait SubgraphTrait

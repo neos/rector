@@ -23,9 +23,8 @@ final class NodeTypeAllowsGrandchildNodeTypeRector extends AbstractRector implem
 {
     use AllTraits;
 
-    public function __construct(
-
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition

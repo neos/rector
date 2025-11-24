@@ -4,20 +4,20 @@ declare (strict_types=1);
 
 namespace Neos\Rector\Generic\Rules;
 
-use Neos\Rector\Utility\CodeSampleLoader;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Rector\Generic\ValueObject\AddInjection;
+use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Name\FullyQualified;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeManipulator\ClassInsertManipulator;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
-use Neos\Rector\Generic\ValueObject\AddInjection;
-use Rector\Contract\Rector\ConfigurableRectorInterface;
 
 // Modelled after https://raw.githubusercontent.com/sabbelasichon/typo3-rector/main/src/Rector/v10/v2/InjectEnvironmentServiceIfNeededInResponseRector.php
 final class InjectServiceIfNeededRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface

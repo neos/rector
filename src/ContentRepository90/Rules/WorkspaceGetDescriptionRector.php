@@ -4,10 +4,10 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
@@ -15,17 +15,14 @@ use PHPStan\Type\ObjectType;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpParser\Node\NodeFactory;
 use Rector\Rector\AbstractRector;
-
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Neos\ContentRepository\Core\SharedModel\Workspace\Workspace;
 
 final class WorkspaceGetDescriptionRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-    )
+    public function __construct()
     {
     }
 

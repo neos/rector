@@ -47,7 +47,7 @@ final class NodeGetPathRector extends AbstractRector implements DocumentedRuleIn
      */
     public function refactor(Node $node)
     {
-        if (!in_array('expr',$node->getSubNodeNames())) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 

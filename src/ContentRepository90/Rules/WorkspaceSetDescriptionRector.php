@@ -42,7 +42,7 @@ final class WorkspaceSetDescriptionRector extends AbstractRector implements Docu
      */
     public function refactor(Node $node): ?Node
     {
-        if (!in_array('expr',$node->getSubNodeNames())) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 

@@ -8,7 +8,6 @@ class RemoveParentClass
     public function __construct(
         public readonly string $parentClassName,
         public readonly string $comment,
-    )
-    {
+    ) {
     }
 }

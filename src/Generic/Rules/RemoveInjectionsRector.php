@@ -7,7 +7,6 @@ namespace Neos\Rector\Generic\Rules;
 use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
-use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
 use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
@@ -27,9 +26,8 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
     private array $injectionsToRemove = [];
 
     public function __construct(
-        protected PhpDocInfoFactory $phpDocInfoFactory
-    )
-    {
+        protected PhpDocInfoFactory $phpDocInfoFactory,
+    ) {
     }
 
     public function getRuleDefinition(): RuleDefinition

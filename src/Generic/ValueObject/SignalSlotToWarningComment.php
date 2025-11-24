@@ -9,7 +9,6 @@ class SignalSlotToWarningComment
         public readonly string $className,
         public readonly string $signalName,
         public readonly string $warningMessage,
-    )
-    {
+    ) {
     }
 }

@@ -39,7 +39,7 @@ final class WorkspaceSetTitleRector extends AbstractRector implements Documented
      */
     public function refactor(Node $node): ?Node
     {
-        if (!in_array('expr',$node->getSubNodeNames())) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 

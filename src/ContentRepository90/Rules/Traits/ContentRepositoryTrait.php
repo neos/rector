@@ -5,8 +5,6 @@ namespace Neos\Rector\ContentRepository90\Rules\Traits;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Name\FullyQualified;
 use Rector\PhpParser\Node\NodeFactory;
 
 trait ContentRepositoryTrait

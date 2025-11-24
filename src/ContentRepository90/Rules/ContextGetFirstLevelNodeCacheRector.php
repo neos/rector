@@ -17,8 +17,8 @@ final class ContextGetFirstLevelNodeCacheRector extends AbstractRector implement
 {
     use AllTraits;
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
     }
 
 
@@ -53,7 +53,7 @@ final class ContextGetFirstLevelNodeCacheRector extends AbstractRector implement
         $nodeFinder = new NodeFinder();
         return $nodeFinder->findFirst(
                 $expr,
-                fn(Node $node) => $node instanceof Node\Expr\MethodCall
+                fn (Node $node) => $node instanceof Node\Expr\MethodCall
                     // WARNING: The System cannot infer the Context type properly, as the factory has no types.
                     // Thus, we simply check on the method name getFirstLevelNodeCache() which is unique enough.
                     //&& (

@@ -15,8 +15,8 @@ final class NodeTypeGetNameRector extends AbstractRector implements DocumentedRu
 {
     use AllTraits;
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition

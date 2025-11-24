@@ -8,7 +8,6 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
 use Rector\Rector\AbstractRector;
-
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -16,8 +15,8 @@ final class NodeIsAutoCreatedRector extends AbstractRector implements Documented
 {
     use AllTraits;
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition

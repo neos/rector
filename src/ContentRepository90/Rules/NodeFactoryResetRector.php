@@ -41,7 +41,7 @@ final class NodeFactoryResetRector extends AbstractRector implements DocumentedR
      */
     public function refactor(Node $node)
     {
-        if (!in_array('expr',$node->getSubNodeNames())) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
