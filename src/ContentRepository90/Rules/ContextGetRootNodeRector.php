@@ -1,6 +1,7 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -8,22 +9,27 @@ use Neos\Rector\ContentRepository90\Legacy\LegacyContextStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Stmt\Nop;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class ContextGetRootNodeRector extends AbstractRector
+final class ContextGetRootNodeRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    )
+    public function __construct()
     {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"Context::getRootNode()" will be rewritten.', __CLASS__);
     }
@@ -31,43 +37,97 @@ final class ContextGetRootNodeRector extends AbstractRector
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
+
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?array
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(LegacyContextStub::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'getRootNode')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::withTodoComment(
-                    '!! MEGA DIRTY CODE! Ensure to rewrite this; by getting rid of LegacyContextStub.',
-                    self::assign('contentRepository', $this->this_contentRepositoryRegistry_get($this->contentRepositoryId_fromString('default')))
-                ),
-                self::assign('workspace', $this->contentRepository_findWorkspaceByName($this->workspaceName_fromString($this->context_workspaceName_fallbackToLive($node->var)))),
-                self::assign('rootNodeAggregate', $this->contentRepository_getContentGraph_findRootNodeAggregateByType($this->nodeFactory->createPropertyFetch('workspace', 'workspaceName') , $this->nodeTypeName_fromString('Neos.Neos:Sites'))),
-                self::assign('subgraph', $this->contentRepository_getContentGraph_getSubgraph($this->nodeFactory->createPropertyFetch('workspace', 'workspaceName'), $this->dimensionSpacePoint_fromLegacyDimensionArray($this->context_dimensions_fallbackToEmpty($node->var)), $this->visibilityConstraints($node->var))),
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
 
-            ],
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
+
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'getRootNode'
+                    ) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(LegacyContextStub::class))) {
+                            $this->changed = true;
+                            $this->nodeVar = $node->var;
+
+                            return $this->subgraph_findNodeById(
+                                $this->nodeFactory->createPropertyFetch('rootNodeAggregate', 'nodeAggregateId')
+                            );
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
+            return null;
+        }
+
+        $node->expr = $newExpr;
+
+        return [
+            new Nop(), // Needed, to render the comment below
+            self::withTodoComment(
+                '!! MEGA DIRTY CODE! Ensure to rewrite this; by getting rid of LegacyContextStub.',
+                self::assign('contentRepository',
+                    $this->this_contentRepositoryRegistry_get(
+                        $this->contentRepositoryId_fromString('default')
+                    )
+                )
+            ),
+            self::assign('workspace',
+                $this->contentRepository_findWorkspaceByName(
+                    $this->workspaceName_fromString(
+                        $this->context_workspaceName_fallbackToLive($visitor->nodeVar)
+                    )
+                )
+            ),
+            self::assign('rootNodeAggregate',
+                $this->contentRepository_getContentGraph_findRootNodeAggregateByType(
+                    $this->nodeFactory->createPropertyFetch('workspace', 'workspaceName'),
+                    $this->nodeTypeName_fromString('Neos.Neos:Sites')
+                )
+            ),
+            self::assign('subgraph',
+                $this->contentRepository_getContentGraph_getSubgraph(
+                    $this->nodeFactory->createPropertyFetch('workspace', 'workspaceName'),
+                    $this->dimensionSpacePoint_fromLegacyDimensionArray(
+                        $this->context_dimensions_fallbackToEmpty($visitor->nodeVar)
+                    ),
+                    $this->visibilityConstraints($visitor->nodeVar)
+                )
+            ),
             $node
-        );
-
-        return $this->subgraph_findNodeById(
-            $this->nodeFactory->createPropertyFetch('rootNodeAggregate', 'nodeAggregateId')
-        );
+        ];
     }
-
 
     private function context_workspaceName_fallbackToLive(Node\Expr $legacyContextStub)
     {

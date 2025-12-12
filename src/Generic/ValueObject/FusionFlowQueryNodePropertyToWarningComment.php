@@ -9,8 +9,7 @@ class FusionFlowQueryNodePropertyToWarningComment
     public function __construct(
         public readonly string $property,
         public readonly string $warningMessage,
-    )
-    {
+    ) {
     }
 
 

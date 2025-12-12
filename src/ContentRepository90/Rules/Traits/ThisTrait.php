@@ -4,14 +4,11 @@ declare (strict_types=1);
 namespace Neos\Rector\ContentRepository90\Rules\Traits;
 
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Variable;
+use Rector\PhpParser\Node\NodeFactory;
 
 trait ThisTrait
 {
-    /**
-     * @var \Rector\Core\PhpParser\Node\NodeFactory
-     */
-    protected $nodeFactory;
+    protected NodeFactory $nodeFactory;
 
     private function this_contentRepositoryRegistry_subgraphForNode(Expr $nodeVariable): Expr
     {

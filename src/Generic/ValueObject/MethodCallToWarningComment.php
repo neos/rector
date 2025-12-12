@@ -9,7 +9,6 @@ class MethodCallToWarningComment
         public readonly string $objectType,
         public readonly string $methodName,
         public readonly string $warningMessage,
-    )
-    {
+    ) {
     }
 }

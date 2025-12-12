@@ -7,20 +7,17 @@ namespace Neos\Rector\ContentRepository90\Rules;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Rector\PostRector\Collector\NodesToAddCollector;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\NodeDumper;
 
-final class ContextIsInBackendRector extends AbstractRector
+final class ContextIsInBackendRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
     use ContextRectorTrait;
 
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    ) {
+    public function __construct()
+    {
     }
 
 
@@ -38,7 +35,7 @@ final class ContextIsInBackendRector extends AbstractRector
     }
 
     /**
-     * @param \PhpParser\Node\Stmt\Expression $node
+     * @param \PhpParser\Node\Expr\MethodCall $node
      */
     public function refactor(Node $node): ?Node
     {

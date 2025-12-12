@@ -6,18 +6,23 @@ namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeGetNodeTypeRector extends AbstractRector
+final class NodeGetNodeTypeRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -30,42 +35,71 @@ final class NodeGetNodeTypeRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): ?array
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-        if (!$this->isName($node->name, 'getNodeType')) {
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
+
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
+
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'getNodeType'
+                    ) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class))) {
+                            $this->changed = true;
+                            $this->nodeVar = $node->var;
+
+                            return $this->nodeFactory->createMethodCall(
+                                $this->contentRepository_getNodeTypeManager()
+                                , 'getNodeType',
+                                [
+                                    $this->nodeFactory->createPropertyFetch($node->var, 'nodeTypeName')
+                                ]);
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::assign(
-                    'contentRepository',
-                    $this->this_contentRepositoryRegistry_get(
-                        $this->nodeFactory->createPropertyFetch($node->var, 'contentRepositoryId')
-                    )
-                ),
-            ],
-            $node
-        );
+        $node->expr = $newExpr;
 
-        return
-            $this->nodeFactory->createMethodCall(
-                $this->contentRepository_getNodeTypeManager()
-                , 'getNodeType',
-                [
-                    $this->nodeFactory->createPropertyFetch($node->var, 'nodeTypeName')
-                ]);
+        return [
+            self::assign(
+                'contentRepository',
+                $this->this_contentRepositoryRegistry_get(
+                    $this->nodeFactory->createPropertyFetch($visitor->nodeVar, 'contentRepositoryId')
+                )
+            ),
+            $node,
+        ];
     }
 }

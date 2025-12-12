@@ -1,10 +1,10 @@
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
-    public function run(NodeLegacyStub $node)
+    public function run(Node $node)
     {
         $label = $node->getLabel();
     }
@@ -14,13 +14,13 @@ class SomeClass
 -----
 <?php
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 class SomeClass
 {
     #[\Neos\Flow\Annotations\Inject]
     protected \Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface $nodeLabelGenerator;
-    public function run(NodeLegacyStub $node)
+    public function run(Node $node)
     {
         $label = $this->nodeLabelGenerator->getLabel($node);
     }

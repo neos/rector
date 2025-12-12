@@ -5,17 +5,13 @@ namespace Neos\Rector\ContentRepository90\Rules\Traits;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Variable;
+use Rector\PhpParser\Node\NodeFactory;
 
 trait SubgraphTrait
 {
     use NodeTrait;
 
-    /**
-     * @var \Rector\Core\PhpParser\Node\NodeFactory
-     */
-    protected $nodeFactory;
-
+    protected NodeFactory $nodeFactory;
 
     private function subgraph_findChildNodes(
         Expr $nodeVariable,
@@ -54,7 +50,7 @@ trait SubgraphTrait
         );
     }
 
-    private function subgraph_findNodePath(Variable $nodeVariable): Expr
+    private function subgraph_findNodePath(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createMethodCall(
             'subgraph',
@@ -65,7 +61,7 @@ trait SubgraphTrait
         );
     }
 
-    private function subgraph_findNodePath_getDepth(Variable $nodeVariable): Expr
+    private function subgraph_findNodePath_getDepth(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createMethodCall(
             $this->subgraph_findNodePath($nodeVariable),
@@ -84,7 +80,7 @@ trait SubgraphTrait
         );
     }
 
-    private function subgraph_findParentNode(Variable $nodeVariable): Expr
+    private function subgraph_findParentNode(Expr $nodeVariable): Expr
     {
         return $this->nodeFactory->createMethodCall(
             'subgraph',

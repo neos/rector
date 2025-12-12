@@ -25,7 +25,6 @@ class SomeClass extends AnotherClass
     {
         $isHidden = $node->getProperty('hiddenInMenu');
         // TODO 9.0 migration: !! Node::setHiddenInIndex() is not supported by the new CR. Use the "SetNodeProperties" command to change the property value for "hiddenInMenu".
-
         $node->setHiddenInIndex(false);
     }
 }

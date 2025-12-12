@@ -2,15 +2,15 @@
 
 declare (strict_types=1);
 
-use Rector\Config\RectorConfig;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\ValueObject\AddInjection;
-use Neos\Neos\Domain\Service\RenderingModeService;
+use Rector\Config\RectorConfig;
 
-return static function (RectorConfig $rectorConfig) : void {
-    $rectorConfig->rule(\Neos\Rector\ContentRepository90\Rules\ContextGetCurrentRenderingModeRector::class);
+$rectorConfig = RectorConfig::configure();
+$rectorConfig->withRules([\Neos\Rector\ContentRepository90\Rules\ContextGetCurrentRenderingModeRector::class]);
 
-    $rectorConfig->ruleWithConfiguration(InjectServiceIfNeededRector::class, [
-        new AddInjection('renderingModeService', RenderingModeService::class)
-    ]);
-};
+$rectorConfig->withConfiguredRule(InjectServiceIfNeededRector::class, [
+    new AddInjection('renderingModeService', RenderingModeService::class)
+]);
+return $rectorConfig;

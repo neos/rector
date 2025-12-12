@@ -1,26 +1,35 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\ContentRepository\Domain\Model\Node as NodeLegacyStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\PhpParser\Node\NodeFactory;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeGetPathRector extends AbstractRector
+final class NodeGetPathRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    )
-    {
+        private BetterNodeFinder $betterNodeFinder,
+
+    ) {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"NodeInterface::getPath()" will be rewritten', __CLASS__);
     }
@@ -28,34 +37,71 @@ final class NodeGetPathRector extends AbstractRector
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
+
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node)
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'getPath')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($node->var)),
-                self::todoComment('Try to remove the (string) cast and make your code more type-safe.')
-            ],
-            $node
-        );
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
 
-        return $this->castToString(
-            $this->subgraph_findNodePath($node->var)
-        );
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
+
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'getPath'
+                    ) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(NodeLegacyStub::class))) {
+                            $this->changed = true;
+                            $this->nodeVar = $node->var;
+
+                            return $this->castToString(
+                                $this->subgraph_findNodePath($node->var)
+                            );
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
+            return null;
+        }
+
+        $node->expr = $newExpr;
+
+        return [
+            self::assign(
+                'subgraph',
+                $this->this_contentRepositoryRegistry_subgraphForNode($visitor->nodeVar)
+            ),
+            self::withTodoComment(
+                'Try to remove the (string) cast and make your code more type-safe.',
+                $node
+            )
+        ];
     }
 }

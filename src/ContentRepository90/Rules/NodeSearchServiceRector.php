@@ -6,18 +6,24 @@ namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Stmt\Nop;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeSearchServiceRector extends AbstractRector
+final class NodeSearchServiceRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -30,95 +36,120 @@ final class NodeSearchServiceRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): ?array
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (
-            !$this->isObjectType($node->var, new ObjectType(\Neos\Neos\Domain\Service\NodeSearchService::class))
-             && !$this->isObjectType($node->var, new ObjectType(\Neos\Neos\Domain\Service\NodeSearchServiceInterface::class))
-        ) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'findByProperties')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-        if (!isset($node->args[3])) {
-            $nodeExpr = self::assign('node', new \PhpParser\Node\Scalar\String_('we-need-a-node-here'));
-            $nodeNode = $nodeExpr->expr->var;
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(
+            $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+                use AllTraits;
 
-            $this->nodesToAddCollector->addNodesBeforeNode(
-                [
-                    self::withTodoComment('The replacement needs a node as starting point for the search. Please provide a node, to make this replacement working.', $nodeExpr),
-                    $subgraphNode = self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($nodeNode)),
-                ],
-                $node
-            );
+                public function __construct(
+                    private readonly NodeTypeResolver $nodeTypeResolver,
+                    protected NodeFactory $nodeFactory,
+                    public bool $changed = false,
+                    public bool $hasStartingPoint = false,
+                    public ?Node\Expr $nodeVar = null,
+                ) {
+                }
 
-        } else {
-            $this->nodesToAddCollector->addNodesBeforeNode(
-                [
-                    self::withTodoComment('This could be a suitable replacement. Please check if all your requirements are still fulfilled.',
-                        $subgraphNode = self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($node->args[3]->value))
-                    )
-                ],
-                $node
+                public function leaveNode(Node $node)
+                {
+                    if (
+                        $node instanceof MethodCall &&
+                        $node->name instanceof Identifier &&
+                        $node->name->toString() === 'findByProperties'
+                    ) {
+                        if ($this->nodeTypeResolver->isObjectType($node->var, new ObjectType(\Neos\Neos\Domain\Service\NodeSearchService::class))
+                            || $this->nodeTypeResolver->isObjectType($node->var, new ObjectType(\Neos\Neos\Domain\Service\NodeSearchServiceInterface::class))
+                        ) {
+                            $this->changed = true;
 
-            );
-            $nodeNode = $node->args[3]->value;
+                            if (isset($node->args[3])) {
+                                $this->hasStartingPoint = true;
+                                $this->nodeVar = $node->args[3]->value;
+                            } else {
+                                $this->nodeVar = new Node\Expr\Variable('node');
+                            }
 
+                            return $this->nodeFactory->createMethodCall(
+                                'subgraph',
+                                'findDescendantNodes',
+                                [
+                                    $this->nodeFactory->createPropertyFetch(
+                                        $this->nodeVar,
+                                        'aggregateId'
+                                    ),
+                                    $this->nodeFactory->createStaticCall(
+                                        \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::class,
+                                        'create',
+                                        [
+                                            'nodeTypes' => $this->nodeFactory->createStaticCall(
+                                                \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::class,
+                                                'create',
+                                                [
+                                                    $this->nodeFactory->createStaticCall(
+                                                        \Neos\ContentRepository\Core\NodeType\NodeTypeNames::class,
+                                                        'fromStringArray',
+                                                        [
+                                                            $node->args[1]->value,
+                                                        ]
+                                                    ),
+                                                    $this->nodeFactory->createStaticCall(
+                                                        \Neos\ContentRepository\Core\NodeType\NodeTypeNames::class,
+                                                        'createEmpty',
+                                                    ),
+                                                ]
+                                            ),
+                                            'searchTerm' => $node->args[0]->value,
+                                        ]
+                                    )
+                                ]
+                            );
+                        }
+                    }
+                    return null;
+                }
+            });
+
+        /** @var Node\Expr $newExpr */
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if (!$visitor->changed) {
+            return null;
         }
 
-        return $this->nodeFactory->createMethodCall(
-            $subgraphNode->expr->var,
-            'findDescendantNodes',
-            [
-                $this->nodeFactory->createPropertyFetch(
-                    $nodeNode,
-                    'aggregateId'
+        $node->expr = $newExpr;
+
+        if (!$visitor->hasStartingPoint) {
+            return [
+                new Nop(), // Needed, to render the comment below
+                self::withTodoComment(
+                    'The replacement needs a node as starting point for the search. Please provide a node, to make this replacement working.',
+                    self::assign($visitor->nodeVar->name, new \PhpParser\Node\Scalar\String_('we-need-a-node-here')),
                 ),
-                $this->nodeFactory->createStaticCall(
-                    \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::class,
-                    'create',
-                    [
-                        'nodeTypes' => $this->nodeFactory->createStaticCall(
-                            \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::class,
-                            'create',
-                            [
-                                $this->nodeFactory->createStaticCall(
-                                    \Neos\ContentRepository\Core\NodeType\NodeTypeNames::class,
-                                    'fromStringArray',
-                                    [
-                                        $node->args[1]->value,
-                                    ]
-                                ),
-                                $this->nodeFactory->createStaticCall(
-                                    \Neos\ContentRepository\Core\NodeType\NodeTypeNames::class,
-                                    'createEmpty',
-                                ),
-                            ]
-                        ),
-                        'searchTerm' => $node->args[0]->value,
-                    ]
-                )
-            ]
-        );
+                self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($visitor->nodeVar)),
+                $node,
+            ];
+        }
+
+        return [
+            new Nop(), // Needed, to render the comment below
+            self::withTodoComment(
+                'This could be a suitable replacement. Please check if all your requirements are still fulfilled.',
+                self::assign('subgraph', $this->this_contentRepositoryRegistry_subgraphForNode($visitor->nodeVar)),
+            ),
+            $node,
+        ];
     }
 }
 
-/**
- * \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::create(
- *      nodeTypes: \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::create(
- *          \Neos\ContentRepository\Core\NodeType\NodeTypeNames::fromStringArray($searchNodeTypes),
- *          \Neos\ContentRepository\Core\NodeType\NodeTypeNames::createEmpty()
- *      ),
- *      searchTerm: $term
- *  )
- */

@@ -8,14 +8,11 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Expression;
-use PhpParser\Node\Stmt\Nop;
+use Rector\PhpParser\Node\NodeFactory;
 
 trait FunctionsTrait
 {
-    /**
-     * @var \Rector\Core\PhpParser\Node\NodeFactory
-     */
-    protected $nodeFactory;
+    protected NodeFactory $nodeFactory;
 
     private function iteratorToArray(Expr $inner): Expr
     {
@@ -39,25 +36,25 @@ trait FunctionsTrait
         );
     }
 
-    private static function todoComment(string $commentText): Nop
-    {
-        return new Nop([
-            'comments' => [
-                new Comment('// TODO 9.0 migration: ' . $commentText)
-            ]
-        ]);
-    }
-
-    private static function withTodoComment(string $commentText, \PhpParser\NodeAbstract $attachmentNode): \PhpParser\Node
-    {
-        $attachmentNode->setAttribute('comments', [
-            new Comment('// TODO 9.0 migration: ' . $commentText)
-        ]);
-        return $attachmentNode;
-    }
-
-    private static function todoCommentAttribute(string $commentText): Comment
+    private static function todoComment(string $commentText): Comment
     {
         return new Comment('// TODO 9.0 migration: ' . $commentText);
+    }
+
+    private static function withTodoComment(string $commentText, \PhpParser\Node $attachmentNode): \PhpParser\Node
+    {
+        $newText = '// TODO 9.0 migration: ' . $commentText;
+
+        $comments = $attachmentNode->getAttribute('comments') ?? [];
+
+        foreach ($comments as $comment) {
+            if ($comment instanceof Comment && $comment->getText() === $newText) {
+                return $attachmentNode;
+            }
+        }
+
+        $comments[] = new Comment($newText);
+        $attachmentNode->setAttribute('comments', $comments);
+        return $attachmentNode;
     }
 }

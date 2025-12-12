@@ -34,9 +34,8 @@ class SomeClass extends AnotherClass
     public function foo(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node, \Neos\ContentRepository\Core\Projection\ContentGraph\Node $targetNode)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        // TODO 9.0 migration: Try to remove the iterator_to_array($nodes) call.
-
         /** @var array<\Neos\ContentRepository\Core\Projection\ContentGraph\Node> $childNodes */
+        // TODO 9.0 migration: Try to remove the iterator_to_array($nodes) call.
         $childNodes = iterator_to_array($subgraph->findChildNodes($node->aggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter::create()));
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($targetNode);
 

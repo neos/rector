@@ -1,27 +1,26 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\ContentRepository90\Rules;
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node as NodeLegacyStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeLabelGeneratorRector extends AbstractRector
+final class NodeLabelGeneratorRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    )
+    public function __construct()
     {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"$node->getLabel()" will be rewritten.', __CLASS__);
     }
@@ -29,14 +28,15 @@ final class NodeLabelGeneratorRector extends AbstractRector
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
         return [Node\Expr\MethodCall::class];
     }
+
     /**
      * @param Node\Expr\MethodCall $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof Node\Expr\MethodCall);
 

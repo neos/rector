@@ -2,12 +2,12 @@
 
 namespace Neos\ContentRepository\Domain\Projection\Content;
 
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node;
 
 /**
  * @deprecated
  */
-class TraversableNodeInterface extends NodeLegacyStub
+class TraversableNodeInterface extends Node
 {
 
 }

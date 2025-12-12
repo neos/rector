@@ -8,21 +8,19 @@ use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeIsHiddenInIndexRector extends AbstractRector
+final class NodeIsHiddenInIndexRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    )
+    public function __construct()
     {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"NodeInterface::isHiddenInIndex()" will be rewritten', __CLASS__);
     }
@@ -30,18 +28,19 @@ final class NodeIsHiddenInIndexRector extends AbstractRector
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
         return [MethodCall::class];
     }
+
     /**
      * @param MethodCall $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?Node
     {
         assert($node instanceof MethodCall);
 
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
+        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class))) {
             return null;
         }
         if (!$this->isName($node->name, 'isHiddenInIndex')) {

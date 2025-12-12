@@ -1,24 +1,29 @@
 <?php
 
 declare (strict_types=1);
+
 namespace Neos\Rector\ContentRepository90\Rules;
 
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeFactoryResetRector extends AbstractRector
+final class NodeFactoryResetRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
     public function __construct(
-    )
-    {
+        private BetterNodeFinder $betterNodeFinder,
+    ) {
     }
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return CodeSampleLoader::fromFile('"NodeFactory::reset()" will be removed.', __CLASS__);
     }
@@ -26,25 +31,32 @@ final class NodeFactoryResetRector extends AbstractRector
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
+
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node)
     {
-        assert($node instanceof Node\Expr\MethodCall);
-
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Factory\NodeFactory::class))) {
-            return null;
-        }
-        if (!$this->isName($node->name, 'reset')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-        $this->removeNode($node);
+        $methodCall = $this->betterNodeFinder->findFirst($node, function (Node $subNode) {
+            return $subNode instanceof MethodCall
+                && $this->isObjectType($subNode->var, new ObjectType(\Neos\ContentRepository\Domain\Factory\NodeFactory::class))
+                && $this->isName($subNode->name, 'reset');
+        });
+
+        if ($methodCall) {
+            if ($node instanceof Node\Stmt\Return_) {
+                return new Node\Stmt\Return_();
+            }
+            return NodeVisitor::REMOVE_NODE;
+        }
 
         return $node;
     }

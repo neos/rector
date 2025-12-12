@@ -7,14 +7,16 @@ namespace Neos\Rector\Generic\Rules;
 use Neos\Rector\Generic\ValueObject\RemoveInjection;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\NodeVisitor;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToRemoveCollector;
+use Rector\BetterPhpDocParser\PhpDocInfo\PhpDocInfoFactory;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
-final class RemoveInjectionsRector extends AbstractRector implements ConfigurableRectorInterface
+final class RemoveInjectionsRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     use AllTraits;
 
@@ -24,7 +26,7 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
     private array $injectionsToRemove = [];
 
     public function __construct(
-        private readonly NodesToRemoveCollector $nodesToRemoveCollector
+        protected PhpDocInfoFactory $phpDocInfoFactory,
     ) {
     }
 
@@ -44,16 +46,15 @@ final class RemoveInjectionsRector extends AbstractRector implements Configurabl
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt\Property $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node)
     {
         assert($node instanceof Node\Stmt\Property);
         foreach ($this->injectionsToRemove as $removeInjection) {
             if ($this->isObjectType($node, new ObjectType($removeInjection->objectType))) {
                 if (self::hasFlowInjectAttribute($node->attrGroups) || $this->hasFlowInjectDocComment($node)) {
-                    $this->removeNode($node);
-                    return $node;
+                    return NodeVisitor::REMOVE_NODE;
                 }
             }
         }

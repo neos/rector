@@ -4,18 +4,20 @@ declare (strict_types=1);
 
 namespace Neos\Rector\Generic\Rules;
 
+use Neos\ContentRepository\Domain\Model\Node as NodeLegacyStub;
 use Neos\Rector\Generic\ValueObject\MethodCallToWarningComment;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\PhpParser\Node\BetterNodeFinder;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
 
-final class MethodCallToWarningCommentRector extends AbstractRector implements ConfigurableRectorInterface
+final class MethodCallToWarningCommentRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     use AllTraits;
 
@@ -25,9 +27,8 @@ final class MethodCallToWarningCommentRector extends AbstractRector implements C
     private array $methodCallsToWarningComments = [];
 
     public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    )
-    {
+        private BetterNodeFinder $betterNodeFinder,
+    ) {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -42,40 +43,38 @@ final class MethodCallToWarningCommentRector extends AbstractRector implements C
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
     public function refactor(Node $node): ?Node
     {
-        assert($node instanceof Node\Expr\MethodCall);
+        if (!in_array('expr', $node->getSubNodeNames())) {
+            return null;
+        }
+
         foreach ($this->methodCallsToWarningComments as $methodCallToWarningComment) {
-            if (!$this->isName($node->name, $methodCallToWarningComment->methodName)) {
-                continue;
+            $methodCall = $this->betterNodeFinder->findFirst($node, function (Node $subNode) use ($methodCallToWarningComment) {
+                return $subNode instanceof MethodCall
+                    && $this->isObjectType($subNode->var, new ObjectType($methodCallToWarningComment->objectType))
+                    && $this->isName($subNode->name, $methodCallToWarningComment->methodName);
+            });
+            if ($methodCall) {
+                return self::withTodoComment(
+                    sprintf($methodCallToWarningComment->warningMessage, $methodCallToWarningComment->objectType, $methodCallToWarningComment->methodName),
+                    $node
+                );
             }
-            if (!$this->isObjectType($node->var, new ObjectType($methodCallToWarningComment->objectType))) {
-                continue;
-            }
-
-            $this->nodesToAddCollector->addNodesBeforeNode(
-                [
-                    self::todoComment(sprintf($methodCallToWarningComment->warningMessage, $methodCallToWarningComment->objectType, $methodCallToWarningComment->methodName))
-                ],
-                $node
-            );
-
-            return $node;
         }
         return null;
     }
 
-
     /**
      * @param mixed[] $configuration
      */
-    public function configure(array $configuration) : void
+    public function configure(array $configuration): void
     {
         Assert::allIsAOf($configuration, MethodCallToWarningComment::class);
         $this->methodCallsToWarningComments = $configuration;

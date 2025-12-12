@@ -8,10 +8,10 @@ use Neos\Rector\Generic\Rules\InjectServiceIfNeededRector;
 use Neos\Rector\Generic\ValueObject\AddInjection;
 use Rector\Config\RectorConfig;
 
-return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->rule(NodeLabelGeneratorRector::class);
+$rectorConfig = RectorConfig::configure();
+$rectorConfig->withRules([NodeLabelGeneratorRector::class]);
 
-    $rectorConfig->ruleWithConfiguration(InjectServiceIfNeededRector::class, [
-        new AddInjection('nodeLabelGenerator', NodeLabelGeneratorInterface::class),
-    ]);
-};
+$rectorConfig->withConfiguredRule(InjectServiceIfNeededRector::class, [
+    new AddInjection('nodeLabelGenerator', NodeLabelGeneratorInterface::class),
+]);
+return $rectorConfig;

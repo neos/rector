@@ -12,20 +12,21 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Contract\Rector\ConfigurableRectorInterface;
-use Rector\Core\Rector\AbstractRector;
+use Rector\Contract\Rector\ConfigurableRectorInterface;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\ConfiguredCodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 use Webmozart\Assert\Assert;
 
-final class ToStringToMethodCallOrPropertyFetchRector extends AbstractRector implements ConfigurableRectorInterface
+final class ToStringToMethodCallOrPropertyFetchRector extends AbstractRector implements ConfigurableRectorInterface, DocumentedRuleInterface
 {
     /**
      * @var array<string, string>
      */
     private array $methodAndPropertyNamesByType = [];
 
-    public function getRuleDefinition() : RuleDefinition
+    public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition('Turns defined code uses of "__toString()" method to specific method calls or property fetches.', [new ConfiguredCodeSample(<<<'CODE_SAMPLE'
 $someValue = new SomeObject;
@@ -43,7 +44,7 @@ CODE_SAMPLE
     /**
      * @return array<class-string<Node>>
      */
-    public function getNodeTypes() : array
+    public function getNodeTypes(): array
     {
         return [String_::class, MethodCall::class, Concat::class, FuncCall::class];
     }
@@ -51,7 +52,7 @@ CODE_SAMPLE
     /**
      * @param String_|MethodCall|Concat $node
      */
-    public function refactor(Node $node) : ?Node
+    public function refactor(Node $node): ?Node
     {
         if ($node instanceof String_) {
             return $this->processStringNode($node);
@@ -68,7 +69,7 @@ CODE_SAMPLE
     /**
      * @param mixed[] $configuration
      */
-    public function configure(array $configuration) : void
+    public function configure(array $configuration): void
     {
         Assert::allString(\array_keys($configuration));
         Assert::allString($configuration);
@@ -76,7 +77,7 @@ CODE_SAMPLE
         $this->methodAndPropertyNamesByType = $configuration;
     }
 
-    private function processStringNode(String_ $string) : ?Node
+    private function processStringNode(String_ $string): ?Node
     {
         foreach ($this->methodAndPropertyNamesByType as $type => $methodOrPropertyName) {
             if (!$this->isObjectType($string->expr, new ObjectType($type))) {
@@ -87,7 +88,7 @@ CODE_SAMPLE
         return null;
     }
 
-    private function processConcatNode(Concat $concat) : ?Node
+    private function processConcatNode(Concat $concat): ?Node
     {
         foreach ($this->methodAndPropertyNamesByType as $type => $methodOrPropertyName) {
             if ($this->isObjectType($concat->left, new ObjectType($type))) {
@@ -100,7 +101,7 @@ CODE_SAMPLE
         return $concat;
     }
 
-    private function processFuncCallNode(FuncCall $funcCall) : ?Node
+    private function processFuncCallNode(FuncCall $funcCall): ?Node
     {
         if (!$this->isName($funcCall, 'sprintf')) {
             return null;
@@ -118,7 +119,7 @@ CODE_SAMPLE
         return $funcCall;
     }
 
-    private function processMethodCall(MethodCall $methodCall) : ?Node
+    private function processMethodCall(MethodCall $methodCall): ?Node
     {
         foreach ($this->methodAndPropertyNamesByType as $type => $methodOrPropertyName) {
             if (!$this->isObjectType($methodCall->var, new ObjectType($type))) {

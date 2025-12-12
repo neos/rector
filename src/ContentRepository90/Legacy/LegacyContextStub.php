@@ -17,7 +17,8 @@ use Neos\Neos\Domain\Model\Site;
  *
  * @deprecated !!! rewrite your code to not use this class.
  */
-class LegacyContextStub {
+class LegacyContextStub
+{
     /**
      * @deprecated
      */

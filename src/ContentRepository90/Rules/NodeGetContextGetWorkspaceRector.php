@@ -4,20 +4,25 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\ContentRepository\Domain\Model\Node as NodeLegacyStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\NodeTypeResolver\NodeTypeResolver;
+use Rector\PhpParser\Node\NodeFactory;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeGetContextGetWorkspaceRector extends AbstractRector
+final class NodeGetContextGetWorkspaceRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    )
+    public function __construct()
     {
     }
 
@@ -31,45 +36,71 @@ final class NodeGetContextGetWorkspaceRector extends AbstractRector
      */
     public function getNodeTypes(): array
     {
-        return [\PhpParser\Node\Expr\MethodCall::class];
+        return [Node\Stmt::class];
     }
 
     /**
-     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param Node\Stmt $node
      */
-    public function refactor(Node $node): ?Node
+    public function refactor(Node $node): ?array
     {
-        assert($node instanceof Node\Expr\MethodCall);
-        // Node->getContext()->getWorkspace()
-        if (!$this->isName($node->name, 'getWorkspace')) {
-            return null;
-        }
-        if (!$node->var instanceof Node\Expr\MethodCall) {
-            return null;
-        }
-        if (!$this->isName($node->var->name, 'getContext')) {
+        if (!in_array('expr', $node->getSubNodeNames())) {
             return null;
         }
 
-        if (!$this->isObjectType($node->var->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
-            return null;
-        }
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor($visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
+            use AllTraits;
 
-        $nodeVar = $node->var->var;
-        $this->nodesToAddCollector->addNodesBeforeNode(
-            [
-                self::assign(
-                    'contentRepository',
-                    $this->this_contentRepositoryRegistry_get(
-                        $this->nodeFactory->createPropertyFetch($nodeVar, 'contentRepositoryId')
-                    )
+            public function __construct(
+                private readonly NodeTypeResolver $nodeTypeResolver,
+                protected NodeFactory $nodeFactory,
+                public bool $changed = false,
+                public ?Node\Expr $nodeVar = null,
+            ) {
+            }
+
+            public function leaveNode(Node $node)
+            {
+                if (
+                    $node instanceof MethodCall &&
+                    $node->name instanceof Identifier &&
+                    $node->name->toString() === 'getWorkspace' &&
+                    $node->var instanceof MethodCall &&
+                    $node->var->name instanceof Identifier &&
+                    $node->var->name->toString() === 'getContext'
+                ) {
+                    $this->nodeVar = $node->var->var;
+                    if ($this->nodeTypeResolver->isObjectType($this->nodeVar, new ObjectType(NodeLegacyStub::class))) {
+                        $this->changed = true;
+
+                        return $this->contentRepository_findWorkspaceByName(
+                            $this->nodeFactory->createPropertyFetch($this->nodeVar, 'workspaceName')
+                        );
+                    }
+                }
+
+                return null;
+            }
+        });
+
+        $newExpr = $traverser->traverse([$node->expr])[0];
+
+        if ($visitor->changed) {
+            $node->expr = $newExpr;
+
+            $contentRepository = self::assign(
+                'contentRepository',
+                $this->this_contentRepositoryRegistry_get(
+                    $this->nodeFactory->createPropertyFetch($visitor->nodeVar, 'contentRepositoryId')
                 )
-            ],
-            $node
-        );
+            );
 
-        return $this->contentRepository_findWorkspaceByName(
-            $this->nodeFactory->createPropertyFetch($nodeVar, 'workspaceName')
-        );
+            return [
+                $contentRepository, $node
+            ];
+        }
+
+        return null;
     }
 }

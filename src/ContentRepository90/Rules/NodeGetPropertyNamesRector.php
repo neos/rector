@@ -4,24 +4,22 @@ declare (strict_types=1);
 
 namespace Neos\Rector\ContentRepository90\Rules;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub;
+use Neos\ContentRepository\Domain\Model\Node as NodeLegacyStub;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Neos\ContentRepository\Core\NodeType\NodeType;
-use PhpParser\NodeDumper;
 
-final class NodeGetPropertyNamesRector extends AbstractRector
+final class NodeGetPropertyNamesRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -55,7 +53,7 @@ final class NodeGetPropertyNamesRector extends AbstractRector
         return
             $this->nodeFactory->createFuncCall('array_keys', [
                 $this->nodeFactory->createFuncCall('iterator_to_array', [
-                            $this->nodeFactory->createPropertyFetch($node->var, 'properties'),
+                    $this->nodeFactory->createPropertyFetch($node->var, 'properties'),
                 ]),
             ]);
     }

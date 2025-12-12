@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Neos\Rector\Tests\Rules\NodeGetDepthRector;
+namespace Neos\Rector\Tests\ContentRepository90\Rules\NodeGetContextPathRector;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Rector\Testing\PHPUnit\AbstractRectorTestCase;
 
 final class NodeGetContextPathRectorTest extends AbstractRectorTestCase
 {
-    /**
-     * @dataProvider provideData()
-     */
+    #[DataProvider('provideData')]
     public function test(string $fileInfo): void
     {
         $this->doTestFile($fileInfo);
@@ -19,9 +18,9 @@ final class NodeGetContextPathRectorTest extends AbstractRectorTestCase
     /**
      * @return \Iterator<string>
      */
-    public function provideData(): \Iterator
+    public static function provideData(): \Iterator
     {
-        return $this->yieldFilesFromDirectory(__DIR__ . '/Fixture');
+        return static::yieldFilesFromDirectory(__DIR__ . '/Fixture');
     }
 
     public function provideConfigFilePath(): string

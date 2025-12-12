@@ -8,12 +8,13 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
-use Rector\Core\Rector\AbstractRector;
-use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
-use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use PHPStan\Type\ObjectType;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
+use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
+use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class ContentRepositoryUtilityRenderValidNodeNameRector extends AbstractRector
+final class ContentRepositoryUtilityRenderValidNodeNameRector extends AbstractRector implements DocumentedRuleInterface
 {
 
     public function getRuleDefinition(): RuleDefinition

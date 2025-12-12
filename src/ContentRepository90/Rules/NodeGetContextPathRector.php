@@ -8,17 +8,16 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAddress;
 use Neos\Rector\Utility\CodeSampleLoader;
 use PhpParser\Node;
 use PHPStan\Type\ObjectType;
-use Rector\Core\Rector\AbstractRector;
-use Rector\PostRector\Collector\NodesToAddCollector;
+use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class NodeGetContextPathRector extends AbstractRector
+final class NodeGetContextPathRector extends AbstractRector implements DocumentedRuleInterface
 {
     use AllTraits;
 
-    public function __construct(
-        private readonly NodesToAddCollector $nodesToAddCollector
-    ) {
+    public function __construct()
+    {
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -41,7 +40,7 @@ final class NodeGetContextPathRector extends AbstractRector
     {
         assert($node instanceof Node\Expr\MethodCall);
 
-        if (!$this->isObjectType($node->var, new ObjectType(\Neos\Rector\ContentRepository90\Legacy\NodeLegacyStub::class))) {
+        if (!$this->isObjectType($node->var, new ObjectType(\Neos\ContentRepository\Domain\Model\Node::class))) {
             return null;
         }
         if (!$this->isName($node->name, 'getContextPath')) {

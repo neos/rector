@@ -9,7 +9,6 @@ class FusionNodePropertyPathToWarningComment
     public function __construct(
         public readonly string $propertyPath,
         public readonly string $warningMessage,
-    )
-    {
+    ) {
     }
 }
