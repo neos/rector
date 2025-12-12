@@ -34,17 +34,9 @@ Right now, we ship the following sets of Rector rules:
 - `\Neos\Rector\NeosRectorSets::CONTENTREPOSITORY_9_0`: all rules needed to migrate to the Event-Sourced Content
   Repository
 
-Also you need to add the autoload paths, to allow rector to parse your code properly. By default we added `./Packages`
-and `./DistributionPackages` to the template.
-
 ```php
 $rectorConfig->sets([
     NeosRectorSets::CONTENTREPOSITORY_9_0,
-]);
-
-$rectorConfig->autoloadPaths([
-    __DIR__ . '/Packages',
-    __DIR__ . '/DistributionPackages',
 ]);
 
 $rectorConfig->paths([

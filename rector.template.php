@@ -10,11 +10,6 @@ return static function (RectorConfig $rectorConfig): void {
         NeosRectorSets::CONTENTREPOSITORY_9_0,
     ]);
 
-    $rectorConfig->autoloadPaths([
-        __DIR__ . '/Packages',
-        __DIR__ . '/DistributionPackages',
-    ]);
-
     $rectorConfig->paths([
         // TODO: Start adding your paths here, like so:
         __DIR__ . '/DistributionPackages/'
