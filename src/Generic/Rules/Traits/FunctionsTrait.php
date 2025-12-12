@@ -43,14 +43,18 @@ trait FunctionsTrait
 
     private static function withTodoComment(string $commentText, \PhpParser\Node $attachmentNode): \PhpParser\Node
     {
-        $attachmentNode->setAttribute('comments', [
-            new Comment('// TODO 9.0 migration: ' . $commentText)
-        ]);
-        return $attachmentNode;
-    }
+        $newText = '// TODO 9.0 migration: ' . $commentText;
 
-    private static function todoCommentAttribute(string $commentText): Comment
-    {
-        return new Comment('// TODO 9.0 migration: ' . $commentText);
+        $comments = $attachmentNode->getAttribute('comments') ?? [];
+
+        foreach ($comments as $comment) {
+            if ($comment instanceof Comment && $comment->getText() === $newText) {
+                return $attachmentNode;
+            }
+        }
+
+        $comments[] = new Comment($newText);
+        $attachmentNode->setAttribute('comments', $comments);
+        return $attachmentNode;
     }
 }
