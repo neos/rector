@@ -5,6 +5,14 @@ This package contains a Rector ruleset which is used for migrating from Neos 8.x
 Right now we focus especially on rules to migrate from the old Content Repository API (< Neos 9.0) to the
 Event Sourced Content Repository (>= 9.0).
 
+**PHP-only migrations**
+
+Earlier version of `neos/rector` also did the migration of Yaml and Fusion file. They have been moved into Neos core migrations starting version 9.0.8. Now `neos/rector` only contains PHP migrations.
+
+See for more details: https://github.com/neos/neos-development-collection/issues/5607
+
+
+
 ## Installation
 
 Please install the neos/rector package in your Distribution as a dev dependency with composer.
