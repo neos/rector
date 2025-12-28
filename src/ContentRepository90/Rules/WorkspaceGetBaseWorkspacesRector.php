@@ -46,10 +46,6 @@ final class WorkspaceGetBaseWorkspacesRector extends AbstractRector implements D
      */
     public function refactor(Node $node): ?array
     {
-        if (!in_array('expr', $node->getSubNodeNames())) {
-            return null;
-        }
-
         $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
             use AllTraits;
@@ -88,11 +84,19 @@ final class WorkspaceGetBaseWorkspacesRector extends AbstractRector implements D
             }
         });
 
-        $newExpr = $traverser->traverse([$node->expr])[0];
+        if (in_array('expr', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newExpr */
+            $newExpr = $traverser->traverse([$node->expr])[0];
+            $node->expr = $newExpr;
+        } elseif (in_array('cond', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newCond */
+            $newCond = $traverser->traverse([$node->cond])[0];
+            $node->cond = $newCond;
+        } else {
+            return null;
+        }
 
         if ($visitor->changed) {
-            $node->expr = $newExpr;
-
             return [
                 new Nop(), // Needed, to render the comment below
                 self::withTodoComment(

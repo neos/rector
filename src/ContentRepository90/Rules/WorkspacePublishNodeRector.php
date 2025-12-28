@@ -44,10 +44,6 @@ final class WorkspacePublishNodeRector extends AbstractRector implements Documen
      */
     public function refactor(Node $node): ?Node
     {
-        if (!in_array('expr', $node->getSubNodeNames())) {
-            return null;
-        }
-
         $traverser = new NodeTraverser();
         $traverser->addVisitor(
             $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
@@ -86,14 +82,21 @@ final class WorkspacePublishNodeRector extends AbstractRector implements Documen
                 }
             });
 
-        /** @var Node\Expr $newExpr */
-        $newExpr = $traverser->traverse([$node->expr])[0];
+        if (in_array('expr', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newExpr */
+            $newExpr = $traverser->traverse([$node->expr])[0];
+            $node->expr = $newExpr;
+        } elseif (in_array('cond', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newCond */
+            $newCond = $traverser->traverse([$node->cond])[0];
+            $node->cond = $newCond;
+        } else {
+            return null;
+        }
 
         if (!$visitor->changed) {
             return null;
         }
-
-        $node->expr = $newExpr;
 
         return self::withTodoComment(
             'Check if this matches your requirements as this is not a 100% replacement. Make this code aware of multiple Content Repositories.',

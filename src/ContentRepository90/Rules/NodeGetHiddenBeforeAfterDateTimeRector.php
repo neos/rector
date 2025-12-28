@@ -43,10 +43,6 @@ final class NodeGetHiddenBeforeAfterDateTimeRector extends AbstractRector implem
      */
     public function refactor(Node $node): ?Node
     {
-        if (!in_array('expr', $node->getSubNodeNames())) {
-            return null;
-        }
-
         $traverser = new NodeTraverser();
         $traverser->addVisitor(
             $visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
@@ -89,14 +85,21 @@ final class NodeGetHiddenBeforeAfterDateTimeRector extends AbstractRector implem
                 }
             });
 
-        /** @var Node\Expr $newExpr */
-        $newExpr = $traverser->traverse([$node->expr])[0];
+        if (in_array('expr', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newExpr */
+            $newExpr = $traverser->traverse([$node->expr])[0];
+            $node->expr = $newExpr;
+        } elseif (in_array('cond', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newCond */
+            $newCond = $traverser->traverse([$node->cond])[0];
+            $node->cond = $newCond;
+        } else {
+            return null;
+        }
 
         if (!$visitor->changed) {
             return null;
         }
-
-        $node->expr = $newExpr;
 
         $comment = 'Timed publishing has been conceptually changed and has been extracted into a dedicated package. Please check https://github.com/neos/timeable-node-visibility for further details.';
         if ($visitor->isGetter === false) {
