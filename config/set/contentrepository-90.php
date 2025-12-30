@@ -635,6 +635,7 @@ $rectorConfig->withConfiguredRule(RenameClassRector::class, [
     \Neos\ContentRepository\Domain\Projection\Content\PropertyCollectionInterface::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
     \Neos\ContentRepository\Domain\Model\ArrayPropertyCollection::class => \Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection::class,
     \Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface::class => \Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface::class,
+    \Neos\ContentRepository\NodeTypePostprocessor\NodeTypePostprocessorInterface::class => \Neos\ContentRepository\Core\NodeType\NodeTypePostprocessorInterface::class,
 ]);
 
 /**
