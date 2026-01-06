@@ -15,7 +15,6 @@ use PHPStan\Type\ObjectType;
 use Rector\Contract\Rector\ConfigurableRectorInterface;
 use Rector\NodeTypeResolver\NodeTypeResolver;
 use Rector\PhpParser\Node\NodeFactory;
-use Rector\PostRector\Collector\NodesToAddCollector;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\Contract\DocumentedRuleInterface;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -54,10 +53,6 @@ final class ObjectInstantiationToWarningCommentRector extends AbstractRector imp
      */
     public function refactor(Node $node): ?Node
     {
-        if (!in_array('expr', $node->getSubNodeNames())) {
-            return null;
-        }
-
         $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor = new class($this->nodeTypeResolver, $this->nodeFactory, $this->objectInstantiationToWarningComments) extends NodeVisitorAbstract {
             use AllTraits;
@@ -86,7 +81,18 @@ final class ObjectInstantiationToWarningCommentRector extends AbstractRector imp
                 return null;
             }
         });
-        $traverser->traverse([$node->expr])[0];
+
+        if (in_array('expr', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newExpr */
+            $newExpr = $traverser->traverse([$node->expr])[0];
+            $node->expr = $newExpr;
+        } elseif (in_array('cond', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newCond */
+            $newCond = $traverser->traverse([$node->cond])[0];
+            $node->cond = $newCond;
+        } else {
+            return null;
+        }
 
         if ($visitor->changed) {
             return

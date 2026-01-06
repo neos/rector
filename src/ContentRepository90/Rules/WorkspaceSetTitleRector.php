@@ -39,10 +39,6 @@ final class WorkspaceSetTitleRector extends AbstractRector implements Documented
      */
     public function refactor(Node $node): ?Node
     {
-        if (!in_array('expr', $node->getSubNodeNames())) {
-            return null;
-        }
-
         $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor = new class($this->nodeTypeResolver, $this->nodeFactory) extends NodeVisitorAbstract {
             public function __construct(
@@ -78,10 +74,19 @@ final class WorkspaceSetTitleRector extends AbstractRector implements Documented
             }
         });
 
-        $newExpr = $traverser->traverse([$node->expr])[0];
+        if (in_array('expr', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newExpr */
+            $newExpr = $traverser->traverse([$node->expr])[0];
+            $node->expr = $newExpr;
+        } elseif (in_array('cond', $node->getSubNodeNames())) {
+            /** @var Node\Expr $newCond */
+            $newCond = $traverser->traverse([$node->cond])[0];
+            $node->cond = $newCond;
+        } else {
+            return null;
+        }
 
         if ($visitor->changed) {
-            $node->expr = $newExpr;
             self::withTodoComment('Make this code aware of multiple Content Repositories.', $node);
             return $node;
         }
