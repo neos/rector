@@ -7,7 +7,9 @@ use PhpParser\Comment;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\NodeTraverser;
 use Rector\PhpParser\Node\NodeFactory;
 
 trait FunctionsTrait
@@ -22,6 +24,37 @@ trait FunctionsTrait
     private function castToString(Expr $inner): Expr
     {
         return new Expr\Cast\String_($inner);
+    }
+
+    /**
+     * Run the given traverser on the expression sub-nodes of a statement, assigning the
+     * transformed expressions back in place. This handles both single-expression sub-nodes
+     * (e.g. Expression::$expr, If_::$cond) and arrays of expressions
+     * (e.g. For_::$init / $cond / $loop, which are Expr[]).
+     *
+     * @see \PhpParser\Node\Stmt\Expression
+     * @see \PhpParser\Node\Stmt\If_
+     * @see \PhpParser\Node\Stmt\For_
+     *
+     * @return bool whether the statement had any expression sub-node to traverse
+     */
+    private static function traverseStatementExpressions(NodeTraverser $traverser, Stmt $node): bool
+    {
+        $traversed = false;
+        
+        foreach (['expr', 'init', 'cond', 'loop'] as $subNodeName) {
+            if (!in_array($subNodeName, $node->getSubNodeNames(), true) || $node->{$subNodeName} === null) {
+                continue;
+            }
+
+            $traversed = true;
+            $value = $node->{$subNodeName};
+            $node->{$subNodeName} = is_array($value)
+                ? $traverser->traverse($value)
+                : $traverser->traverse([$value])[0];
+        }
+
+        return $traversed;
     }
 
     private static function assign(string $variableName, Expr $value): Expression
