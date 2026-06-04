@@ -74,15 +74,7 @@ final class WorkspaceSetTitleRector extends AbstractRector implements Documented
             }
         });
 
-        if (in_array('expr', $node->getSubNodeNames())) {
-            /** @var Node\Expr $newExpr */
-            $newExpr = $traverser->traverse([$node->expr])[0];
-            $node->expr = $newExpr;
-        } elseif (in_array('cond', $node->getSubNodeNames())) {
-            /** @var Node\Expr $newCond */
-            $newCond = $traverser->traverse([$node->cond])[0];
-            $node->cond = $newCond;
-        } else {
+        if (!self::traverseStatementExpressions($traverser, $node)) {
             return null;
         }
 
